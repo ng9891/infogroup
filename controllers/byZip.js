@@ -2,9 +2,9 @@
 let db_service = require('../utils/db_service')
 
 function geobyzip(zipcode) {
-  return new Promise(function (resolve, reject) {
-    let sql = 
-      `select 
+    return new Promise(function (resolve, reject) {
+        let sql =
+        `select 
         id, 
         ST_ASGeoJSON(ST_transform(geom,4326)) as geoPoint, 
         "CONAME",
@@ -17,23 +17,22 @@ function geobyzip(zipcode) {
         "BE_Payroll_Expense_Range",
         "BE_Payroll_Expense_Description" 
         from businesses_2014  
-        where "PRMZIP" = ${zipcode};
-      `
+        where "PRMZIP" = ${zipcode};`
 
-      db_service.runQuery(sql, [], (err,data) => {
-          if (err) reject(err)
-          resolve(data.rows)
-      })
-  });
+        db_service.runQuery(sql, [], (err, data) => {
+            if (err) reject(err)
+            resolve(data.rows)
+        })
+    });
 }
 
-const geoByZipRequest =  function( request, response ) {
-    if(!request.params.zipcode) {
+const geoByZipRequest = function (request, response) {
+    if (!request.params.zipcode) {
         response.status(400)
-        .json({
-          status: 'Error',
-          responseText: 'No zipcide specified'
-        })
+            .json({
+                status: 'Error',
+                responseText: 'No zipcide specified'
+            })
     }
 
     geobyzip(request.params.zipcode)
@@ -42,11 +41,11 @@ const geoByZipRequest =  function( request, response ) {
         })
         .then(data => {
             response.status(200)
-            .json({
-              data: data,
-            })
+                .json({
+                    data: data,
+                })
         })
-    
+
 }
 
 
