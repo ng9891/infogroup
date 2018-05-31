@@ -2,9 +2,9 @@
 requires node (recommended version 8.9.4LTS)
 ###To Run
 
-1 - ```git clone https://github.com/availabs/infogroup-api.git```
+1 - ```git clone https://github.com/ng9891/infogroup.git```
 
-2 - ```cd infogroup-api```
+2 - ```cd infogroup```
 
 3 - ```npm install```
 
