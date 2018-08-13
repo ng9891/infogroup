@@ -39,17 +39,24 @@
 	position:fixed; 
 	top: 25px; 
 	right:15px; 
-	width: 300px; 
+	width: 450px; 
 	height:90%;
 	background-color: white;
 	z-index: 3000;
 	border-radius: 5px;
 	padding: 10px;
-	background-color:#E8E8E8;    	
+  background-color:#E8E8E8;
 }
     	
 .Input {
   position: relative;
+  /* border: 2px solid green; */
+  padding-bottom: 10px;
+}
+
+.Object-desc {
+  position: relative;
+  /* border: 2px solid red; */
 }
 
 	

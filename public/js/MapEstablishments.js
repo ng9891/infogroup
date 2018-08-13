@@ -13,9 +13,7 @@ function mapEstablishments (establishments) {
 	// 1 - 1000 employees
 	// mapped to 5 - 30 pixel width
 	// --
-	var employmentScale = d3.scaleLinear()             
-        .domain([1, 999])
-        .range([5, 30]);
+	var employmentScale = d3.scaleLinear().domain([1, 999]).range([5, 12]);
 
 	establishments = establishments.data.map(est =>{
 	    est.geopoint = JSON.parse(est.geopoint)
@@ -23,9 +21,8 @@ function mapEstablishments (establishments) {
 	    // get two digit coede
         var twoDigitCode = est.NAICSCD.toString().slice(0,2);
         // get markerRadius
-        var circleRadius = est.ALEMPSZ 
-        	? employmentScale(+est.ALEMPSZ) : 5
-        circleRadius = circleRadius.toFixed(2)
+        var circleRadius = est.ALEMPSZ ? employmentScale(+est.ALEMPSZ) : 5;
+        circleRadius = circleRadius.toFixed(2);
 	   
 	 	// get color by NAICS industry
 	    let color = naicsKeys[twoDigitCode] 
@@ -75,8 +72,20 @@ function mapEstablishments (establishments) {
 		    	 Industry : ${est.NAICSDS}
 
 		    	`
-		    ).openPopup();
-		    
+			).openPopup();
+
+			marker.on('click', function(){
+				//Does it also accepts ReactJs innerHTML? Needs to check.
+				$("div.Object-desc").html(
+					`<b>Company : ${est.CONAME}</b><br>
+					Employees : ${est.ALEMPSZ ? est.ALEMPSZ.toLocaleString() : ''}<br>
+					Payroll : ${est.BE_Payroll_Expense_Description}<br>
+					NAICS :  ${est.NAICSCD}<br>
+					Industry : ${est.NAICSDS}`
+				);
+			});
+			
+			
 		    marker.addTo(mymap);
 		    markers.push(marker)
 	    }
