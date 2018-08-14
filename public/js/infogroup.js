@@ -12,12 +12,12 @@ L.tileLayer(
     }).addTo(mymap);
 
 // Go button click listener
-
 d3.select('.go-button').on('click', (e) => {
     let value = d3.select('#zipInput').property("value")
     if (value.length !== 5 || isNaN(+value)) {
         alert("Invalid Input");
     }else{
+        $('#zipInput').blur();
         loadEstablishments(value);
     }
 });

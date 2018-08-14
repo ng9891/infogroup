@@ -18,7 +18,7 @@ function geobyzip(zipcode) {
         "BE_Payroll_Expense_Description" 
         from businesses_2014  
         where "PRMZIP" = ${zipcode}
-        limit 1000;`
+        limit 3000;`
 
         db_service.runQuery(sql, [], (err, data) => {
             if (err) reject(err)

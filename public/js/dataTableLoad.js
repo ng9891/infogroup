@@ -1,5 +1,5 @@
 
-//Creates a Datatable with the information in est
+//Creates a Datatable with the information in data
 function loadTables(data){
 	//TODO: Check if exist if not clear
 	

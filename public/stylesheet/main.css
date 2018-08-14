@@ -106,12 +106,14 @@ body{
 
   /* maybe a bit hardcoded for hiding the container*/
   width: 1000px;
-  transition: 0.2s linear;
+  transform: translate3d(0,0,0);
+  transition: transform 0.2s linear;
 }
 
 .infoContainer.closed{
   /* maybe a bit hardcoded hiding the container*/
-  right: -1000px;
+  /* right: -1000px; */
+  transform: translate3d(1000px,0,0);
 }
 
 .infoContainerButton{

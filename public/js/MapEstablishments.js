@@ -86,8 +86,6 @@ function mapEstablishments (establishments) {
 					`
 				);
 			});
-			
-			
 		    marker.addTo(mymap);
 			markers.push(marker)
 		}
@@ -101,12 +99,14 @@ function mapEstablishments (establishments) {
 	// bbox = L.featureGroup(markers);
 
 	// zoom to bounds
-	// mymap.fitBounds(bbox.getBounds());
-
 	mymap.setZoom(15);
+	//values for paddingBottomRight are weird.... need further research
+	//[1000,400]
 	mymap.fitBounds(bbox, {
-		paddingBottomRight: [1000,0]
+		paddingBottomRight: [1000,400]
 	});
+
+	// mymap.fitBounds(bbox.getBounds());
 	// mymap.fitBounds(bbox);
 }
 
