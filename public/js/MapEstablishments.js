@@ -94,14 +94,19 @@ function mapEstablishments (establishments) {
 	})
 
 	// calculate the bounding Box
-	// bbox = [
-	// 	[d3.min(lats),d3.min(lngs)],
-	// 	[d3.max(lats),d3.max(lngs)]
-	// ]
-	bbox = L.featureGroup(markers);
+	bbox = [
+		[d3.min(lats),d3.min(lngs)],
+		[d3.max(lats),d3.max(lngs)]
+	]
+	// bbox = L.featureGroup(markers);
 
 	// zoom to bounds
-	mymap.fitBounds(bbox.getBounds());
+	// mymap.fitBounds(bbox.getBounds());
+
+	mymap.setZoom(15);
+	mymap.fitBounds(bbox, {
+		paddingBottomRight: [1000,0]
+	});
 	// mymap.fitBounds(bbox);
 }
 

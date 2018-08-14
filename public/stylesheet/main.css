@@ -104,17 +104,22 @@ body{
   background-color:#E8E8E8;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
 
-  width: 70%;
-  /* transition: 0.2s linear;
-  width: 5%;
-  opacity: 0; */
+  /* maybe a bit hardcoded for hiding the container*/
+  width: 1000px;
+  transition: 0.2s linear;
 }
 
-/* .infoContainer:hover{
-  opacity: 1;
-  width: 70%;
-} */
+.infoContainer.closed{
+  /* maybe a bit hardcoded hiding the container*/
+  right: -1000px;
+}
 
+.infoContainerButton{
+  position: absolute;
+  left: -20px;
+  width: 20px;
+  height: 40px;
+}
 
 .Input {
   /* position: relative; */
@@ -139,9 +144,11 @@ body{
   /* border-radius: 0.4rem; */
   transition: box-shadow var(--transitionDuration);
   background-color: #f7f7f7;
-  box-sizing: border-box;
   padding: 0px 20px;
   width: 70%;
+  
+  /*TODO: webkit */
+  box-sizing: border-box;
 }
 
 .go-button {
@@ -208,12 +215,13 @@ body{
 
 .Object-desc {
   position: relative;
+  margin-left: 20px;
   float: left;
   width: auto;
   /* border: 2px solid red; */
 }
 
 .list-table{
-  width: 40%;
-  height: 40%;
+  float:left;
+  width: 38%;
 }
