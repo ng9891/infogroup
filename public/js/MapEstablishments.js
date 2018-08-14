@@ -91,21 +91,21 @@ function mapEstablishments (establishments) {
 		}
 	})
 
+	mymap.setZoom(15);
 	// calculate the bounding Box
 	bbox = [
 		[d3.min(lats),d3.min(lngs)],
 		[d3.max(lats),d3.max(lngs)]
 	]
-	// bbox = L.featureGroup(markers);
 
 	// zoom to bounds
-	mymap.setZoom(15);
 	//values for paddingBottomRight are weird.... need further research
 	//[1000,400]
 	mymap.fitBounds(bbox, {
 		paddingBottomRight: [1000,400]
 	});
 
+	// bbox = L.featureGroup(markers);
 	// mymap.fitBounds(bbox.getBounds());
 	// mymap.fitBounds(bbox);
 }

@@ -17,8 +17,7 @@ function geobyzip(zipcode) {
         "BE_Payroll_Expense_Range",
         "BE_Payroll_Expense_Description" 
         from businesses_2014  
-        where "PRMZIP" = ${zipcode}
-        limit 3000;`
+        where "PRMZIP" = ${zipcode};`
 
         db_service.runQuery(sql, [], (err, data) => {
             if (err) reject(err)
@@ -32,7 +31,7 @@ const geoByZipRequest = function (request, response) {
         response.status(400)
             .json({
                 status: 'Error',
-                responseText: 'No zipcide specified'
+                responseText: 'No zipcode specified'
             })
     }
 
