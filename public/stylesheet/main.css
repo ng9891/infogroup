@@ -35,67 +35,142 @@
   --inputTransitionTF: var(--transitionTF);
 }
 
+/* Resetting margins for different browser */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body{
+  width: 100%;
+  height: 100vh;
+  margin: 0px;
+  padding: 0px;
+}
+
+/* BEGIN NAV BAR (Change later to bootstrap?) */
+/* Add a black background color to the top navigation */
+.topnav {
+  background-color: #333;
+  overflow: hidden;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+.topnav a.navlogin{
+  float: right;
+}
+/* Change the color of links on hover */
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+/* Add a color to the active/current link */
+.topnav a.active {
+  background-color: #686868;
+  color: white;
+}
+/* END OF NAV BAR */
+
+.body-container{
+  /* display: flex; */
+  width: 100%;
+  height: 95%;
+}
+
+.map-style{
+  /* position: relative; */
+  width: 100%;
+  height: 95vh;
+}
+
 .infoContainer {
-	position:fixed; 
-	top: 25px; 
-	right:15px; 
-	width: 450px; 
-	height:90%;
-	background-color: white;
-	z-index: 3000;
-	border-radius: 5px;
+  /* position: relative;  */
+  position: fixed; 
+	top: 5%; 
+	right: 0px; 
+  z-index: 3000;
+  height: 95vh;
+	/* border-radius: 5px; */
 	padding: 10px;
   background-color:#E8E8E8;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+
+  width: 70%;
+  /* transition: 0.2s linear;
+  width: 5%;
+  opacity: 0; */
 }
-    	
+
+/* .infoContainer:hover{
+  opacity: 1;
+  width: 70%;
+} */
+
+
 .Input {
-  position: relative;
-  /* border: 2px solid green; */
-  padding-bottom: 10px;
+  /* position: relative; */
+  float: right;
+  display: flex;
+  background-color: #f7f7f7;
+  padding: 5px 2px;
+  margin-bottom: 25px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 1);
+  width: 60%;
 }
 
-.Object-desc {
-  position: relative;
-  /* border: 2px solid red; */
-}
-
-	
 .Input-text {
-  display: block ;
-  margin: 0;
-  padding: var(--inputPaddingV) var(--inputPaddingH);
+  /* display: block; */
+  flex: 1;
   color: inherit;
-  width: 83%;
   font-family: inherit;
   font-size: var(--inputFontSize);
   font-weight: inherit;
   line-height: var(--inputLineHeight);
   border: none;
-  border-radius: 0.4rem;
+  /* border-radius: 0.4rem; */
   transition: box-shadow var(--transitionDuration);
+  background-color: #f7f7f7;
+  box-sizing: border-box;
+  padding: 0px 20px;
+  width: 70%;
 }
 
 .go-button {
+  flex: 0;
+  /* display: inline-block; */
   font-size: var(--inputFontSize);
   font-weight: inherit;
   line-height: var(--inputLineHeight);
   padding: var(--inputPaddingV) var(--inputPaddingH);
   background-color: #c8c8c8;
   border-radius: 5px;
-  width: 100%;
+}
+.go-button:hover{
+  background-color: lightskyblue;
 }
 
 .Input-text:focus {
   outline: none;
-  box-shadow: 0.2rem 0.8rem 1.6rem var(--colorPrimary600);
+  background-color: white;
+  border: 3px solid lightskyblue;
+  /* box-shadow: 0.2rem 0.8rem 1.6rem var(--colorPrimary600); */
 }
 
-.Input-label {
+/* .Input-label {
   display: block;
   position: absolute;
   bottom: 50%;
   left: 1rem;
-  color: 686868;
+  color: red;
   font-family: inherit;
   font-size: var(--inputFontSize);
   font-weight: inherit;
@@ -110,7 +185,7 @@
     transform var(--inputTransitionDuration) var(--inputTransitionTF),
     visibility 0ms var(--inputTransitionDuration) var(--inputTransitionTF),
     z-index 0ms var(--inputTransitionDuration) var(--inputTransitionTF);
-}
+} */
 
 .Input-text:placeholder-shown + .Input-label {
   visibility: hidden;
@@ -118,7 +193,7 @@
 }
 
 .Input-text:not(:placeholder-shown) + .Input-label,
-.Input-text:focus:not(:placeholder-shown) + .Input-label {
+/* .Input-text:focus:not(:placeholder-shown) + .Input-label {
   visibility: visible;
   z-index: 1;
   opacity: 1;
@@ -129,4 +204,16 @@
     transform var(--inputTransitionDuration),
     visibility 0ms,
     z-index 0ms;
+} */
+
+.Object-desc {
+  position: relative;
+  float: left;
+  width: auto;
+  /* border: 2px solid red; */
+}
+
+.list-table{
+  width: 40%;
+  height: 40%;
 }

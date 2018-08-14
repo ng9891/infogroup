@@ -1,4 +1,3 @@
-
 function mapEstablishments (establishments) {
 	// ---
 	// remove all previous markers from map
@@ -6,6 +5,7 @@ function mapEstablishments (establishments) {
 	while(markers.length > 0){
 		mymap.removeLayer(markers.pop())
 	}
+
 	
 	var lats = []; var lngs = [];
 	// --
@@ -18,7 +18,7 @@ function mapEstablishments (establishments) {
 	establishments = establishments.data.map(est =>{
 	    est.geopoint = JSON.parse(est.geopoint)
 	    
-	    // get two digit coede
+	    // get two digit code
         var twoDigitCode = est.NAICSCD.toString().slice(0,2);
         // get markerRadius
         var circleRadius = est.ALEMPSZ ? employmentScale(+est.ALEMPSZ) : 5;
@@ -65,41 +65,44 @@ function mapEstablishments (establishments) {
 		    )
 		    // create Pop Up
 		    marker.bindPopup(
-		    	`<b>Company : ${est.CONAME}</b><br>
-		    	 Employees : ${est.ALEMPSZ ? est.ALEMPSZ.toLocaleString() : ''}<br>
-		    	 Payroll : ${est.BE_Payroll_Expense_Description}<br>
-		    	 NAICS :  ${est.NAICSCD}<br>
-		    	 Industry : ${est.NAICSDS}
-
+				`
+				<b>Company : ${est.CONAME}</b><br>
+		    	Employees : ${est.ALEMPSZ ? est.ALEMPSZ.toLocaleString() : ''}<br>
+		    	Payroll : ${est.BE_Payroll_Expense_Description}<br>
+		    	NAICS :  ${est.NAICSCD}<br>
+		    	Industry : ${est.NAICSDS}
 		    	`
 			).openPopup();
 
 			marker.on('click', function(){
 				//Does it also accepts ReactJs innerHTML? Needs to check.
 				$("div.Object-desc").html(
-					`<b>Company : ${est.CONAME}</b><br>
+					`
+					<b>Company : ${est.CONAME}</b><br>
 					Employees : ${est.ALEMPSZ ? est.ALEMPSZ.toLocaleString() : ''}<br>
 					Payroll : ${est.BE_Payroll_Expense_Description}<br>
 					NAICS :  ${est.NAICSCD}<br>
-					Industry : ${est.NAICSDS}`
+					Industry : ${est.NAICSDS}
+					`
 				);
 			});
 			
 			
 		    marker.addTo(mymap);
-		    markers.push(marker)
-	    }
+			markers.push(marker)
+		}
 	})
 
 	// calculate the bounding Box
+	// bbox = [
+	// 	[d3.min(lats),d3.min(lngs)],
+	// 	[d3.max(lats),d3.max(lngs)]
+	// ]
+	bbox = L.featureGroup(markers);
 
-	bbox = [
-		[d3.min(lats),d3.min(lngs)],
-		[d3.max(lats),d3.max(lngs)]
-	]
 	// zoom to bounds
-	mymap.fitBounds(bbox);
-
+	mymap.fitBounds(bbox.getBounds());
+	// mymap.fitBounds(bbox);
 }
 
 function loadEstablishments(zip) {
@@ -109,6 +112,7 @@ function loadEstablishments(zip) {
 	// --
 	d3.json(`/api/byzip/${zip}`)
 		.then(data => {
-			mapEstablishments(data)
-		})
+			mapEstablishments(data);
+			loadTables(data.data); //from dataTableLoad.js
+		});
 }

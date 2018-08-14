@@ -6,7 +6,7 @@ const pg_js = require('pg')
 const Pool = pg_js.Pool
 
 const envFile = require('node-env-file')
-envFile(path.join(__dirname, './postgres.env'))
+envFile(path.join(__dirname, './test.env'))
 
 
 const config = {

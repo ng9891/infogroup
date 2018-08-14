@@ -49,6 +49,4 @@ const geoByZipRequest = function (request, response) {
 }
 
 
-
-
 module.exports = geoByZipRequest
