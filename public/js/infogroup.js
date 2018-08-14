@@ -11,22 +11,23 @@ L.tileLayer(
         id: 'mapbox.streets'
     }).addTo(mymap);
 
-// Go button click listener
-d3.select('.go-button').on('click', (e) => {
-    let value = d3.select('#zipInput').property("value")
-    if (value.length !== 5 || isNaN(+value)) {
-        alert("Invalid Input");
-    }else{
-        $('#zipInput').blur();
-        loadEstablishments(value);
-    }
-});
-//Input Text Box on Enter key press
-$("#zipInput").on("keydown", function search(e) {
-    if (e.keyCode == 13) {
-        $('.go-button').click();
-    }
-});
+//TODO: FIX
+// // Go button click listener
+// d3.select('.go-button').on('click', (e) => {
+//     let value = d3.select('#zipInput').property("value")
+//     if (value.length !== 5 || isNaN(+value)) {
+//         alert("Invalid Input");
+//     }else{
+//         $('#zipInput').blur();
+//         loadEstablishments(value);
+//     }
+// });
+// //Input Text Box on Enter key press
+// $("#zipInput").on("keydown", function search(e) {
+//     if (e.keyCode == 13) {
+//         $('.go-button').click();
+//     }
+// });
 
 //Button listener to hide infoContainer
 $(".infoContainerButton").click(() => {

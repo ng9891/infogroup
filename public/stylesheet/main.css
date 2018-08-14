@@ -93,13 +93,13 @@ body{
 }
 
 .infoContainer {
-  /* position: relative;  */
-  position: fixed; 
-	top: 5%; 
-	right: 0px; 
-  z-index: 3000;
-  height: 95vh;
-	/* border-radius: 5px; */
+	position:fixed; 
+	top: 25px; 
+	right:15px; 
+	height:90%;
+	background-color: white;
+	z-index: 3000;
+	border-radius: 5px;
 	padding: 10px;
   background-color:#E8E8E8;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
@@ -124,47 +124,42 @@ body{
 }
 
 .Input {
-  /* position: relative; */
-  float: right;
-  display: flex;
-  background-color: #f7f7f7;
-  padding: 5px 2px;
-  margin-bottom: 25px;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 1);
-  width: 60%;
+  position: relative;
+  /* border: 2px solid green; */
+  padding-bottom: 10px;
 }
-
+	
 .Input-text {
-  /* display: block; */
-  flex: 1;
+  display: block;
+  float: left;
+  width: 240px;
+  display: block;
+  margin-right: 8px;
+  margin-left: 2%;
+  padding: var(--inputPaddingV) var(--inputPaddingH);
   color: inherit;
   font-family: inherit;
   font-size: var(--inputFontSize);
   font-weight: inherit;
   line-height: var(--inputLineHeight);
   border: none;
-  /* border-radius: 0.4rem; */
+  border-radius: 0.4rem;
   transition: box-shadow var(--transitionDuration);
-  background-color: #f7f7f7;
-  padding: 0px 20px;
-  width: 70%;
   
   /*TODO: webkit */
   box-sizing: border-box;
 }
 
 .go-button {
-  flex: 0;
-  /* display: inline-block; */
+  display: block;
   font-size: var(--inputFontSize);
-  font-weight: inherit;
-  line-height: var(--inputLineHeight);
+  font-weight: inherit;  
   padding: var(--inputPaddingV) var(--inputPaddingH);
   background-color: #c8c8c8;
   border-radius: 5px;
-}
-.go-button:hover{
-  background-color: lightskyblue;
+  width: 240px;
+  height: 46px;
+  border: 1px solid green;
 }
 
 .Input-text:focus {
@@ -221,9 +216,4 @@ body{
   float: left;
   width: auto;
   /* border: 2px solid red; */
-}
-
-.list-table{
-  float:left;
-  width: 38%;
 }
