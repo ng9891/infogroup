@@ -133,7 +133,6 @@ body{
   display: block;
   float: left;
   width: 240px;
-  display: block;
   margin-right: 8px;
   margin-left: 2%;
   padding: var(--inputPaddingV) var(--inputPaddingH);

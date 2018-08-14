@@ -1,14 +1,15 @@
-function mapEstablishments (establishments) {
+function mapEstablishments(establishments) {
 	// ---
 	// remove all previous markers from map
 	// ---
 
-	while(markers.length > 0){
+	while (markers.length > 0) {
 		mymap.removeLayer(markers.pop())
 	}
 
-	
-	var lats = []; var lngs = [];
+
+	var lats = [];
+	var lngs = [];
 	// --
 	// employee scale
 	// 1 - 1000 employees
@@ -16,27 +17,27 @@ function mapEstablishments (establishments) {
 	// --
 	var employmentScale = d3.scaleLinear().domain([1, 999]).range([5, 15]);
 
-	establishments = establishments.data.map(est =>{
-	    est.geopoint = JSON.parse(est.geopoint)
-	    
-	    // get two digit code
-        var twoDigitCode = est.NAICSCD.toString().slice(0,2);
-        // get markerRadius
-        var circleRadius = est.ALEMPSZ ? employmentScale(+est.ALEMPSZ) : 5;
-        circleRadius = circleRadius.toFixed(2);
-	   
-	 	// get color by NAICS industry
-	    let color = naicsKeys[twoDigitCode] 
-	    	? naicsKeys[twoDigitCode].color 
-	    	: 'black'
-	    
-	    // -- 
-	    // Create divIcon
-	    // http://leafletjs.com/reference-1.3.0.html#divicon
-	    // -- 
-	    var myIcon = L.divIcon({
-	        className:'current-location-icon',
-	        html:`
+	establishments = establishments.data.map(est => {
+		est.geopoint = JSON.parse(est.geopoint)
+
+		// get two digit code
+		var twoDigitCode = est.NAICSCD.toString().slice(0, 2);
+		// get markerRadius
+		var circleRadius = est.ALEMPSZ ? employmentScale(+est.ALEMPSZ) : 5;
+		circleRadius = circleRadius.toFixed(2);
+
+		// get color by NAICS industry
+		let color = naicsKeys[twoDigitCode] ?
+			naicsKeys[twoDigitCode].color :
+			'black'
+
+		// -- 
+		// Create divIcon
+		// http://leafletjs.com/reference-1.3.0.html#divicon
+		// -- 
+		var myIcon = L.divIcon({
+			className: 'current-location-icon',
+			html: `
 				<div id="${encodeURIComponent(est.CONAME)}" 
 					class = "NAICS" 
 	        		style="
@@ -45,27 +46,28 @@ function mapEstablishments (establishments) {
 	        			background-color:${color};
 	        			border-radius:500px;"
 	        	></div>`,
-	        iconAnchor:[0,0],
-	        iconSize:null,
-	        popupAnchor:[0,0],
-	        id: encodeURIComponent(est.CONAME)
-	    });
-	    // check if coordinate exist
-	    if(est.geopoint.coordinates[1] && est.geopoint.coordinates[0]) {
-		    // add to array for bounding box
-		    lats.push(est.geopoint.coordinates[1])
-		    lngs.push(est.geopoint.coordinates[0])
-		
-		    // create marker
-		    marker = L.marker(
-		    	[
-		    		est.geopoint.coordinates[1], 
-		    		est.geopoint.coordinates[0]
-		    	], 
-		    	{icon: myIcon}
-		    )
-		    // create Pop Up
-		    marker.bindPopup(
+			iconAnchor: [0, 0],
+			iconSize: null,
+			popupAnchor: [0, 0],
+			id: encodeURIComponent(est.CONAME)
+		});
+		// check if coordinate exist
+		if (est.geopoint.coordinates[1] && est.geopoint.coordinates[0]) {
+			// add to array for bounding box
+			lats.push(est.geopoint.coordinates[1])
+			lngs.push(est.geopoint.coordinates[0])
+
+			// create marker
+			marker = L.marker(
+				[
+					est.geopoint.coordinates[1],
+					est.geopoint.coordinates[0]
+				], {
+					icon: myIcon
+				}
+			)
+			// create Pop Up
+			marker.bindPopup(
 				`
 				<b>Company : ${est.CONAME}</b><br>
 		    	Employees : ${est.ALEMPSZ ? est.ALEMPSZ.toLocaleString() : ''}<br>
@@ -74,7 +76,7 @@ function mapEstablishments (establishments) {
 		    	Industry : ${est.NAICSDS}
 		    	`
 			).openPopup();
-			
+
 			/*
 			marker.on('click', function(){
 				//Does it also accepts ReactJs innerHTML? Needs to check.
@@ -90,8 +92,8 @@ function mapEstablishments (establishments) {
 				);
 			});
 			*/
-			
-		    marker.addTo(mymap);
+
+			marker.addTo(mymap);
 			markers.push(marker)
 		}
 	})
@@ -99,15 +101,15 @@ function mapEstablishments (establishments) {
 	mymap.setZoom(15);
 	// calculate the bounding Box
 	bbox = [
-		[d3.min(lats),d3.min(lngs)],
-		[d3.max(lats),d3.max(lngs)]
+		[d3.min(lats), d3.min(lngs)],
+		[d3.max(lats), d3.max(lngs)]
 	]
 
 	// zoom to bounds
 	//values for paddingBottomRight are weird.... need further research
 	//[1000,400]
 	mymap.fitBounds(bbox, {
-		paddingBottomRight: [1000,400]
+		paddingBottomRight: [1000, 400]
 	});
 
 	// bbox = L.featureGroup(markers);
@@ -122,11 +124,11 @@ function loadPieChart(establishments) {
 	var industries = {};
 	var ct = 0;
 
-	$.each( establishments, function( key, value) {
-		
-		$.each(value, function(key2, value2) {
-			
-			$.each(value2, function(key3, value3) {
+	$.each(establishments, function (key, value) {
+
+		$.each(value, function (key2, value2) {
+
+			$.each(value2, function (key3, value3) {
 				if (key3 == "NAICSDS") {
 					if (!industries.hasOwnProperty(value3)) {
 						industries[value3] = 1;
@@ -140,11 +142,11 @@ function loadPieChart(establishments) {
 		});
 
 	});
-	
+
 	//var color  = d3.scaleLinear().domain([10, 60]).range([d3.rgb("#2383c1"), d3.rgb("#cc0f0f")]);
 	//console.log(color(1));
 	var pie_content = [];
-	$.each( industries, function (key, value2) {
+	$.each(industries, function (key, value2) {
 		if (value2 > 40) {
 			ct++;
 			item = {};
@@ -154,7 +156,7 @@ function loadPieChart(establishments) {
 		}
 	});
 	if (ct < 10) {
-		$.each( industries, function (key, value2) {
+		$.each(industries, function (key, value2) {
 			if (value2 > 10) { //idea needs to be imroved
 				ct++;
 				item = {};
