@@ -39,7 +39,7 @@
 	position:fixed; 
 	top: 25px; 
 	right:15px; 
-	width: 450px; 
+	width: 750px; 
 	height:90%;
 	background-color: white;
 	z-index: 3000;
@@ -58,14 +58,16 @@
   position: relative;
   /* border: 2px solid red; */
 }
-
 	
 .Input-text {
-  display: block ;
-  margin: 0;
+  display: block;
+  float: left;
+  width: 240px;
+  display: block;
+  margin-right: 8px;
+  margin-left: 2%;
   padding: var(--inputPaddingV) var(--inputPaddingH);
   color: inherit;
-  width: 83%;
   font-family: inherit;
   font-size: var(--inputFontSize);
   font-weight: inherit;
@@ -76,13 +78,15 @@
 }
 
 .go-button {
+  display: block;
   font-size: var(--inputFontSize);
-  font-weight: inherit;
-  line-height: var(--inputLineHeight);
+  font-weight: inherit;  
   padding: var(--inputPaddingV) var(--inputPaddingH);
   background-color: #c8c8c8;
   border-radius: 5px;
-  width: 100%;
+  width: 240px;
+  height: 46px;
+  border: 1px solid green;
 }
 
 .Input-text:focus {
