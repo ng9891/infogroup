@@ -1,4 +1,4 @@
-function loadEstablishments(zip) {
+function loadZipEstablishments(zip) {
 	// --
 	// load data from api
 	// then add to map
