@@ -167,6 +167,9 @@ function loadPieChart(establishments) {
 		});
 	}
 	//console.log(ct);
+	var wh = $(window).height();
+	pie_h = (wh >= 670 && wh < 800) ? 260 : 380;
+	pie_w = (wh >= 670 && wh < 800) ? 560 : 750;
 
 	var pie_c = new d3pie("pieChart", {
 		"header": {
@@ -188,9 +191,9 @@ function loadPieChart(establishments) {
 			"location": "bottom-left"
 		},
 		"size": {
-			"canvasHeight": 400,
-			"canvasWidth": 750,
-			"pieOuterRadius": "76%"
+			"canvasHeight": pie_h, //380
+			"canvasWidth": pie_w, //750 
+			"pieOuterRadius": "70%"
 		},
 		"data": {
 			"sortOrder": "value-desc",
@@ -261,6 +264,6 @@ function loadEstablishments(zip) {
 		.then(data => {
 			mapEstablishments(data);
 			loadPieChart(data);
-			loadTables(data.data);
+			loadDatatable(data);
 		})
 }

@@ -52,29 +52,46 @@ body{
 /* BEGIN NAV BAR (Change later to bootstrap?) */
 /* Add a black background color to the top navigation */
 .topnav {
+  z-index: 900;
+  position: fixed;
+  width: 100%;
+  top: 0;
   background-color: #333;
   overflow: hidden;
+  height: 5%;
 }
 
 /* Style the links inside the navigation bar */
-.topnav a {
-  float: left;
+.topnav ul {
+  list-style-type: none;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+}
+.topnav li {
+  display: inline;
+}
+
+.topnav li a {
+  height: 100%;
+  padding: 10px 14px;
+  display: inline-block;
   color: #f2f2f2;
   text-align: center;
-  padding: 14px 16px;
   text-decoration: none;
-  font-size: 17px;
+  font-size: 14px;
 }
-.topnav a.navlogin{
+.topnav li.navlogin,.topnav li.navlogin a {
   float: right;
+  height: 100%;
 }
 /* Change the color of links on hover */
-.topnav a:hover {
+.topnav li:hover {
   background-color: #ddd;
   color: black;
 }
 /* Add a color to the active/current link */
-.topnav a.active {
+.topnav li.active a {
   background-color: #686868;
   color: white;
 }
@@ -94,7 +111,8 @@ body{
 
 .infoContainer {
 	position:fixed; 
-	top: 25px; 
+  /* top: 25px;  */
+  top: 6%;
 	right:15px; 
 	height:90%;
 	background-color: white;
@@ -105,7 +123,8 @@ body{
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
 
   /* maybe a bit hardcoded for hiding the container*/
-  width: 1000px;
+  /* width: 750px; */
+  width: 40%;
   transform: translate3d(0,0,0);
   transition: transform 0.2s linear;
 }
@@ -113,7 +132,7 @@ body{
 .infoContainer.closed{
   /* maybe a bit hardcoded hiding the container*/
   /* right: -1000px; */
-  transform: translate3d(1000px,0,0);
+  transform: translate3d(99%,0,0);
 }
 
 .infoContainerButton{
@@ -132,7 +151,8 @@ body{
 .Input-text {
   display: block;
   float: left;
-  width: 240px;
+  /* width: 240px; */
+  width: 30%;
   margin-right: 8px;
   margin-left: 2%;
   padding: var(--inputPaddingV) var(--inputPaddingH);
@@ -156,9 +176,9 @@ body{
   padding: var(--inputPaddingV) var(--inputPaddingH);
   background-color: #c8c8c8;
   border-radius: 5px;
-  width: 240px;
+  /* width: 240px; */
+  width: 30%;
   height: 46px;
-  border: 1px solid green;
 }
 
 .Input-text:focus {
@@ -215,4 +235,25 @@ body{
   float: left;
   width: auto;
   /* border: 2px solid red; */
+}
+
+.leaflet-control-zoom {
+  top: 50px;
+}
+
+#pieChart svg text {
+  font-size: 9px !important;
+}
+
+.datatable {
+  margin: 0 auto;
+  widows: 100%;
+  clear: both;
+  border-collapse: collapse;
+  table-layout: fixed;
+  word-wrap: break-word;
+  font-size: 12px;
+}
+.dataTables_info, .dataTables_paginate, .dataTables_filter {
+  font-size: 12px;
 }
