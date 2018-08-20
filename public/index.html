@@ -49,6 +49,15 @@
 				</tr>
 			</thead>
 		</table>
+
+		<!-- BEGIN TEST! DELETABLE -->
+		<div class="Input">
+			<input type="text" id="countyInput" class="Input-text" placeholder="County: eg. Bronx">
+			<button class='county_go-button'>GO</button>
+			<button class='county_next-button'>Next</button>
+		<!-- END TEST! -->
+
+		</div>
 	</div>
 </body>
 
@@ -68,12 +77,12 @@
 	// --
 	// on Load, load zipcode 10001
 	// --
-	loadCountyEstablishments('New York', 3500); 	// From load_county.js. Takes an offset for pagination
+	loadCountyEstablishments('Westchester'); 	// From load_county.js. Takes an offset for pagination
 	// loadZipEstablishments(10001)				// From load_zip.js
 </script>
 
 </html>
 
-<!-- TODO: check for query error -->
 <!-- TODO: Add loading animation -->
-<!-- TODO: Create a list of zip code for searching bar? -->
+<!-- TODO: ADD typeahead to search bar-->
+<!-- TODO: ADD load next batch of points button -->

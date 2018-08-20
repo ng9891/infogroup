@@ -1,0 +1,53 @@
+{
+    "county": [{
+            "name": "Bronx",
+            "mpo": "NYMTC",
+            "tccs": "NYC"
+        },
+        {
+            "name": "Kings",
+            "mpo": "NYMTC",
+            "tccs": "NYC"
+        },
+        {
+            "name": "Nassau",
+            "mpo": "NYMTC",
+            "tccs": "LI"
+        },
+        {
+            "name": "New York",
+            "mpo": "NYMTC",
+            "tccs": "NYC"
+        },
+        {
+            "name": "Putnam",
+            "mpo": "NYMTC",
+            "tccs": "MHS"
+        },
+        {
+            "name": "Queens",
+            "mpo": "NYMTC",
+            "tccs": "NYC"
+        },
+        {
+            "name": "Richmond",
+            "mpo": "NYMTC",
+            "tccs": "NYC"
+        },
+        {
+            "name": "Rockland",
+            "mpo": "NYMTC",
+            "tccs": "MHS"
+        },
+        {
+            "name": "Suffolk",
+            "mpo": "NYMTC",
+            "tccs": "LI"
+        },
+        {
+            "name": "Westchester",
+            "mpo": "NYMTC",
+            "tccs": "MHS"
+        }
+    ]
+}

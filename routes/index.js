@@ -1,4 +1,5 @@
 var express = require('express');
+var path = require('path');
 var router = express.Router();
 
 let byZip = require('../controllers/byZip');
@@ -7,7 +8,8 @@ let byCounty = require('../controllers/byCounty');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.sendfile('./public/index.html');
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+  
 });
 
 

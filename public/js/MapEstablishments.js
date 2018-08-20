@@ -10,13 +10,19 @@ function mapEstablishments(establishments) {
 
 	var lats = [];
 	var lngs = [];
+
+	// if(establishments.data.geopoly){
+	// 	//add polygon to map for county
+	// 	console.log("YESSS")
+	// }
+
 	// --
 	// employee scale
 	// 1 - 1000 employees
 	// mapped to 5 - 30 pixel width
 	// --
 	var employmentScale = d3.scaleLinear().domain([1, 999]).range([5, 15]);
-
+	
 	establishments = establishments.data.map(est => {
 		est.geopoint = JSON.parse(est.geopoint);
 
@@ -100,8 +106,7 @@ function mapEstablishments(establishments) {
 			marker.addTo(mymap);
 			markers.push(marker)
 		}
-	})
-
+	});
 	// mymap.setZoom(15);
 	// calculate the bounding Box
 	bbox = [

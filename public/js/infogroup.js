@@ -2,6 +2,7 @@
 var mymap = L.map('mapid').setView([40.755, -74.00], 13);
 var markers = [];
 var table;
+
 L.tileLayer(
     'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
         maxZoom: 20,
@@ -11,6 +12,7 @@ L.tileLayer(
         id: 'mapbox.streets'
     }).addTo(mymap);
 
+//TODO: Change Go button to query selected options
 // Go button click listener
 d3.select('.go-button').on('click', (e) => {
     let value = d3.select('#zipInput').property("value")
@@ -18,7 +20,7 @@ d3.select('.go-button').on('click', (e) => {
         alert("Invalid Input");
     }else{
         $('#zipInput').blur();
-        loadEstablishments(value);
+        loadZipEstablishments(value);
     }
 });
 //Input Text Box on Enter key press
@@ -32,3 +34,31 @@ $("#zipInput").on("keydown", function search(e) {
 $(".infoContainerButton").click(() => {
     $(".infoContainer").toggleClass("closed");
 });
+
+//------------------------------------------------------------------------------
+//TEST
+//BUTTON FOR COUNTY
+// Go button click listener
+d3.select('.county_go-button').on('click', (e) => {
+    let value = d3.select('#countyInput').property("value")
+    if (value.length === '') {
+        alert("Invalid Input");
+    }else{
+        $('#countyInput').blur();
+        loadCountyEstablishments(value);
+    }
+});
+//Input Text Box on Enter key press
+$("#countyInput").on("keydown", function search(e) {
+    if (e.keyCode == 13) {
+        $('.county_go-button').click();
+    }
+});
+
+d3.select('.county_next-button').on('click', (e) => {
+    //TODO: Find a way to save the offset value in a var or URL for offsetting
+    //Send the amount of current points for offset
+    // loadCountyEstablishments(value, markers.length);
+});
+//END OF TEST
+//------------------------------------------------------------------------------
