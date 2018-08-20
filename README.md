@@ -1,6 +1,18 @@
+# About
+
 # InfogGroup API Start
-requires node (recommended version 8.9.4LTS)
-###To Run
+Requires node (recommended version 8.9.4LTS)
+Requires an enviromental file in utils called postgres.env
+
+.env file contains:
+```POSTGRES_DB= dbname```
+```POSTGRES_USER= username```
+```POSTGRES_PASSWORD= password```
+```POSTGRES_NETLOC= db ip address```
+```POSTGRES_PORT=5432```
+```QUERY_LIMIT=3000``` - Default value for amount of points to display on map.
+
+### To Run
 
 1 - ```git clone https://github.com/availabs/infogroup-api.git```
 
