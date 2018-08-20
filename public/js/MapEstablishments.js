@@ -18,7 +18,7 @@ function mapEstablishments(establishments) {
 	var employmentScale = d3.scaleLinear().domain([1, 999]).range([5, 15]);
 
 	establishments = establishments.data.map(est => {
-		est.geopoint = JSON.parse(est.geopoint)
+		est.geopoint = JSON.parse(est.geopoint);
 
 		// get two digit code
         var twoDigitCode = null;
