@@ -4,7 +4,7 @@ let db_service = require('../utils/db_service')
 function geobyid(bp_id) {
     return new Promise(function (resolve, reject) {
         let sql =
-        `select 
+            `select 
         id, 
         ST_ASGeoJSON(ST_transform(geom,4326)) as geoPoint, 
         "CONAME",
@@ -20,7 +20,7 @@ function geobyid(bp_id) {
         where id = ${bp_id};`
 
         db_service.runQuery(sql, [], (err, data) => {
-            if (err) reject(err)
+            if (err) return reject(err)
             resolve(data.rows)
         })
     });
@@ -36,15 +36,18 @@ const requestGeoById = function (request, response) {
     }
 
     geobyid(request.params.id)
-        .catch(function (err) {
-            return next(err);
-        })
         .then(data => {
             response.status(200)
                 .json({
                     data: data,
-                })
-        })
-
+                });
+        }, function (err) {
+            response.status(500)
+                .json({
+                    status: 'Error',
+                    responseText: 'Error in query'
+                });
+        });
 }
-module.exports = requestGeoById
+
+module.exports = requestGeoById;

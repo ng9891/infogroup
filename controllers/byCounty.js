@@ -1,10 +1,10 @@
 'use strict';
 let db_service = require('../utils/db_service')
 
-function geobycounty(county_name) {
+function geobycounty(county_name, offset, limit) {
     return new Promise(function (resolve, reject) {
         let sql =
-        `
+            `
         WITH borough AS (
             SELECT ST_Transform(geom, 4326) AS geom
             FROM nymtc
@@ -28,25 +28,19 @@ function geobycounty(county_name) {
         "BE_Payroll_Expense_Description" 
         FROM businesses_2014 as business, borough
         WHERE ST_Contains(borough.geom, ST_Transform(business.geom, 4326))
-        ORDER BY NAICSCD
-        LIMIT 2000
+        ORDER BY id
+        LIMIT ${limit}
+        OFFSET ${offset};
         `;
 
         db_service.runQuery(sql, [], (err, data) => {
-            if (err){
-                reject(err);
-                // console.log(err);
-                // resolve(err);
-            }else{
-                // console.log(data);
-                resolve(data.rows);
-            } 
+            if (err) return reject(err);
+            resolve(data.rows);
         });
     });
 }
 
 const geoByCountyRequest = function (request, response) {
-    // response.json(request.params.county);
     if (!request.params.county) {
         response.status(400)
             .json({
@@ -55,29 +49,30 @@ const geoByCountyRequest = function (request, response) {
             });
     }
 
-    geobycounty(request.params.county)
-        .catch(function (err) {
-            // console.log(err);
-            return err;
-            // return next(err);
-        })
+    //Check for offset params. Set to 0 if none.
+    //increase to the amount of default value for limit
+    if (request.query.offset === undefined) {
+        request.query.offset = 0;
+    }
+
+    //Sets the amount of point to display in the map.
+    if (request.query.limiter === undefined) {
+        request.query.limiter = process.env.QUERY_LIMIT; //QUERY_LIMIT from env file.
+    }
+
+    geobycounty(request.params.county, request.query.offset, request.query.limiter)
         .then(data => {
-            if(data.name !== 'error'){
-                response.status(200)
+            response.status(200)
                 .json({
                     data: data,
                 });
-            }else{
-                // console.log(Object.getOwnPropertyNames(data));
-                console.log(data.stack);
-                response.status(400)
+        }, function (err) {
+            response.status(500)
                 .json({
                     status: 'Error',
                     responseText: 'Error in query'
                 });
-            }
         });
 }
-
 
 module.exports = geoByCountyRequest;

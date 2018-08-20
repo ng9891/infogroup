@@ -68,16 +68,8 @@
 	// --
 	// on Load, load zipcode 10001
 	// --
-	// let loadButton = d3.select('.go-button')
-	// loadButton.on('click',(e) => {
-	// 	let value = d3.select('#zipInput').property("value")
-	// 	if(value.length !== 5 || isNaN(+value)){
-			
-	// 	}
-	// 	loadEstablishments(value);
-	// })
-	loadCountyEstablishments('New York');
-	// loadEstablishments(10001)
+	// loadCountyEstablishments('New York', 3500); 	// From load_county.js. Takes an offset for pagination
+	loadEstablishments(10001)				// From load_zip.js
 </script>
 
 </html>

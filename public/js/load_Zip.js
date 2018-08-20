@@ -11,5 +11,8 @@ function loadEstablishments(zip) {
 			mapEstablishments(data);
 			loadPieChart(data);
 			loadDatatable(data);
-		})
+		},function(err){
+			alert("Query Error");
+			console.log(err);
+		});
 }
