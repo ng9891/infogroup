@@ -21,7 +21,11 @@ function mapEstablishments(establishments) {
 		est.geopoint = JSON.parse(est.geopoint)
 
 		// get two digit code
-		var twoDigitCode = est.NAICSCD.toString().slice(0, 2);
+        var twoDigitCode = null;
+        if(est.NAICSCD){
+            twoDigitCode = est.NAICSCD.toString().slice(0, 2);
+		}
+		
 		// get markerRadius
 		var circleRadius = est.ALEMPSZ ? employmentScale(+est.ALEMPSZ) : 5;
 		circleRadius = circleRadius.toFixed(2);
@@ -98,7 +102,7 @@ function mapEstablishments(establishments) {
 		}
 	})
 
-	mymap.setZoom(15);
+	// mymap.setZoom(15);
 	// calculate the bounding Box
 	bbox = [
 		[d3.min(lats), d3.min(lngs)],
@@ -108,13 +112,13 @@ function mapEstablishments(establishments) {
 	// zoom to bounds
 	//values for paddingBottomRight are weird.... need further research
 	//[1000,400]
-	mymap.fitBounds(bbox, {
-		paddingBottomRight: [1000, 400]
-	});
+	// mymap.fitBounds(bbox, {
+	// 	paddingBottomRight: [1000, 400]
+	// });
 
 	// bbox = L.featureGroup(markers);
 	// mymap.fitBounds(bbox.getBounds());
-	// mymap.fitBounds(bbox);
+	mymap.fitBounds(bbox);
 }
 
 //TODO: SEPARATE TO PIE CHART FILE.JS
@@ -250,20 +254,4 @@ function loadPieChart(establishments) {
 			//}
 		}
 	});
-}
-
-function loadEstablishments(zip) {
-	// --
-	// load data from api
-	// then add to map
-	// --
-	$("div.Object-desc").empty();
-	$("#pieChart").empty();
-
-	d3.json(`/api/byzip/${zip}`)
-		.then(data => {
-			mapEstablishments(data);
-			loadPieChart(data);
-			loadDatatable(data);
-		})
 }

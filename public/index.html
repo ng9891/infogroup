@@ -60,22 +60,24 @@
 <script src="js/d3pie.js"></script>
 <script src="meta/naicsKeys.js"></script>
 <script src="js/MapEstablishments.js"></script>
+<script src="js/load_zip.js"></script>
+<script src="js/load_county.js"></script>
 <script src="js/dataTableLoad.js"></script>
 <script src="js/infogroup.js"></script>
 <script>
 	// --
 	// on Load, load zipcode 10001
 	// --
-	let loadButton = d3.select('.go-button')
-	loadButton.on('click',(e) => {
-		let value = d3.select('#zipInput').property("value")
-		if(value.length !== 5 || isNaN(+value)){
+	// let loadButton = d3.select('.go-button')
+	// loadButton.on('click',(e) => {
+	// 	let value = d3.select('#zipInput').property("value")
+	// 	if(value.length !== 5 || isNaN(+value)){
 			
-		}
-		loadEstablishments(value);
-	})
-
-	loadEstablishments(10001)
+	// 	}
+	// 	loadEstablishments(value);
+	// })
+	loadCountyEstablishments('New York');
+	// loadEstablishments(10001)
 </script>
 
 </html>
