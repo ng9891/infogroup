@@ -1,6 +1,7 @@
 'use strict';
 let db_service = require('../utils/db_service')
 
+//Takes an offset and limit to load the county with pagination.
 function geobycounty(county_name, offset, limit) {
     return new Promise(function (resolve, reject) {
         let sql =

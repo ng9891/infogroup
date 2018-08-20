@@ -5,13 +5,12 @@ function loadZipEstablishments(zip) {
 	// --
 	$("div.Object-desc").empty();
 	$("#pieChart").empty();
-
 	d3.json(`/api/byzip/${zip}`)
 		.then(data => {
 			mapEstablishments(data);
 			loadPieChart(data);
 			loadDatatable(data);
-		},function(err){
+		}, function (err) {
 			alert("Query Error");
 			console.log(err);
 		});
