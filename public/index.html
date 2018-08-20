@@ -18,11 +18,12 @@
 
 <body>
 	<div class="topnav">
-		<a class="active" href="/">Home</a>
-		<a class="navlogin" href="#test">Login</a>
+		<ul>
+			<li class="active"><a href="/">Home</a></li>
+			<li class="navlogin"><a href="#test">Login</a></li>
+		</ul>
 	</div>
 	<div id="mapid" style="width: 100%; height: 100%;"></div>
-
 
 	<div class='infoContainer'>
 		<button class='infoContainerButton'>ICONHERE</button>
@@ -36,10 +37,18 @@
 		</div>
 		<div class="Object-desc"></div>
 		<div id="pieChart"></div>
-		<div id="list-table">
-			<table id="table_id" class="display compact">
-			</table>
-		</div>
+		<table id="jq_datatable" class="datatable stripe compact">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Emp</th>
+					<th>Industry</th>
+					<th>PR.SIC</th>
+					<th>Sales Vol.</th>
+					<th>SQF</th>
+				</tr>
+			</thead>
+		</table>
 	</div>
 </body>
 
@@ -50,13 +59,22 @@
 <script src="https://d3js.org/d3.v5.js"></script>
 <script src="js/d3pie.js"></script>
 <script src="meta/naicsKeys.js"></script>
-<script src="js/dataTableLoad.js"></script>
 <script src="js/MapEstablishments.js"></script>
+<script src="js/dataTableLoad.js"></script>
 <script src="js/infogroup.js"></script>
 <script>
 	// --
 	// on Load, load zipcode 10001
 	// --
+	let loadButton = d3.select('.go-button')
+	loadButton.on('click',(e) => {
+		let value = d3.select('#zipInput').property("value")
+		if(value.length !== 5 || isNaN(+value)){
+			
+		}
+		loadEstablishments(value);
+	})
+
 	loadEstablishments(10001)
 </script>
 

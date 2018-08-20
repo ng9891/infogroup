@@ -12,7 +12,10 @@ function geobyzip(zipcode) {
         "NAICSDS", 
         "LEMPSZCD", 
         "LEMPSZDS", 
-        "ALEMPSZ",  
+        "ALEMPSZ", 
+        "PRMSICDS", 
+        "LSALVOLDS", 
+        "SQFOOTCD", 
         "BE_Payroll_Expense_Code",
         "BE_Payroll_Expense_Range",
         "BE_Payroll_Expense_Description" 
