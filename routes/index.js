@@ -11,7 +11,6 @@ router.get('/', function(req, res, next) {
 
 
 router.get( '/api/byzip/:zipcode', byZip);
-
 router.get( '/api/byid/:id', byId);
 
 module.exports = router;

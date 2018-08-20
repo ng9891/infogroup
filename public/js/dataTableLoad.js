@@ -1,6 +1,7 @@
 
 //Creates a Datatable with the information in data
 function loadTables(data){
+
 	// render the table(s)
 	var table = $('#table_id').DataTable({
 		data: data,
