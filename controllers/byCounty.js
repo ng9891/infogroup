@@ -44,7 +44,7 @@ function geobycounty(county_name, offset, limit) {
 
 const geoByCountyRequest = function (request, response) {
     if (!request.params.county) {
-        response.status(400)
+        return response.status(400)
             .json({
                 status: 'Error',
                 responseText: 'No county specified'
@@ -62,12 +62,12 @@ const geoByCountyRequest = function (request, response) {
 
     geobycounty(request.params.county, request.query.offset, request.query.limiter)
         .then(data => {
-            response.status(200)
+            return response.status(200)
                 .json({
                     data: data,
                 });
         }, function (err) {
-            response.status(500)
+            return response.status(500)
                 .json({
                     status: 'Error',
                     responseText: 'Error in query'

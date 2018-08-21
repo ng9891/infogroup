@@ -19,10 +19,6 @@ function loadCountyEstablishments(county, offset, limit) {
 	}
 	// console.log(reqURL);
 
-	//---
-	//Maybe add county polygon request here.
-	//---
-
 	d3.json(reqURL)
 		.then(data => {
 			mapEstablishments(data);

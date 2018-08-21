@@ -19,11 +19,7 @@ function loadDistanceEstablishments(lon, lat, dist) {
 		}
 	}
 	// console.log(reqURL);
-
-	//---
-	//Maybe add county polygon request here.
-	//---
-
+	
 	d3.json(reqURL)
 		.then(data => {
 			mapEstablishments(data);

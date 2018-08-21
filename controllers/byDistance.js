@@ -32,19 +32,20 @@ function geobydistance(lon, lat, dist) {
 
 const geoByDistanceRequest = function (request, response) {
     if (!request.query.lon) {
-        response.status(400)
+        return response.status(400)
             .json({
                 status: 'Error',
                 responseText: 'No Longitude specified'
             });
     }
     if (!request.query.lat) {
-        response.status(400)
+        return response.status(400)
             .json({
                 status: 'Error',
                 responseText: 'No latitude specified'
             });
     }
+
 
     if (!request.query.dist) {
         request.query.dist = process.env.QUERY_DIST; //QUERY_DIST from env file.
@@ -52,12 +53,12 @@ const geoByDistanceRequest = function (request, response) {
 
     geobydistance(request.query.lon, request.query.lat, request.query.dist)
         .then(data => {
-            response.status(200)
+            return response.status(200)
                 .json({
                     data: data,
                 });
         }, function (err) {
-            response.status(500)
+            return response.status(500)
                 .json({
                     status: 'Error',
                     responseText: 'Error in query'

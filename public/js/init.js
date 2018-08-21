@@ -39,7 +39,7 @@ mymap.addEventListener("contextmenu", function (event) {
 //---
 
 //-----
-// BEGIN Test
+// BEGIN Test to PARSE URL
 //-----
 //  Parse URL and call API accordingly
 // authors note: is this the only way to go? or use templating
@@ -67,13 +67,13 @@ switch (path) {
         console.log("HomePage");
 }
 //-----
-// END Test
+// END Test to PARSE URL
 //-----
 
 
 // --
 // on Load, load zipcode 10001
 // --
-// loadDistanceEstablishments(-74.00157809257509, 40.71972943412674, 500);
-// loadCountyEstablishments('Westchester'); // From load_county.js. Takes an offset for pagination
-loadZipEstablishments(10001) // From load_zip.js
+// loadDistanceEstablishments(-74.00157809257509, 40.71972943412674);
+// loadCountyEstablishments('Westchester'); //Can take an offset for pagination
+loadZipEstablishments(10001);
