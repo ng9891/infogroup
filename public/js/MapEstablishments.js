@@ -22,16 +22,16 @@ function mapEstablishments(establishments) {
 	// mapped to 5 - 30 pixel width
 	// --
 	var employmentScale = d3.scaleLinear().domain([1, 999]).range([5, 15]);
-	
+
 	establishments = establishments.data.map(est => {
 		est.geopoint = JSON.parse(est.geopoint);
 
 		// get two digit code
-        var twoDigitCode = null;
-        if(est.NAICSCD){
-            twoDigitCode = est.NAICSCD.toString().slice(0, 2);
+		var twoDigitCode = null;
+		if (est.NAICSCD) {
+			twoDigitCode = est.NAICSCD.toString().slice(0, 2);
 		}
-		
+
 		// get markerRadius
 		var circleRadius = est.ALEMPSZ ? employmentScale(+est.ALEMPSZ) : 5;
 		circleRadius = circleRadius.toFixed(2);
@@ -73,7 +73,7 @@ function mapEstablishments(establishments) {
 					est.geopoint.coordinates[1],
 					est.geopoint.coordinates[0]
 				], {
-					icon: myIcon
+					icon: myIcon,
 				}
 			)
 			// create Pop Up

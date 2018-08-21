@@ -7,28 +7,29 @@ function loadCountyEstablishments(county, offset, limit) {
 	// --
 	$("div.Object-desc").empty();
 	$("#pieChart").empty();
+	if(usrMarkers.length !== 0) mymap.removeLayer(usrMarkers.pop()); //removes marker from user
 
-	// Let server handle the empty values
-	if(offset === undefined){
-		offset = 0;
+	// Creates a request URL for the API
+	var reqURL = '/api/bycounty/' + county;
+	if (offset) {
+		reqURL += '?offset=' + offset;
+		if (limit) {
+			reqURL += '&limiter=' + limit;
+		}
 	}
-
-	if(limit === undefined){
-		limit = '';
-	}
-
+	// console.log(reqURL);
 
 	//---
 	//Maybe add county polygon request here.
 	//---
-			
-	d3.json(`/api/bycounty/${county}?offset=${offset}&limiter=${limit}`)
+
+	d3.json(reqURL)
 		.then(data => {
 			mapEstablishments(data);
 			loadPieChart(data);
 			loadDatatable(data);
 			d3.select('#countyInput').property("value", county);
-		},function(err){
+		}, function (err) {
 			alert("Query Error");
 			console.log(err);
 		});

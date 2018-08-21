@@ -4,7 +4,8 @@ let db_service = require('../utils/db_service')
 function geobyzip(zipcode) {
     return new Promise(function (resolve, reject) {
         let sql =
-            `select 
+            `
+        select 
         id, 
         ST_ASGeoJSON(ST_transform(geom,4326)) as geoPoint, 
         "CONAME",
@@ -20,8 +21,9 @@ function geobyzip(zipcode) {
         "BE_Payroll_Expense_Range",
         "BE_Payroll_Expense_Description"
         from businesses_2014  
-        where "PRMZIP" = ${zipcode};
-      `
+        where "PRMZIP" = ${zipcode}
+        limit 2000;
+        `
 
         db_service.runQuery(sql, [], (err, data) => {
             if (err) return reject(err);
