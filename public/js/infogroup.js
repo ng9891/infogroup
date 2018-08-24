@@ -24,10 +24,15 @@ d3.select('.go-button').on('click', (e) => {
     }
 });
 //Input Text Box on Enter key press
-$("#zipInput").on("keydown", function search(e) {
+$("#zipInput").on("keypress", function search(e) {
     if (e.keyCode == 13) {
         $('.go-button').click();
     }
+});
+
+//Button listener to show advancedSearchContainer
+$(".advancedSearchContainerButton").click(() => {
+    $(".advancedSearchContainer").toggleClass("open");
 });
 
 //Button listener to hide infoContainer
@@ -55,10 +60,32 @@ $("#countyInput").on("keydown", function search(e) {
     }
 });
 
-d3.select('.county_next-button').on('click', (e) => {
-    //TODO: Find a way to save the offset value in a var or URL for offsetting
-    //Send the amount of current points for offset
-    // loadCountyEstablishments(value, markers.length);
-});
-//END OF TEST
-//------------------------------------------------------------------------------
+$( function() {
+    var availableTags = [
+      "ActionScript",
+      "AppleScript",
+      "Asp",
+      "BASIC",
+      "C",
+      "C++",
+      "Clojure",
+      "COBOL",
+      "ColdFusion",
+      "Erlang",
+      "Fortran",
+      "Groovy",
+      "Haskell",
+      "Java",
+      "JavaScript",
+      "Lisp",
+      "Perl",
+      "PHP",
+      "Python",
+      "Ruby",
+      "Scala",
+      "Scheme"
+    ];
+    $( "#tags" ).autocomplete({
+      source: availableTags
+    });
+  } );

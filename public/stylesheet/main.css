@@ -101,21 +101,38 @@ body{
   height: 95vh;
 }
 
+.advancedSearchContainer {
+  position: fixed;
+  top: 16%;
+  right: 0%;
+  height: 80%;
+  background-color:#cfcccc;
+  z-index: 4000;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+  width: 40%;
+  transform: translate3d(0,0,0);
+  transition: transform 0.2s linear;
+  transform: translate3d(99.50%,0,0);
+}
+.advancedSearchContainer.open{
+  /* maybe a bit hardcoded hiding the container*/
+  /* right: -1000px; */
+  transform: translate3d(0,0,0);
+}
+
 .infoContainer {
 	position:fixed; 
   /* top: 25px;  */
   top: 6%;
 	right:0px; 
 	height:90%;
-	background-color: white;
 	z-index: 3000;
 	border-radius: 5px;
 	padding: 10px;
   background-color:#E8E8E8;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-
-  /* maybe a bit hardcoded for hiding the container*/
-  /* width: 750px; */
   width: 40%;
   transform: translate3d(0,0,0);
   transition: transform 0.2s linear;
@@ -127,7 +144,7 @@ body{
   transform: translate3d(99.50%,0,0);
 }
 
-.infoContainerButton{
+.infoContainerButton, .advancedSearchContainerButton{
   position: absolute;
   left: -20px;
   width: 20px;
@@ -146,7 +163,7 @@ body{
   /* width: 240px; */
   width: 30%;
   margin-right: 8px;
-  margin-left: 2%;
+  margin-left: 20%;
   padding: var(--inputPaddingV) var(--inputPaddingH);
   color: inherit;
   font-family: inherit;
@@ -248,4 +265,34 @@ body{
 }
 .dataTables_info, .dataTables_paginate, .dataTables_filter {
   font-size: 12px;
+}
+
+.ui-autocomplete {
+  z-index: 4000;
+  max-height: 100px;
+  overflow-y: auto;
+  /* prevent horizontal scrollbar */
+  overflow-x: hidden;
+}
+/* IE 6 doesn't support max-height
+ * we use height instead, but this forces the menu to always be this tall
+ */
+* html .ui-autocomplete {
+  z-index: 4000;
+  height: 100px;
+}
+.ui-widget fieldset {
+  border: 1px solid #333;
+  padding: 14px 18px;
+}
+.ui-widget legend {
+  text-align: center;
+  width: 250px;
+  font-size: 90%;
+  background-color: #333;
+  color: #ffffff;
+  padding: 0.2em 0.5em;
+}
+.ui-draggable, .ui-droppable {
+  background-position: top;
 }
