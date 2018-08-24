@@ -5,8 +5,7 @@ let db_service = require('../utils/db_service');
 function geobycounty(county_name, offset, limit) {
     return new Promise(function (resolve, reject) {
         let sql =
-        `
-            WITH borough AS (
+            `WITH borough AS (
                 SELECT 
                 ST_Transform(geom, 4326) AS geom
                 FROM nymtc
@@ -35,6 +34,7 @@ function geobycounty(county_name, offset, limit) {
             OFFSET ${offset};
         `;
 
+
         db_service.runQuery(sql, [], (err, data) => {
             if (err) return reject(err);
             resolve(data.rows);
@@ -44,33 +44,30 @@ function geobycounty(county_name, offset, limit) {
 
 const geoByCountyRequest = function (request, response) {
     if (!request.params.county) {
-        response.status(400)
+        return response.status(400)
             .json({
                 status: 'Error',
                 responseText: 'No county specified'
             });
     }
 
-    //Check for offset params. Set to 0 if none.
-    //increase to the amount of default value for limit
-    // if( +request.query.offset > +process.env.QUERY_LIMIT){
-    //     test += +process.env.QUERY_LIMIT;
-    //     request.query.offset = test;
-    // }
-    // console.log(request.query.offset);
+    if (!request.query.offset) {
+        request.query.offset = 0;
+    }
 
     //Sets the amount of point to display in the map.
-    if (request.query.limiter === '') {
+    if (!request.query.limiter) {
         request.query.limiter = process.env.QUERY_LIMIT; //QUERY_LIMIT from env file.
     }
+
     geobycounty(request.params.county, request.query.offset, request.query.limiter)
         .then(data => {
-            response.status(200)
+            return response.status(200)
                 .json({
                     data: data,
                 });
         }, function (err) {
-            response.status(500)
+            return response.status(500)
                 .json({
                     status: 'Error',
                     responseText: 'Error in query'
