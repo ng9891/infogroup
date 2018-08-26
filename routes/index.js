@@ -6,12 +6,16 @@ let byZip = require('../controllers/byZip');
 let byId = require('../controllers/byId');
 let byCounty = require('../controllers/byCounty');
 let byDistance = require('../controllers/byDistance');
+let getIndustries = require('../controllers/getIndustries');
+let advancedSearch = require('../controllers/advancedSearch')
 
 //API ROUTES
 router.get('/api/byzip/:zipcode', byZip);
 router.get('/api/byid/:id', byId);
 router.get('/api/bycounty/:county', byCounty);
 router.get('/api/bydistance', byDistance);
+router.get('/api/getindustries', getIndustries);
+router.get('/api/advancedSearch', advancedSearch);
 
 /* GET home page. */
 router.get('*', function(req, res, next) {

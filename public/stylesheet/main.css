@@ -112,13 +112,10 @@ body{
   padding: 10px;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
   width: 40%;
-  transform: translate3d(0,0,0);
   transition: transform 0.2s linear;
   transform: translate3d(99.50%,0,0);
 }
 .advancedSearchContainer.open{
-  /* maybe a bit hardcoded hiding the container*/
-  /* right: -1000px; */
   transform: translate3d(0,0,0);
 }
 
@@ -268,9 +265,10 @@ body{
 }
 
 .ui-autocomplete {
-  z-index: 4000;
-  max-height: 100px;
-  overflow-y: auto;
+  position: fixed;
+  background:inherit;
+  z-index: 4002;
+  max-height: 200px;
   /* prevent horizontal scrollbar */
   overflow-x: hidden;
 }
@@ -278,13 +276,32 @@ body{
  * we use height instead, but this forces the menu to always be this tall
  */
 * html .ui-autocomplete {
-  z-index: 4000;
-  height: 100px;
+  border: 1px solid lightgray;
+  position: fixed;
+  z-index: 4002;
+  height: 200px;
+  overflow-x: hidden;
+  background:inherit;
 }
+
+.ui-autocomplete .ui-menu-item {
+  padding: 5px 10px;
+}
+
+.ui-autocomplete .ui-menu-item:hover {
+  background-color: lightblue;
+  cursor: pointer;
+}
+
+.ui-helper-hidden-accessible {
+  display: none
+}
+
 .ui-widget fieldset {
   border: 1px solid #333;
   padding: 14px 18px;
 }
+
 .ui-widget legend {
   text-align: center;
   width: 250px;
@@ -293,6 +310,11 @@ body{
   color: #ffffff;
   padding: 0.2em 0.5em;
 }
-.ui-draggable, .ui-droppable {
-  background-position: top;
+
+.dropdown-menu {
+  z-index: 4002;
+}
+
+#search-message {
+  color: #cb4c4c;
 }
