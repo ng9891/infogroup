@@ -21,8 +21,7 @@ function geobyzip(zipcode) {
         "BE_Payroll_Expense_Range",
         "BE_Payroll_Expense_Description"
         from businesses_2014  
-        where "PRMZIP" = ${zipcode}
-        limit 2000;
+        where "PRMZIP" = ${zipcode};
         `
 
         db_service.runQuery(sql, [], (err, data) => {

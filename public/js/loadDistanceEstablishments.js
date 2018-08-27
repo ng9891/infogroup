@@ -18,13 +18,18 @@ function loadDistanceEstablishments(lon, lat, dist) {
 			}
 		}
 	}
+
 	// console.log(reqURL);
 	
 	d3.json(reqURL)
 		.then(data => {
-			mapEstablishments(data);
-			loadPieChart(data);
-			loadDatatable(data);
+			if (data.data.length === 0){
+				console.log("Query not found.");
+			}else{
+				mapEstablishments(data);
+				loadPieChart(data);
+				loadDatatable(data);
+			}
 		}, function (err) {
 			alert("Query Error");
 			console.log(err);

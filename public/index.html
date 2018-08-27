@@ -12,9 +12,14 @@
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
 	    crossorigin="" />
 	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
-	<link rel="stylesheet" type="text/css" href="/js/jquery-ui.min.css" />
-	<script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+	    crossorigin="" />
+	<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
 		crossorigin=""></script>
+	
+	<link rel="stylesheet" type="text/css" href="/stylesheet/MarkerCluster.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheet/MarkerCluster.Default.css" />
+	<link rel="stylesheet" type="text/css" href="/js/src/jquery-ui.min.css" />
 </head>
 
 <body>
@@ -30,8 +35,8 @@
 			<form class="form-inline mx-auto" role="search">
 				<input type="text" class="search form-control input-sm" placeholder="Search" id="query-search">
 				<select id='query-dropdown' class="custom-select">
-						<option selected value="zip">Zip</option>
-						<option value="county">County</option>
+					<option selected value="zip">Zip</option>
+					<option value="county">County</option>
 				</select>
 				<button id="query-button" type="button" class="btn btn-secondary">Search</button>
 			</form>
@@ -47,14 +52,15 @@
 		</div>
 	</nav>
 
-	<div id="mapid" style="width: 100%; height: 100%;"></div>
+	<div id="progress"><div id="progress-bar" style="width: 100%"></div></div>
+	<div id="mapid"></div>
 
 	<div class='infoContainer'>
 		<button class='infoContainerButton'>ICONHERE</button>
-		<div class="Input">
+		<!-- <div class="Input">
 			<input type="text" id="zipInput" class="Input-text" placeholder="Zipcode eg. 12203">
 			<button class='go-button btn btn-primary btn-lg'>Search</button>
-		</div>
+		</div> -->
 		<div class="Object-desc"></div>
 		<div id="pieChart"></div>
 		<table id="jq_datatable" class="datatable stripe compact"></table>
@@ -67,7 +73,7 @@
 				<legend>Advanced Search</legend>
 				<div class="input-group mb-3">
 					<div class="input-group-prepend">
-						<span class="input-group-text" id="basic-addon1">Indsutry</span>
+						<span class="input-group-text" id="basic-addon1">Industry</span>
 					</div>
 					<input type="text" id="tags" class="form-control" placeholder="e.g. Financial">
 				</div>
@@ -104,29 +110,35 @@
 	</div>
 </body>
 
-<script src="/js/jquery-3.3.1.min.js"></script>
-<script src="/js/jquery-ui-1.12.1/jquery-ui.min.js "></script>
+
+<!-- SOURCES -->
+<script src="/js/src/jquery-3.3.1.min.js"></script>
+<script src="/js/src/jquery-ui-1.12.1/jquery-ui.min.js "></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
     crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="/js/src/dataTableLoad.js"></script>
 <script src="https://d3js.org/d3.v5.js"></script>
-<script src="/js/d3pie.js"></script>
+<script src="/js/src/d3pie.js"></script>
+<script src="/js/src/leaflet.markercluster.js"></script>
+<script src="/js/src/leaflet.editable.min.js"></script>
+
+<!-- SCRIPTS -->
 <script src="/meta/naicsKeys.js"></script>
 <script src="/js/MapEstablishments.js"></script>
 <script src="/js/loadPieChart.js"></script>
 <script src="/js/loadZipEstablishments.js"></script>
 <script src="/js/loadCountyEstablishments.js"></script>
-<script src="/js/loadDistanceEstablishments.js"></script>
+<!-- <script src="/js/loadDistanceEstablishments.js"></script> -->
+<script src="/js/loadDrawingEstablishments.js"></script>
 <script src="/js/loadAdvancedSearchEstablishments.js"></script>
-<script src="/js/dataTableLoad.js"></script>
 <script src="/js/infogroup.js"></script>
+<script src="/js/map.js"></script>
+
 
 <!-- INIT -->
 <script src="/js/init.js"></script>
-
 </html>
 
 <!-- TODO: Add loading animation -->
-<!-- TODO: ADD typeahead to search bar-->
-<!-- TODO: ADD load next batch of points button -->

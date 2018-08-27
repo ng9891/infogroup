@@ -1,7 +1,7 @@
 'use strict';
 let db_service = require('../utils/db_service')
 
-function geobydistance(lon, lat, dist) {
+function geobyrectangle(minLon, minLat, maxLon, maxLat) {
     return new Promise(function (resolve, reject) {
         let sql =
             `SELECT
@@ -20,7 +20,7 @@ function geobydistance(lon, lat, dist) {
             "BE_Payroll_Expense_Range",
             "BE_Payroll_Expense_Description" 
             FROM businesses_2014
-            WHERE ST_DWithin(ST_GeogFromText('SRID=4326;POINT(${lon} ${lat})'), geography(ST_transform(geom,4326)), ${dist});
+            WHERE ST_Contains(ST_MakeEnvelope(${minLon}, ${minLat}, ${maxLon}, ${maxLat}, 4326), ST_transform(geom,4326));
         `;
 
         db_service.runQuery(sql, [], (err, data) => {
@@ -30,29 +30,38 @@ function geobydistance(lon, lat, dist) {
     });
 }
 
-const geoByDistanceRequest = function (request, response) {
-    if (!request.query.lon) {
+const geoByRectangleRequest = function (request, response) {
+
+    if (!request.query.maxLon) {
         return response.status(400)
             .json({
                 status: 'Error',
                 responseText: 'No Longitude specified'
             });
     }
-    if (!request.query.lat) {
+    if (!request.query.maxLat) {
         return response.status(400)
             .json({
                 status: 'Error',
-                responseText: 'No latitude specified'
+                responseText: 'No Longitude specified'
             });
     }
-
-    if (!request.query.dist) {
-        request.query.dist = process.env.QUERY_DIST; //QUERY_DIST from env file.
+    if (!request.query.minLon) {
+        return response.status(400)
+            .json({
+                status: 'Error',
+                responseText: 'No Longitude specified'
+            });
+    }
+    if (!request.query.minLat) {
+        return response.status(400)
+            .json({
+                status: 'Error',
+                responseText: 'No Longitude specified'
+            });
     }
     
-    console.log(request.query.dist);
-
-    geobydistance(request.query.lon, request.query.lat, request.query.dist)
+    geobyrectangle(request.query.minLon, request.query.minLat, request.query.maxLon, request.query.maxLat)
         .then(data => {
             return response.status(200)
                 .json({
@@ -67,4 +76,4 @@ const geoByDistanceRequest = function (request, response) {
         });
 }
 
-module.exports = geoByDistanceRequest;
+module.exports = geoByRectangleRequest;

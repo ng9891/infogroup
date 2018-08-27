@@ -5,11 +5,11 @@ let db_service = require('../utils/db_service');
 function geobycounty(county_name, offset, limit) {
     return new Promise(function (resolve, reject) {
         let sql =
-            `WITH borough AS (
+            `WITH county AS (
                 SELECT 
                 ST_Transform(geom, 4326) AS geom
-                FROM nymtc
-                WHERE nymtc.county LIKE '%${county_name}%'
+                FROM county
+                WHERE UPPER(county.name) LIKE UPPER('%${county_name}%')
                 LIMIT 1
             )
             SELECT
@@ -27,13 +27,16 @@ function geobycounty(county_name, offset, limit) {
             "BE_Payroll_Expense_Code",
             "BE_Payroll_Expense_Range",
             "BE_Payroll_Expense_Description" 
-            FROM businesses_2014 as business, borough
-            WHERE ST_Contains(borough.geom, ST_Transform(business.geom, 4326))
+            FROM businesses_2014 as business, county
+            WHERE ST_Contains(county.geom, ST_Transform(business.geom, 4326))
             ORDER BY COALESCE("ALEMPSZ", 0) DESC
-            LIMIT ${limit}
-            OFFSET ${offset};
+            OFFSET ${offset}
         `;
+        if(limit){
+            sql += ' LIMIT ' + limit;
+        }else{
 
+        }
 
         db_service.runQuery(sql, [], (err, data) => {
             if (err) return reject(err);
@@ -56,9 +59,9 @@ const geoByCountyRequest = function (request, response) {
     }
 
     //Sets the amount of point to display in the map.
-    if (!request.query.limiter) {
-        request.query.limiter = process.env.QUERY_LIMIT; //QUERY_LIMIT from env file.
-    }
+    // if (!request.query.limiter) {
+    //     request.query.limiter = process.env.QUERY_LIMIT; //QUERY_LIMIT from env file.
+    // }
 
     geobycounty(request.params.county, request.query.offset, request.query.limiter)
         .then(data => {
