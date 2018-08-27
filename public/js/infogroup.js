@@ -13,10 +13,15 @@ d3.select('.go-button').on('click', (e) => {
     }
 });
 //Input Text Box on Enter key press
-$("#zipInput").on("keydown", function search(e) {
+$("#zipInput").on("keypress", function search(e) {
     if (e.keyCode == 13) {
         $('.go-button').click();
     }
+});
+
+//Button listener to show advancedSearchContainer
+$(".advancedSearchContainerButton").click(() => {
+    $(".advancedSearchContainer").toggleClass("open");
 });
 
 //Button listener to hide infoContainer
@@ -88,3 +93,52 @@ function updateProgressBar(processed, total, elapsed, layersArray) {
 
 //END OF TEST
 //------------------------------------------------------------------------------
+// JS For Advanced Search Form
+$(document).ready(function() {
+
+    $("#search-message").hide();
+
+    d3.json(`/api/getindustries`).then(data => {
+           loadIndustries(data);
+		}, function (err) {
+		alert("Query Error");
+		console.log(err);
+    });
+
+    function loadIndustries(input) {
+       
+        var arr_data = [];
+
+        input.data.map( est => {
+            arr_data.push(est.NAICSDS);
+        });
+
+        $( "#tags" ).autocomplete({
+            delay: 0,
+            minLength: 2,
+            //source: arr_data,
+            source: function(request, response) {
+                var results = $.ui.autocomplete.filter(arr_data, request.term);
+                response(results.slice(0, 10));
+            },
+            messages: {
+                noResults: '',
+                results: function(){}
+            }
+        });
+    }
+
+    var borough;
+    $(".dropdown-menu a").click(function(){
+        borough = $(this).text();
+        $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+        $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+    });
+
+    d3.select('#advsearch-button').on('click', (e) => {
+        var industry = $("#tags").val();
+        var employee = $("#emplsize").val();
+        loadAdvancedSearchEstablishments(industry, employee, borough);
+    });
+
+});

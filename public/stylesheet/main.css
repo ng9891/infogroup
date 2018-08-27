@@ -110,6 +110,23 @@ body{
   width:100%;
 }
 
+.advancedSearchContainer {
+  position: fixed;
+  top: 16%;
+  right: 0%;
+  height: 80%;
+  background-color:#cfcccc;
+  z-index: 4000;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+  width: 40%;
+  transition: transform 0.2s linear;
+  transform: translate3d(99.50%,0,0);
+}
+.advancedSearchContainer.open{
+  transform: translate3d(0,0,0);
+}
 
 .infoContainer {
 	position:fixed; 
@@ -117,15 +134,11 @@ body{
   top: 6%;
 	right:0px; 
 	height:90%;
-	background-color: white;
-	z-index: 500;
+	z-index: 3000;
 	border-radius: 5px;
 	padding: 10px;
   background-color:#E8E8E8;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-
-  /* maybe a bit hardcoded for hiding the container*/
-  /* width: 750px; */
   width: 40%;
   transform: translate3d(0,0,0);
   transition: transform 0.2s linear;
@@ -137,7 +150,7 @@ body{
   transform: translate3d(99.50%,0,0);
 }
 
-.infoContainerButton{
+.infoContainerButton, .advancedSearchContainerButton{
   position: absolute;
   left: -20px;
   width: 20px;
@@ -156,7 +169,7 @@ body{
   /* width: 240px; */
   width: 30%;
   margin-right: 8px;
-  margin-left: 2%;
+  margin-left: 20%;
   padding: var(--inputPaddingV) var(--inputPaddingH);
   color: inherit;
   font-family: inherit;
@@ -281,4 +294,59 @@ body{
   height: 100%;
   background-color: #76A6FC;
   border-radius: 4px;
+}
+
+.ui-autocomplete {
+  position: fixed;
+  background:inherit;
+  z-index: 4002;
+  max-height: 200px;
+  /* prevent horizontal scrollbar */
+  overflow-x: hidden;
+}
+/* IE 6 doesn't support max-height
+ * we use height instead, but this forces the menu to always be this tall
+ */
+* html .ui-autocomplete {
+  border: 1px solid lightgray;
+  position: fixed;
+  z-index: 4002;
+  height: 200px;
+  overflow-x: hidden;
+  background:inherit;
+}
+
+.ui-autocomplete .ui-menu-item {
+  padding: 5px 10px;
+}
+
+.ui-autocomplete .ui-menu-item:hover {
+  background-color: lightblue;
+  cursor: pointer;
+}
+
+.ui-helper-hidden-accessible {
+  display: none
+}
+
+.ui-widget fieldset {
+  border: 1px solid #333;
+  padding: 14px 18px;
+}
+
+.ui-widget legend {
+  text-align: center;
+  width: 250px;
+  font-size: 90%;
+  background-color: #333;
+  color: #ffffff;
+  padding: 0.2em 0.5em;
+}
+
+.dropdown-menu {
+  z-index: 4002;
+}
+
+#search-message {
+  color: #cb4c4c;
 }
