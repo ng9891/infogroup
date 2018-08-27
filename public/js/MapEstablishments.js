@@ -3,10 +3,14 @@ function mapEstablishments(establishments) {
 	// remove all previous markers from map
 	// ---
 
-	while (markers.length > 0) {
-		mymap.removeLayer(markers.pop())
-	}
+	// while (markers.length > 0) {
+	// 	mymap.removeLayer(markers.pop());
+	// }
 
+	if(markerList.length > 0) {
+		markers.clearLayers();
+		markerList = [];
+	}
 
 	var lats = [];
 	var lngs = [];
@@ -75,7 +79,8 @@ function mapEstablishments(establishments) {
 				], {
 					icon: myIcon,
 				}
-			)
+			);
+
 			// create Pop Up
 			marker.bindPopup(
 				`
@@ -103,10 +108,16 @@ function mapEstablishments(establishments) {
 			});
 			*/
 
-			marker.addTo(mymap);
-			markers.push(marker)
+			markerList.push(marker);
+			// markers.addLayer(marker);
+			// mymap.addLayer(markers);
+			// marker.addTo(mymap);
+			// mymap.addLayer(markerList);
 		}
 	});
+	markers.addLayers(markerList);
+	mymap.addLayer(markers);
+
 	// mymap.setZoom(15);
 	// calculate the bounding Box
 	bbox = [
@@ -121,9 +132,8 @@ function mapEstablishments(establishments) {
 	// 	paddingBottomRight: [1000, 400]
 	// });
 
-	// bbox = L.featureGroup(markers);
-	// mymap.fitBounds(bbox.getBounds());
 	mymap.fitBounds(bbox);
+	// mymap.fitBounds(markers.getBounds());
 }
 
 //TODO: SEPARATE TO PIE CHART FILE.JS
