@@ -18,6 +18,7 @@ function loadDistanceEstablishments(lon, lat, dist) {
 			}
 		}
 	}
+
 	// console.log(reqURL);
 	
 	d3.json(reqURL)

@@ -63,7 +63,8 @@ function loadDrawingEstablishments() {
 	// --
 	$("div.Object-desc").empty();
     $("#pieChart").empty();
-    
+
+    // console.log(usrMarkers.length);
     if(usrMarkers.length===0) return;
 
     let reqURL;
