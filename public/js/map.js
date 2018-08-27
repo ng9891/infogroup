@@ -1,5 +1,5 @@
 //Setup Leaflet Map
-var markerList = [];
+var markerList = []; //contains all the points from query
 //markers will contain the markers for the plugin markerClusterGroup
 var markers = L.markerClusterGroup({    
     spiderfyOnMaxZoom: false,
@@ -7,10 +7,10 @@ var markers = L.markerClusterGroup({
     chunkedLoading: true,
     chunkProgress: updateProgressBar
 });
-var usrMarkers = [];
+var usrMarkers = [];    //contains all the marker drawn by user
 var table;
 var lat, lon;
-var redoBuffer = [];
+// var redoBuffer = [];
 
 var mymap = L.map('mapid',{editable: true}).setView([40.755, -74.00], 13);
 var drawnItems = new L.FeatureGroup().addTo(mymap);
@@ -23,7 +23,9 @@ L.tileLayer(
         id: 'mapbox.streets'
     }).addTo(mymap);
 
-//--- Init Control tools
+//---
+// MAP CONTROL TOOLS
+//---
 L.EditControl = L.Control.extend({
     options: {
         position: 'topleft',
@@ -33,7 +35,7 @@ L.EditControl = L.Control.extend({
         html: ''
     },
     onAdd: function (map) {
-        var container = L.DomUtil.create('div', '');
+        var container = '';
         switch (this.options.type){
             case 'draw':
                 container = L.DomUtil.create('div', 'leaflet-control leaflet-bar');
@@ -50,7 +52,7 @@ L.EditControl = L.Control.extend({
                 container = L.DomUtil.create('div', 'leaflet-control leaflet-bar');
                 var link = L.DomUtil.create('a', '', container);
                 link.href = '#';
-                link.title = 'Query drawing';
+                link.title = 'Query the drawing';
                 link.innerHTML = this.options.html;
                 L.DomEvent.on(link, 'click', L.DomEvent.stop)
                 .on(link, 'click', loadDrawingEstablishments, this);
@@ -126,32 +128,16 @@ L.EmptyControl = L.EditControl.extend({
 mymap.addControl(new L.NewRectangleControl());
 mymap.addControl(new L.NewCircleControl());
 mymap.addControl(new L.NewMarkerControl());
-mymap.addControl(new L.EmptyControl()); //space
-mymap.addControl(new L.EmptyControl()); //space
+mymap.addControl(new L.EmptyControl());     //space
+mymap.addControl(new L.EmptyControl());     //space
 mymap.addControl(new L.NewQueryControl());
+//---
+// END MAP CONTROL TOOLS
 //---
 
 //---
 // MAP EVENT LISTENERS
 //---
-// mymap.addEventListener('mousemove', function (ev) {
-//     lat = ev.latlng.lat;
-//     lon = ev.latlng.lng;
-// });
-
-// mymap.addEventListener("contextmenu", function (event) {
-//     // Prevent the browser's context menu from appearing
-//     // event.preventDefault();
-
-//     if (usrMarkers.length !== 0) mymap.removeLayer(usrMarkers.pop());
-//     // Add marker
-//     let marker = L.marker([lat, lon]);
-//     marker.addTo(mymap);
-//     usrMarkers.push(marker);
-//     loadDistanceEstablishments(lon, lat);
-//     return false; // To disable default popup.
-// });
-
 mymap.on('editable:drawing:end', (e)=>{
     // console.log('end');
     usrMarkers.push(e.layer);
@@ -193,3 +179,4 @@ L.DomEvent.addListener(document, 'keydown', onKeyDown, mymap);
 // END MAP EVENT LISTENER
 //---
 
+// TODO: When drawing circle display radius
