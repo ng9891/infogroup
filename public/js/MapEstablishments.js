@@ -1,3 +1,4 @@
+// File to load markers into the map
 function mapEstablishments(establishments) {
 	// ---
 	// remove all previous markers from map

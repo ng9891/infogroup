@@ -60,9 +60,6 @@ L.EditControl = L.Control.extend({
                 link.title = 'Query the drawing';
                 link.innerHTML = this.options.html;
                 L.DomEvent.on(link, 'click', L.DomEvent.stop);
-
-                    // L.DomEvent.on(link, 'click', L.DomEvent.stop)
-                    // .on(link, 'click', loadDrawingEstablishments, this);
                 break;
             default:
                 var container = L.DomUtil.create('div', 'leaflet-control leaflet-bar');
@@ -214,8 +211,8 @@ var onKeyDown = function (e) {
     //ESC button to stop drawing.
     if (e.keyCode == 27) {
         if (!this.editTools._drawingEditor) return;
+        //TODO: Circle not working correctly with ESC
         let test = this.editTools._drawingEditor.pop();
-        // console.log(test);
         this.editTools._drawingEditor.disable();
         //drawnItems.clearLayers();
         this.editTools.stopDrawing();

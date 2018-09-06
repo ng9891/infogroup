@@ -21,7 +21,7 @@ function markerQuery(layer){
 }
 
 function circleQuery(layer){
-    let lat,lon, dist, reqURL;
+    let lat, lon, dist, reqURL;
     lat = layer.getLatLng().lat;
     lon = layer.getLatLng().lng;
     dist = layer.getRadius();
@@ -68,7 +68,7 @@ function loadDrawingEstablishments() {
     if(usrMarkers.length===0) return;
 
     let reqURL;
-    let layer = usrMarkers[usrMarkers.length -1];
+    let layer = usrMarkers[usrMarkers.length - 1]; //last layer
     switch(drawingType(layer)){
         case 'marker':
             reqURL = markerQuery(layer);

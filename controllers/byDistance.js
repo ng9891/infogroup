@@ -47,7 +47,7 @@ const geoByDistanceRequest = function (request, response) {
     }
 
     if (!request.query.dist) {
-        request.query.dist = process.env.QUERY_DIST; //QUERY_DIST from env file.
+        request.query.dist = process.env.QUERY_DIST || 1609; //QUERY_DIST from env file. Default: 1 mi.
     }
     
     console.log(request.query.dist);
