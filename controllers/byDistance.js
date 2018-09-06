@@ -50,7 +50,7 @@ const geoByDistanceRequest = function (request, response) {
         request.query.dist = process.env.QUERY_DIST || 1609; //QUERY_DIST from env file. Default: 1 mi.
     }
     
-    console.log(request.query.dist);
+    // console.log(request.query.dist);
 
     geobydistance(request.query.lon, request.query.lat, request.query.dist)
         .then(data => {
