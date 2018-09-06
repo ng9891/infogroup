@@ -128,6 +128,24 @@ body{
   transform: translate3d(0,0,0);
 }
 
+.statisticsContainer {
+  position: fixed;
+  top: 26%;
+  right: 0%;
+  height: 80%;
+  background-color:#cfcccc;
+  z-index: 5000;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+  width: 40%;
+  transition: transform 0.2s linear;
+  transform: translate3d(99.50%,0,0);
+}
+.statisticsContainer.open{
+  transform: translate3d(0,0,0);
+}
+
 .infoContainer {
 	position:fixed; 
   /* top: 25px;  */
@@ -150,11 +168,63 @@ body{
   transform: translate3d(99.50%,0,0);
 }
 
-.infoContainerButton, .advancedSearchContainerButton{
+.infoContainerButton, 
+.advancedSearchContainerButton, 
+.statisticsContainerButton{
   position: absolute;
-  left: -20px;
-  width: 20px;
-  height: 40px;
+  /* Safari */
+  -webkit-transform: rotate(-90deg);
+  /* Firefox */
+  -moz-transform: rotate(-90deg);
+  /* IE */
+  -ms-transform: rotate(-90deg);
+  /* Opera */
+  -o-transform: rotate(-90deg);
+}
+
+.infoContainerButton {
+  left: -55px;
+  top: 15px;
+  width: 70px;
+  height: 30px;
+  background-color: #14a57a;
+  border-radius: 4px;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px; 
+}
+
+.advancedSearchContainerButton {
+  left: -54px;
+  top: 20px;
+  width: 80px;
+  height: 30px;
+  background-color: #1149b3;
+  border-radius: 4px;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px; 
+}
+
+.statisticsContainerButton {
+  left: -75px;
+  top: 40px;
+  width: 120px;
+  height: 30px;
+  background-color: #cc2a02;
+  border-radius: 4px;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px; 
 }
 
 .Input {
@@ -329,12 +399,14 @@ body{
   display: none
 }
 
-.ui-widget fieldset {
+.ui-widget fieldset, 
+.statisticsContainer fieldset {
   border: 1px solid #333;
   padding: 14px 18px;
 }
 
-.ui-widget legend {
+.ui-widget legend,
+.statisticsContainer legend {
   text-align: center;
   width: 250px;
   font-size: 90%;
@@ -349,4 +421,24 @@ body{
 
 #search-message {
   color: #cb4c4c;
+}
+
+.pieChart-loader {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 45%;
+  z-index: 9999;
+  background: url('../loader-pie.gif') 50% 50% no-repeat rgb(232,232,232);
+}
+
+.loader {
+ position: fixed;
+ left: 0px;
+ top: 0px;
+ width: 100%;
+ height: 100%;
+ z-index: 9999;
+ background: url('../loader.gif') 50% 50% no-repeat rgb(232,232,232);
 }

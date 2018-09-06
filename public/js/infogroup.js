@@ -19,6 +19,11 @@ $("#zipInput").on("keypress", function search(e) {
     }
 });
 
+//Button listener to show statisticsContainer
+$(".statisticsContainerButton").click(() => {
+    $(".statisticsContainer").toggleClass("open");
+});
+
 //Button listener to show advancedSearchContainer
 $(".advancedSearchContainerButton").click(() => {
     $(".advancedSearchContainer").toggleClass("open");
@@ -28,6 +33,8 @@ $(".advancedSearchContainerButton").click(() => {
 $(".infoContainerButton").click(() => {
     $(".infoContainer").toggleClass("closed");
 });
+
+
 //---
 // END EVENT LISTENERS
 //---

@@ -36,3 +36,8 @@ switch (path) {
 // loadDistanceEstablishments(-74.00157809257509, 40.71972943412674);
 // loadCountyEstablishments('Westchester'); //Can take an offset for pagination
 loadZipEstablishments(10001);
+
+$( window ).on( "load", function() {
+    // Animate loader off screen
+    $(".loader").fadeOut("slow");
+});

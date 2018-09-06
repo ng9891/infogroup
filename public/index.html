@@ -23,6 +23,7 @@
 </head>
 
 <body>
+	<div class="loader"></div>
 	<nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark py-1">
 		<div class="col-sm-5">
 			<ul class="navbar-nav">
@@ -56,18 +57,19 @@
 	<div id="mapid"></div>
 
 	<div class='infoContainer'>
-		<button class='infoContainerButton'>ICONHERE</button>
+		<button class='infoContainerButton'>MAIN</button>
 		<!-- <div class="Input">
 			<input type="text" id="zipInput" class="Input-text" placeholder="Zipcode eg. 12203">
 			<button class='go-button btn btn-primary btn-lg'>Search</button>
 		</div> -->
 		<div class="Object-desc"></div>
+		<div class="pieChart-loader"></div>
 		<div id="pieChart"></div>
 		<table id="jq_datatable" class="datatable stripe compact"></table>
 	</div>
 
 	<div class='advancedSearchContainer'>
-		<button class='advancedSearchContainerButton'>IC</button>
+		<button class='advancedSearchContainerButton'>SEARCH</button>
 		<div class="ui-widget"> <!-- Temporary -->
 			<fieldset>
 				<legend>Advanced Search</legend>
@@ -107,6 +109,15 @@
 				<hr/>
 				<table id="jq_datatable_search" class="datatable stripe compact"></table>
 			</fieldset>
+		</div>
+	</div>
+
+	<div class='statisticsContainer'>
+		<button class='statisticsContainerButton'>STATISTICS</button>
+		<fieldset>
+			<legend>Statistics</legend>
+			
+		</fieldset>
 	</div>
 </body>
 
