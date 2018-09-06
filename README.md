@@ -1,4 +1,6 @@
 # About
+This project aims at creating a Web-GIS tool to allow users to explore Information about firm-level, business establishments and their locations for the understanding of economic activities and related transportation movements at various geographical regions and scales. 
+The project will use business establishment data, which includes street address location, number of employees, annual sales volume, NAICS and SICS industry classification codes, and other attributes provided by Infogroup (formally known as InfoUSA). 
 
 # InfogGroup API Start
 Requires node (recommended version 8.9.4LTS)
@@ -16,7 +18,7 @@ Requires an enviromental file in utils called postgres.env
 
 - ```POSTGRES_PORT=5432```
 
-- ```QUERY_LIMIT=3000``` - Default value for amount of points to display on map.
+- ```QUERY_DIST=1609``` - OPTIONAL: Default value for maker distance query.
 
 
 ### To Run
@@ -30,10 +32,9 @@ Requires an enviromental file in utils called postgres.env
 
 Go to http://localhost:3001/ in your browser
 
-to get data by zipcode ex
+To get data by Zipcode. eg:
 http://localhost:3001/byZip/12203
 
-
-to get data by entry ID
+To get data by entry ID. eg:
 http://localhost:3001/byid/232719
  
