@@ -1,4 +1,3 @@
-//TODO: SEPARATE TO PIE CHART FILE.JS
 function loadPieChart(establishments) {
 
 	//console.log(establishments);
