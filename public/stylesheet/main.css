@@ -273,7 +273,7 @@ body{
   font-size: 12px;
 }
 
-#progress {
+/* #progress {
   display: none;
   position: absolute;
   z-index: 5000;
@@ -294,6 +294,21 @@ body{
   height: 100%;
   background-color: #76A6FC;
   border-radius: 4px;
+} */
+
+#tooltip {
+  display: none;
+  position: absolute;
+  background: #666;
+  color: white;
+  opacity: 0.8;
+  padding: 5px;
+  border: 1px dashed #999;
+  font-family: sans-serif;
+  font-size: 12px;
+  height: 30px;
+  line-height: 20px;
+  z-index: 1000;
 }
 
 .ui-autocomplete {
