@@ -1,52 +1,33 @@
 function loadPieChart(establishments) {
 
-	//console.log(establishments);
-	var industries = {};
-	var ct = 0;
-
-	$.each(establishments, function (key, value) {
-
-		$.each(value, function (key2, value2) {
-
-			$.each(value2, function (key3, value3) {
-				if (key3 == "NAICSDS") {
-					if (!industries.hasOwnProperty(value3)) {
-						industries[value3] = 1;
-					} else {
-						industries[value3]++;
-					}
-					//console.log(value3);
-				}
-			});
-
-		});
-
-	});
-
-	//var color  = d3.scaleLinear().domain([10, 60]).range([d3.rgb("#2383c1"), d3.rgb("#cc0f0f")]);
-	//console.log(color(1));
+	var arr_data = [];
 	var pie_content = [];
-	$.each(industries, function (key, value2) {
-		if (value2 > 40) {
-			ct++;
-			item = {};
-			item["label"] = key;
-			item["value"] = value2;
-			pie_content.push(item);
-		}
+	establishments.data.map( est => {
+		arr_data.push(est.NAICSDS);
 	});
-	if (ct < 10) {
-		$.each(industries, function (key, value2) {
-			if (value2 > 10) { //idea needs to be imroved
-				ct++;
-				item = {};
-				item["label"] = key;
-				item["value"] = value2;
-				pie_content.push(item);
-			}
-		});
+	
+	var i=0, x, count, item, it;
+
+	while(i < arr_data.length) {
+		count = 1;
+		item = arr_data[i];
+		x = i+1;
+
+		while(x < arr_data.length && (x=arr_data.indexOf(item,x))!=-1) {
+			count+=1;
+			arr_data.splice(x,1);
+		}
+		if (count > 20) { // if number of specific industries more than 20
+			arr_data[i] = new Array(arr_data[i],count);
+			it = {};
+			it["label"] = arr_data[i][0];
+			it["value"] = count;
+			pie_content.push(it);
+		} // TODO: have to create additional section for all others, where numbers less than 20
+		++i;
 	}
-	//console.log(ct);
+	//console.log(pie_content);
+
 	var wh = $(window).height();
 	pie_h = (wh >= 670 && wh < 800) ? 260 : 380;
 	pie_w = (wh >= 670 && wh < 800) ? 560 : 750;
@@ -108,7 +89,7 @@ function loadPieChart(establishments) {
 		"tooltips": {
 			"enabled": true,
 			"type": "placeholder",
-			"string": "{label}: {value}, {percentage}%"
+			"string": "{label}: {percentage}%"
 		},
 		"effects": {
 			"pullOutSegmentOnClick": {

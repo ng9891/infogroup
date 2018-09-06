@@ -46,10 +46,11 @@ const geoByDistanceRequest = function (request, response) {
             });
     }
 
-
     if (!request.query.dist) {
         request.query.dist = process.env.QUERY_DIST; //QUERY_DIST from env file.
     }
+    
+    console.log(request.query.dist);
 
     geobydistance(request.query.lon, request.query.lat, request.query.dist)
         .then(data => {

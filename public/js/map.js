@@ -50,7 +50,8 @@ L.EditControl = L.Control.extend({
                 break;
             case 'query':
                 container = L.DomUtil.create('div', 'leaflet-control leaflet-bar');
-                var link = L.DomUtil.create('a', '', container);
+                var link = L.DomUtil.create('a', 'leaflet-control-queryBtn', container);
+                link.style = 'display:none;'
                 link.href = '#';
                 link.title = 'Query the drawing';
                 link.innerHTML = this.options.html;
@@ -80,9 +81,10 @@ L.NewMarkerControl = L.EditControl.extend({
         position: 'topleft',
         callback: mymap.editTools.startMarker,
         kind: 'marker',
-        html: '🖈',
+        html: '&#9873',
         type: 'draw'
     }
+    //🖈
 });
 
 L.NewRectangleControl = L.EditControl.extend({
@@ -138,16 +140,26 @@ mymap.addControl(new L.NewQueryControl());
 //---
 // MAP EVENT LISTENERS
 //---
-mymap.on('editable:drawing:end', (e)=>{
-    // console.log('end');
+// mymap.on('editable:drawing:end', (e)=>{
+//     // console.log('end');
+//     // usrMarkers.push(e.layer);
+//     // drawnItems.addLayer(e.layer);
+//     // $('.leaflet-control-queryBtn').css('display','block');
+//     // drawnItems.clearLayers();
+// });
+mymap.on('editable:drawing:commit', (e)=>{
+    // console.log('commit');
     usrMarkers.push(e.layer);
     drawnItems.addLayer(e.layer);
+    $('.leaflet-control-queryBtn').css('display','block');
     // drawnItems.clearLayers();
 });
+
 mymap.on('editable:drawing:start', (e)=>{
     // console.log('start'); 
     usrMarkers.pop();
     drawnItems.clearLayers();
+    $('.leaflet-control-queryBtn').css('display','none');
 });
 
 //Event listeners key down during drawing
@@ -167,6 +179,7 @@ var onKeyDown = function(e) {
                 //usually 1 drawing
                 usrMarkers.pop();
                 drawnItems.clearLayers();
+                $('.leaflet-control-queryBtn').css('display','none');
             }
             return;
         }
