@@ -2,32 +2,22 @@
 // EVENT LISTENERS
 //---
 
-// Go button click listener
-// d3.select('.go-button').on('click', (e) => {
-//     let value = d3.select('#zipInput').property("value")
-//     if (value.length !== 5 || isNaN(+value)) {
-//         alert("Invalid Input");
-//     } else {
-//         $('#zipInput').blur();
-//         loadZipEstablishments(value);
-//     }
-// });
-// //Input Text Box on Enter key press
-// $("#zipInput").on("keypress", function search(e) {
-//     if (e.keyCode == 13) {
-//         $('.go-button').click();
-//     }
-// });
+//Button listener to show statisticsContainer
+$(".statisticsContainerButton").click(() => {
+    $(".statisticsContainer").toggleClass("open");
+});
 
-// //Button listener to show advancedSearchContainer
-// $(".advancedSearchContainerButton").click(() => {
-//     $(".advancedSearchContainer").toggleClass("open");
-// });
+//Button listener to show advancedSearchContainer
+$(".advancedSearchContainerButton").click(() => {
+    $(".advancedSearchContainer").toggleClass("open");
+});
 
-// //Button listener to hide infoContainer
-// $(".infoContainerButton").click(() => {
-//     $(".infoContainer").toggleClass("closed");
-// });
+//Button listener to hide infoContainer
+$(".infoContainerButton").click(() => {
+    $(".infoContainer").toggleClass("closed");
+});
+
+
 //---
 // END EVENT LISTENERS
 //---
@@ -71,6 +61,12 @@ $(document).ready(function() {
     
         // loadCountyEstablishments(value, markers.length);
     });
+});
+
+
+$( window ).on( "load", function() {
+    // Animate loader off screen
+    $(".loader").fadeOut("slow");
 });
 
 //Progress bar for chunk loading leaflet cluster

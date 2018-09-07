@@ -15,14 +15,15 @@
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
 	    crossorigin="" />
 	<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
-		crossorigin=""></script>
-	
-	<link rel="stylesheet" type="text/css" href="/stylesheet/MarkerCluster.css" />
-	<link rel="stylesheet" type="text/css" href="/stylesheet/MarkerCluster.Default.css" />
+	    crossorigin=""></script>
+
+	<link rel="stylesheet" type="text/css" href="/stylesheet/src/MarkerCluster.css" />
+	<link rel="stylesheet" type="text/css" href="/stylesheet/src/MarkerCluster.Default.css" />
 	<link rel="stylesheet" type="text/css" href="/js/src/jquery-ui.min.css" />
 </head>
 
 <body>
+	<div class="loader"></div>
 	<nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark py-1">
 		<div class="col-sm-5">
 			<ul class="navbar-nav">
@@ -52,24 +53,28 @@
 		</div>
 	</nav>
 
-	<div id="progress"><div id="progress-bar" style="width: 100%"></div></div>
+	<div id="progress">
+		<div id="progress-bar" style="width: 100%"></div>
+	</div>
 	<div id="mapid"></div>
 	<div id="tooltip"></div>
 
 	<div class='infoContainer'>
-		<button class='infoContainerButton'>ICONHERE</button>
+		<button class='infoContainerButton'>MAIN</button>
 		<!-- <div class="Input">
 			<input type="text" id="zipInput" class="Input-text" placeholder="Zipcode eg. 12203">
 			<button class='go-button btn btn-primary btn-lg'>Search</button>
 		</div> -->
 		<div class="Object-desc"></div>
+		<div class="pieChart-loader"></div>
 		<div id="pieChart"></div>
 		<table id="jq_datatable" class="datatable stripe compact"></table>
 	</div>
 
 	<div class='advancedSearchContainer'>
-		<button class='advancedSearchContainerButton'>IC</button>
-		<div class="ui-widget"> <!-- Temporary -->
+		<button class='advancedSearchContainerButton'>SEARCH</button>
+		<div class="ui-widget">
+			<!-- Temporary -->
 			<fieldset>
 				<legend>Advanced Search</legend>
 				<div class="input-group mb-3">
@@ -85,29 +90,39 @@
 					<input type="text" class="form-control" id="emplsize" placeholder="e.g. >100">
 				</div>
 				<div class="dropdown">
-					<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-					  Select Borough
+					<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+					    aria-haspopup="true" aria-expanded="false">
+						Select Borough
 					</button>
 					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-					  <a class="dropdown-item" href="#">Bronx</a>
-					  <a class="dropdown-item" href="#">Kings</a>
-					  <a class="dropdown-item" href="#">Nassau</a>
-					  <a class="dropdown-item" href="#">New York</a>
-					  <a class="dropdown-item" href="#">Putnam</a>
-					  <a class="dropdown-item" href="#">Queens</a>
-					  <a class="dropdown-item" href="#">Richmond</a>
-					  <a class="dropdown-item" href="#">Rockland</a>
-					  <a class="dropdown-item" href="#">Suffolk</a>
-					  <a class="dropdown-item" href="#">Westchester</a>
+						<a class="dropdown-item" href="#">Bronx</a>
+						<a class="dropdown-item" href="#">Kings</a>
+						<a class="dropdown-item" href="#">Nassau</a>
+						<a class="dropdown-item" href="#">New York</a>
+						<a class="dropdown-item" href="#">Putnam</a>
+						<a class="dropdown-item" href="#">Queens</a>
+						<a class="dropdown-item" href="#">Richmond</a>
+						<a class="dropdown-item" href="#">Rockland</a>
+						<a class="dropdown-item" href="#">Suffolk</a>
+						<a class="dropdown-item" href="#">Westchester</a>
 					</div>
-					&nbsp;<label id="search-message">No match found</label>  
+					&nbsp;<label id="search-message">No match found</label>
 				</div>
 				<div class="d-flex">
 					<button class="btn btn-primary btn-lg ml-auto" id="advsearch-button" type="submit">Search</button>
 				</div>
-				<hr/>
+				<hr />
 				<table id="jq_datatable_search" class="datatable stripe compact"></table>
 			</fieldset>
+		</div>
+	</div>
+
+	<div class='statisticsContainer'>
+		<button class='statisticsContainerButton'>STATISTICS</button>
+		<fieldset>
+			<legend>Statistics</legend>
+
+		</fieldset>
 	</div>
 </body>
 
@@ -115,7 +130,8 @@
 <!-- SOURCES -->
 <script src="/js/src/jquery-3.3.1.min.js"></script>
 <script src="/js/src/jquery-ui-1.12.1/jquery-ui.min.js "></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+    crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
     crossorigin="anonymous"></script>
 <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
@@ -140,6 +156,7 @@
 
 <!-- INIT -->
 <script src="/js/init.js"></script>
+
 </html>
 
 <!-- TODO: Add loading animation -->
