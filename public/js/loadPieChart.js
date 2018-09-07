@@ -6,7 +6,9 @@ function loadPieChart(establishments) {
 		arr_data.push(est.NAICSDS);
 	});
 	
-	var i=0, x, count, item, it;
+	var i=0, x, count, item, it, limit;
+
+	limit = (arr_data.length > 2000) ? 30 : 10;
 
 	while(i < arr_data.length) {
 		count = 1;
@@ -17,7 +19,7 @@ function loadPieChart(establishments) {
 			count+=1;
 			arr_data.splice(x,1);
 		}
-		if (count > 20) { // if number of specific industries more than 20
+		if (count > limit) { // if number of specific industries more than 20
 			arr_data[i] = new Array(arr_data[i],count);
 			it = {};
 			it["label"] = arr_data[i][0];
@@ -29,8 +31,9 @@ function loadPieChart(establishments) {
 	//console.log(pie_content);
 
 	var wh = $(window).height();
-	pie_h = (wh >= 670 && wh < 800) ? 260 : 380;
-	pie_w = (wh >= 670 && wh < 800) ? 560 : 750;
+
+	pie_h = (wh >= 660 && wh < 800) ? 260 : 380;
+	pie_w = (wh >= 660 && wh < 800) ? 560 : 750;
 
 	var pie_c = new d3pie("pieChart", {
 		"header": {
@@ -109,6 +112,9 @@ function loadPieChart(establishments) {
 			// 	alert("Segment clicked!");
 			// 	console.log(a);
 			//}
+			onload: function(){
+				$(".pieChart-loader").fadeOut("slow");
+			}
 		}
 	});
 }
