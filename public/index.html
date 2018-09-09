@@ -13,7 +13,8 @@
 	    crossorigin="" />
 	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-	    crossorigin="" />
+		crossorigin="" />
+	<link rel="stylesheet" type="text/css" href="/stylesheet/histogram.css" />
 	<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
 	    crossorigin=""></script>
 
@@ -121,7 +122,9 @@
 		<button class='statisticsContainerButton'>STATISTICS</button>
 		<fieldset>
 			<legend>Statistics</legend>
-
+			<div id='histogram-container'>
+				<svg />
+			</div>
 		</fieldset>
 	</div>
 </body>
@@ -145,6 +148,7 @@
 <script src="/meta/naicsKeys.js"></script>
 <script src="/js/MapEstablishments.js"></script>
 <script src="/js/loadPieChart.js"></script>
+<script src="/js/loadHistogram.js"></script>
 <script src="/js/loadZipEstablishments.js"></script>
 <script src="/js/loadCountyEstablishments.js"></script>
 <!-- <script src="/js/loadDistanceEstablishments.js"></script> -->

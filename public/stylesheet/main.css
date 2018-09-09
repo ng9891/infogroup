@@ -112,7 +112,7 @@ body{
 
 .advancedSearchContainer {
   position: fixed;
-  top: 16%;
+  top: 18%;
   right: 0%;
   height: 80%;
   background-color:#cfcccc;
@@ -130,15 +130,15 @@ body{
 
 .statisticsContainer {
   position: fixed;
-  top: 26%;
+  top: 28%;
   right: 0%;
-  height: 80%;
+  height: 70%;
   background-color:#cfcccc;
   z-index: 5000;
   border-radius: 5px;
   padding: 10px;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-  width: 40%;
+  width: 56%;
   transition: transform 0.2s linear;
   transform: translate3d(99.50%,0,0);
 }
@@ -149,7 +149,7 @@ body{
 .infoContainer {
 	position:fixed; 
   /* top: 25px;  */
-  top: 6%;
+  top: 8%;
 	right:0px; 
 	height:90%;
 	z-index: 3000;
@@ -183,7 +183,7 @@ body{
 }
 
 .infoContainerButton {
-  left: -55px;
+  left: -54px;
   top: 15px;
   width: 70px;
   height: 30px;
@@ -456,4 +456,8 @@ body{
  height: 100%;
  z-index: 9999;
  background: url('./images/loader.gif') 50% 50% no-repeat rgb(232,232,232);
+}
+
+.leaflet-control-container .leaflet-top {
+  top: 20px !important;
 }

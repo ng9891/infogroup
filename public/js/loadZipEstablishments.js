@@ -13,6 +13,7 @@ function loadZipEstablishments(zip) {
 			mapEstablishments(data);
 			loadPieChart(data);
 			loadDatatable(data);
+			loadHistogram(data);
 		}, function (err) {
 			alert("Query Error");
 			console.log(err);

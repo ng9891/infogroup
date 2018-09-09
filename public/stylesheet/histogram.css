@@ -1,0 +1,71 @@
+/* div#layout {
+    text-align: center;
+  } */
+  
+  #histogram-container {
+    width: 1000px;
+    height: 600px;
+    margin: auto;
+    background-color: #2F4A6D;
+  }
+  
+  #histogram-container svg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  #histogram-container .bar {
+    fill: #80cbc4;
+  }
+  
+  #histogram-container text {
+    font-size: 12px;
+    fill: #fff;
+  }
+  
+  #histogram-container path {
+    stroke: gray;
+  }
+  
+  #histogram-container line {
+    stroke: gray;
+  }
+  
+  #histogram-container line#limit {
+    stroke: #FED966;
+    stroke-width: 3;
+    stroke-dasharray: 3 6;
+  }
+  
+  #histogram-container .grid path {
+    stroke-width: 0;
+  }
+  
+  #histogram-container .grid .tick line {
+    stroke: #9FAAAE;
+    stroke-opacity: 0.3;
+  }
+  
+  #histogram-container text.divergence {
+    font-size: 12px;
+    /* fill: #2F4A6D; */
+    fill: #ffffff;
+  }
+  
+  #histogram-container text.employees {
+    font-size: 12px;
+  }
+  
+  #histogram-container text.title {
+    font-size: 22px;
+    font-weight: 600;
+  }
+  
+  #histogram-container text.label {
+    font-size: 12px;
+    font-weight: 400;
+  }
+  
+  #histogram-container text.source {
+    font-size: 10px;
+  }

@@ -8,7 +8,11 @@ function loadPieChart(establishments) {
 	
 	var i=0, x, count, item, it, limit;
 
+	//console.log("PieChart dataLength:" + arr_data.length);
+
 	limit = (arr_data.length > 2000) ? 30 : 10;
+
+	//console.log("PieChart Limit: " + limit);
 
 	while(i < arr_data.length) {
 		count = 1;
@@ -20,6 +24,7 @@ function loadPieChart(establishments) {
 			arr_data.splice(x,1);
 		}
 		if (count > limit) { // if number of specific industries more than 20
+			//console.log("PieChart count: " + count);
 			arr_data[i] = new Array(arr_data[i],count);
 			it = {};
 			it["label"] = arr_data[i][0];

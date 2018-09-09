@@ -95,7 +95,8 @@ function loadDrawingEstablishments() {
 			}else{
 				mapEstablishments(data);
 				loadPieChart(data);
-				loadDatatable(data);
+                loadDatatable(data);
+                loadHistogram(data);
 			}
 		}, function (err) {
 			alert("Query Error");

@@ -27,6 +27,7 @@ function loadCountyEstablishments(county, offset, limit) {
 				mapEstablishments(data);
 				loadPieChart(data);
 				loadDatatable(data);
+				loadHistogram(data);
 			}
 		}, function (err) {
 			alert("Query Error");

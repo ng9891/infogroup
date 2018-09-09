@@ -28,6 +28,7 @@ function loadAdvancedSearchEstablishments(industry, employee, borough) {
 			else {
 				mapEstablishments(data);
 				loadDatatableAdvancedSearch(data);
+				loadHistogram(data);
 			}
 		}, function (err) {
 			alert("Query Error");

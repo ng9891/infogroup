@@ -29,6 +29,7 @@ function loadDistanceEstablishments(lon, lat, dist) {
 				mapEstablishments(data);
 				loadPieChart(data);
 				loadDatatable(data);
+				loadHistogram(data);
 			}
 		}, function (err) {
 			alert("Query Error");
