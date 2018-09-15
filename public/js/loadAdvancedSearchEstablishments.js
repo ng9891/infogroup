@@ -27,8 +27,9 @@ function loadAdvancedSearchEstablishments(industry, employee, borough) {
 			} 
 			else {
 				mapEstablishments(data);
-				loadDatatableAdvancedSearch(data);
+				loadPieChart(data);
 				loadHistogram(data);
+				loadDatatableAdvancedSearch(data);
 			}
 		}, function (err) {
 			alert("Query Error");

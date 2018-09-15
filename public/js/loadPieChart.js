@@ -10,7 +10,7 @@ function loadPieChart(establishments) {
 
 	//console.log("PieChart dataLength:" + arr_data.length);
 
-	limit = (arr_data.length > 2000) ? 30 : 10;
+	//limit = (arr_data.length > 2000) ? 30 : 20;
 
 	//console.log("PieChart Limit: " + limit);
 
@@ -18,19 +18,18 @@ function loadPieChart(establishments) {
 		count = 1;
 		item = arr_data[i];
 		x = i+1;
-
 		while(x < arr_data.length && (x=arr_data.indexOf(item,x))!=-1) {
 			count+=1;
 			arr_data.splice(x,1);
 		}
-		if (count > limit) { // if number of specific industries more than 20
+		//if (count > limit) { // if number of specific industries more than 20
 			//console.log("PieChart count: " + count);
 			arr_data[i] = new Array(arr_data[i],count);
 			it = {};
 			it["label"] = arr_data[i][0];
 			it["value"] = count;
 			pie_content.push(it);
-		} // TODO: have to create additional section for all others, where numbers less than 20
+		//} // TODO: have to create additional section for all others, where numbers less than 20
 		++i;
 	}
 	//console.log(pie_content);
@@ -66,6 +65,12 @@ function loadPieChart(establishments) {
 		},
 		"data": {
 			"sortOrder": "value-desc",
+			smallSegmentGrouping: {
+				enabled: true,
+				value: 1,
+				valueType: "percentage",
+				label: "MISCELLANEOUS"
+			},
 			"content": pie_content
 		},
 		"labels": {
@@ -122,4 +127,5 @@ function loadPieChart(establishments) {
 			}
 		}
 	});
+
 }

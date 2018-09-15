@@ -3,7 +3,7 @@
   } */
   
   #histogram-container {
-    width: 1000px;
+    width: 1250px;
     height: 600px;
     margin: auto;
     background-color: #2F4A6D;
@@ -64,6 +64,10 @@
   #histogram-container text.label {
     font-size: 12px;
     font-weight: 400;
+  }
+
+  #histogram-container text.stat-desc {
+    fill: #FED966 !important;
   }
   
   #histogram-container text.source {

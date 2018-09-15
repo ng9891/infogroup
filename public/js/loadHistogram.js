@@ -3,35 +3,46 @@ function loadHistogram(establishments) {
     /*****************************/
     // preparing data for histogram
 
-    var arr_employees = [], result_content = [];
-    var i=0, x, y, count, item, it;
+    var arr_employees = [], arr_maxemp_companies = [], arr_minemp_companies=[], result_content = [];
+    var i=0, x, total_empl_size=0, total_comp_num=0, count, item, it;
 
-	establishments.data.map( est => {
-       arr_employees.push(est.ALEMPSZ);
+    establishments.data.map( est => {
+      total_comp_num += 1;
+      total_empl_size += est.ALEMPSZ;
+      arr_employees.push(est.ALEMPSZ);
     });
 
     // grouping companies according to employee size (number of companies - unique employee size)
     while(i < arr_employees.length) {
-		count = 1;
-		item = arr_employees[i];
-		x = i+1;
-
-		while(x < arr_employees.length && (x=arr_employees.indexOf(item,x))!=-1) {
-			count+=1;
-			arr_employees.splice(x,1);
-		}
-        arr_employees[i] = new Array(arr_employees[i],count);
-        if (arr_employees[i][0]!==null) {
-            it = {};
-            it["companies"] = count;
-            it["employees"] = arr_employees[i][0];
-            result_content.push(it);
-        }
-		++i;
+      count = 1;
+      item = arr_employees[i];
+      x = i+1;
+      while(x < arr_employees.length && (x=arr_employees.indexOf(item,x))!=-1) {
+        count+=1;
+        arr_employees.splice(x,1);
+      }
+          arr_employees[i] = new Array(arr_employees[i],count);
+          if (arr_employees[i][0]!==null) {
+              it = {};
+              it["companies"] = count;
+              it["employees"] = arr_employees[i][0];
+              result_content.push(it);
+          }
+      ++i;
     }
 
     var max_employee_size = result_content.reduce((max, p) => p.employees > max ? p.employees : max, result_content[0].employees);
     var min_employee_size = result_content.reduce((min, p) => p.employees < min ? p.employees : min, result_content[0].employees);
+
+    establishments.data.map( est => {
+      if (est.ALEMPSZ === max_employee_size) {
+        arr_maxemp_companies.push(est.CONAME);
+      } 
+
+      if (est.ALEMPSZ === min_employee_size) {
+        arr_minemp_companies.push(est.CONAME);
+      } 
+    });
     
     var companies_with_min_employees = result_content.find(o => o.employees === min_employee_size).companies;
     var companies_with_max_employees = result_content.find(o => o.employees === max_employee_size).companies;
@@ -77,9 +88,9 @@ function loadHistogram(establishments) {
     // start to load histogram
     sample = histogram_bars;
     
-      d3.selectAll("svg > *").remove(); // clearing histogram each time
+      d3.select('#histogram-container').selectAll("svg > *").remove(); // clearing histogram each time
       const svg = d3.select('#histogram-container').selectAll('svg');
-      const svgContainer = d3.select('#histogram-container');
+      //const svgContainer = d3.select('#histogram-container');
       
       const margin = 80;
       const width = 1000 - 2 * margin;
@@ -208,5 +219,82 @@ function loadHistogram(establishments) {
         .attr('y', 40)
         .attr('text-anchor', 'middle')
         .text('Company distribution by employee size')
+
+        /* Short statistics description */
+        svg
+        .append('text')
+        .attr('class', 'label stat-desc')
+        .attr('x', width + margin + 10)
+        .attr('y', 100)
+        .attr('text-anchor', 'start')
+        .text('Total number of companies: ' + total_comp_num)
+
+        svg
+        .append('text')
+        .attr('class', 'label stat-desc')
+        .attr('x', width + margin + 10)
+        .attr('y', 150)
+        .attr('text-anchor', 'start')
+        .text('Total number of employees: ' + total_empl_size)
+
+        svg
+        .append('text')
+        .attr('class', 'label stat-desc')
+        .attr('x', width + margin + 10)
+        .attr('y', 200)
+        .attr('text-anchor', 'start')
+        .text('Total sales volume: ?')
+
+        if (arr_maxemp_companies[0].length > 26) {
+          svg
+          .append('text')
+          .attr('class', 'label stat-desc')
+          .attr('x', width + margin + 10)
+          .attr('y', 250)
+          .attr('text-anchor', 'start')
+          .text('Max employee size comp.: ')
+          svg
+          .append('text')
+          .attr('class', 'label stat-desc')
+          .attr('x', width + margin + 10)
+          .attr('y', 270)
+          .attr('text-anchor', 'start')
+          .text(arr_maxemp_companies[0])
+        }
+        else {
+          svg
+          .append('text')
+          .attr('class', 'label stat-desc')
+          .attr('x', width + margin + 10)
+          .attr('y', 250)
+          .attr('text-anchor', 'start')
+          .text('Max employee size comp.: ' + arr_maxemp_companies[0])
+        }
+
+        if (arr_minemp_companies[0].length > 26) {
+          svg
+          .append('text')
+          .attr('class', 'label stat-desc')
+          .attr('x', width + margin + 10)
+          .attr('y', 300)
+          .attr('text-anchor', 'start')
+          .text('Min employee size comp.: ')
+          svg
+          .append('text')
+          .attr('class', 'label stat-desc')
+          .attr('x', width + margin + 10)
+          .attr('y', 320)
+          .attr('text-anchor', 'start')
+          .text(arr_minemp_companies[0])
+        }
+        else {
+          svg
+          .append('text')
+          .attr('class', 'label stat-desc')
+          .attr('x', width + margin + 10)
+          .attr('y', 300)
+          .attr('text-anchor', 'start')
+          .text('Min employee size comp.: ' + arr_minemp_companies[0])
+        }
     
 };
