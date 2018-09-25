@@ -28,6 +28,7 @@ function loadCountyEstablishments(county, offset, limit) {
 				loadPieChart(data);
 				loadDatatable(data);
 				loadHistogram(data);
+				updateSearchInfo('County', county.toUpperCase());
 			}
 		}, function (err) {
 			alert("Query Error");

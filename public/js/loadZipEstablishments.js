@@ -14,6 +14,7 @@ function loadZipEstablishments(zip) {
 			loadPieChart(data);
 			loadDatatable(data);
 			loadHistogram(data);
+			updateSearchInfo('ZipCode', zip);
 		}, function (err) {
 			alert("Query Error");
 			console.log(err);

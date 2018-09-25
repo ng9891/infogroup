@@ -30,6 +30,7 @@ function loadDistanceEstablishments(lon, lat, dist) {
 				loadPieChart(data);
 				loadDatatable(data);
 				loadHistogram(data);
+				updateSearchInfo('Distance Query', dist);
 			}
 		}, function (err) {
 			alert("Query Error");

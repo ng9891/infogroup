@@ -7,13 +7,18 @@ function loadAdvancedSearchEstablishments(industry, employee, borough) {
 	$("#pieChart").empty();
 
 	// Creates a request URL for the API
+	let searchType = 'Filter';
+	let searchValue = '';
 	var reqURL = '/api/advancedSearch';
 	if (industry) {
 		reqURL += '?industry=' + industry;
+		searchValue += 'Industry = ' + industry;
 		if (employee) {
 			reqURL += '&employee=' + employee;
+			searchValue += ' Employee = ' + employee;
 			if (borough) {
-			reqURL += '&borough=' + borough;
+				reqURL += '&borough=' + borough;
+				searchValue += ' Borough = '+ borough;
 			}
 		}
 	}
@@ -30,6 +35,7 @@ function loadAdvancedSearchEstablishments(industry, employee, borough) {
 				loadPieChart(data);
 				loadHistogram(data);
 				loadDatatableAdvancedSearch(data);
+				updateSearchInfo(searchType, searchValue);
 			}
 		}, function (err) {
 			alert("Query Error");

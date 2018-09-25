@@ -138,3 +138,9 @@ $(document).ready(function() {
     });
 
 });
+
+function updateSearchInfo(searchType, searchValue){
+    if(!searchType) searchType = 'error';
+    if(!searchValue) searchValue = '';
+    $('#search-description').html('<h4>' + searchType + ' ' + searchValue + '</h4>');
+}
