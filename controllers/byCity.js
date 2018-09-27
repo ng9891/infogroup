@@ -2,14 +2,22 @@
 let db_service = require('../utils/db_service');
 
 //Takes an offset and limit to load the county with pagination.
-function geobycity(city_name, offset, limit) {
+function geobycity(mun_name, offset, limit) {
     return new Promise(function (resolve, reject) {
+        // TODO: distinguish between city, town, village or county
         let sql =
             `WITH city AS (
                 SELECT 
                 geom
-                FROM cities_towns as cities
-                WHERE UPPER(cities.name) LIKE UPPER('%${city_name}%')
+                FROM (
+					SELECT geom
+					FROM cities_towns as cities
+					WHERE UPPER(cities.name) LIKE UPPER('%${mun_name}%')
+					UNION
+					SELECT geom
+					FROM villages
+					WHERE UPPER(villages.name) LIKE UPPER('%${mun_name}%')
+				) mun
                 LIMIT 1
             )
             SELECT

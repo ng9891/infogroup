@@ -1,15 +1,55 @@
 'use strict';
 let db_service = require('../utils/db_service');
 
-function geogetcity(city_name) {
+function geogetcity(mun_name) {
     return new Promise(function (resolve, reject) {
+        // let sql =
+        //     `
+        //     SELECT 
+        //     name,
+        //     ST_ASGeoJSON(ST_Transform(MAX(geom), 4326)) AS geom
+        //     FROM(
+        //             SELECT geom, name
+        //             FROM cities_towns as cities
+        //             WHERE UPPER(cities.name) LIKE UPPER('${mun_name}%')
+        //             UNION
+        //             SELECT geom, name
+        //             FROM villages
+        //             WHERE UPPER(villages.name) LIKE UPPER('${mun_name}%')
+        //         ) mun
+        //     GROUP BY name
+        //     `;
+        // allows duplication
+        // let sql =
+        //     `
+        //     SELECT 
+        //     name,
+        //     ST_ASGeoJSON(ST_Transform(geom, 4326))) AS geom
+        //     FROM(
+        //             SELECT geom, name
+        //             FROM cities_towns as cities
+        //             WHERE UPPER(cities.name) LIKE UPPER('${mun_name}%')
+        //             UNION
+        //             SELECT geom, name
+        //             FROM villages
+        //             WHERE UPPER(villages.name) LIKE UPPER('${mun_name}%')
+        //         ) mun
+        //     `;
         let sql =
             `
             SELECT 
             name,
+            muni_type,
             ST_ASGeoJSON(ST_Transform(geom, 4326)) AS geom
-            FROM cities_towns as cities
-            WHERE UPPER(cities.name) LIKE UPPER('%${city_name}%')
+            FROM(
+                SELECT c.name, c.muni_type, c.geom
+                FROM cities_towns c
+                UNION ALL
+                SELECT v.name, 'village' as muni_type, v.geom
+                FROM villages v
+            ) muni
+            WHERE UPPER(name) LIKE UPPER('${mun_name}%')
+            ORDER BY name
             `;
         db_service.runQuery(sql, [], (err, data) => {
             if (err) return reject(err);
