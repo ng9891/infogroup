@@ -1,6 +1,6 @@
 //Takes an offset and limit to load the county with pagination.
 //Limit is usually undefined and set to default value unless specified by api.
-function loadCountyEstablishments(county, offset, limit) {
+function loadMpoEstablishments(mpo, offset, limit) {
 	// --
 	// load data from api
 	// then add to map
@@ -10,7 +10,7 @@ function loadCountyEstablishments(county, offset, limit) {
 	// if (usrMarkers.length !== 0) mymap.removeLayer(usrMarkers.pop()); //removes marker from user
 
 	// Creates a request URL for the API
-	var reqURL = '/api/bycounty/' + county;
+	var reqURL = '/api/bympo/' + mpo;
 	if (offset) {
 		reqURL += '?offset=' + offset;
 		if (limit) {
@@ -23,25 +23,26 @@ function loadCountyEstablishments(county, offset, limit) {
 		.then(data => {
 			if (data.data.length === 0) {
 				console.log("Query not found.");
-				updateSearchInfo('NOT FOUND', county.toUpperCase());
+				updateSearchInfo('NOT FOUND', mpo.toUpperCase());
 			} else {
 				mapEstablishments(data);
 				loadPieChart(data);
 				loadDatatable(data);
 				loadHistogram(data);
-				updateSearchInfo('County', county.toUpperCase());
 
 				//Get Query layer/ bounding box
-				d3.json('/api/getcounty/' + county)
+				d3.json('/api/getmpo/' + mpo)
 					.then(data => {
 						loadQueryOverlay(data);
+						let mpo_name = data.data[0].name;
+                        updateSearchInfo('MPO', mpo_name);
 					}, function (err) {
 						alert("Query Error on Base Layer");
 						console.log(err);
 					});
 			}
 		}, function (err) {
-			alert("Query Error on County Establishment");
+			alert("Query Error on mpo Establishment");
 			console.log(err);
 		});
 }

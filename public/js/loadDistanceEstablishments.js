@@ -24,7 +24,7 @@ function loadDistanceEstablishments(lon, lat, dist) {
 	d3.json(reqURL)
 		.then(data => {
 			if (data.data.length === 0){
-				console.log("Query not found.");
+				updateSearchInfo('NOT FOUND');
 			}else{
 				mapEstablishments(data);
 				loadPieChart(data);

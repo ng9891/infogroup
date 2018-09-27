@@ -35,12 +35,17 @@
 		</div>
 		<div class="col-sm-4">
 			<form class="form-inline mx-auto" role="search">
-				<input type="text" class="search form-control input-sm" placeholder="Search" id="query-search">
-				<select id='query-dropdown' class="custom-select">
-					<option selected value="zip">Zip</option>
-					<option value="county">County</option>
-				</select>
-				<button id="query-button" type="button" class="btn btn-secondary">Search</button>
+					<input type="text" class="search form-control input-sm" placeholder="Search" id="query-search">
+					<!-- <input type="text" class="search form-control input-sm" placeholder="Search" id="query-search" list="result_box"> -->
+					<!-- <datalist id="result_box"></datalist> -->
+					<select id='query-dropdown' class="custom-select">
+						<option selected value="zip">Zip</option>
+						<option value="county">County</option>
+						<option value="mpo">MPO</option>
+						<option value="city">City</option>
+						<option value="village">Village</option>
+					</select>
+					<button id="query-button" type="button" class="btn btn-secondary">Search</button>
 			</form>
 		</div>
 		<div class="col-sm-3">
@@ -124,7 +129,7 @@
 		<fieldset>
 			<legend>Statistics</legend>
 			<div id='histogram-container'>
-				<svg />
+				<svg></svg>
 			</div>
 		</fieldset>
 	</div>
@@ -152,10 +157,14 @@
 <script src="/js/loadHistogram.js"></script>
 <script src="/js/loadZipEstablishments.js"></script>
 <script src="/js/loadCountyEstablishments.js"></script>
+<script src="/js/loadMpoEstablishments.js"></script>
+<script src="/js/loadCityEstablishments.js"></script>
 <!-- <script src="/js/loadDistanceEstablishments.js"></script> -->
 <script src="/js/loadDrawingEstablishments.js"></script>
 <script src="/js/loadAdvancedSearchEstablishments.js"></script>
+<script src="/js/loadQueryOverlay.js"></script>
 <script src="/js/infogroup.js"></script>
+<script src="/js/autoComplete_url.js"></script>
 <script src="/js/map.js"></script>
 
 

@@ -1,6 +1,6 @@
 //File for the initialization of the leaflet Map and Event listeners
 //Setup Leaflet Map
-var markerList = []; //contains all the points from query
+
 //markers will contain the markers for the plugin markerClusterGroup
 var markers = L.markerClusterGroup({
     spiderfyOnMaxZoom: false,
@@ -8,6 +8,8 @@ var markers = L.markerClusterGroup({
     chunkedLoading: true,
     chunkProgress: updateProgressBar
 });
+var markerList = []; //contains all the points from query
+var queryLayer = []; //contains the query layer or bounding box of query
 var usrMarkers = []; //contains all the marker drawn by user
 var table;
 var lat, lon;
@@ -55,7 +57,7 @@ var baseMaps = {
     "Esri-WorldStreetMap" : Esri_WorldStreetMap
 };
 
-L.control.layers(baseMaps, null, {position: 'bottomleft'}).addTo(mymap);
+var layerControl = L.control.layers(baseMaps, null, {position: 'bottomleft'}).addTo(mymap);
 // mapBox.addTo(mymap);
 // OpenStreetMap_Mapnik.addTo(mymap);
 // OpenMapSurfer_Roads.addTo(mymap);

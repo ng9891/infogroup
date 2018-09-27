@@ -8,8 +8,8 @@ function advancedSearch(industry, employee, borough) {
             WITH borough AS ( 
                 SELECT 
                 ST_Transform(geom, 4326) AS geom 
-                FROM nymtc 
-                WHERE nymtc.county LIKE '%${borough}%' 
+                FROM county 
+                WHERE UPPER(county.name) LIKE UPPER('%${borough}%')
                 LIMIT 1 
             ) 
             SELECT 

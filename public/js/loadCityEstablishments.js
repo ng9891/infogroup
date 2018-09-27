@@ -1,6 +1,6 @@
 //Takes an offset and limit to load the county with pagination.
 //Limit is usually undefined and set to default value unless specified by api.
-function loadCountyEstablishments(county, offset, limit) {
+function loadCityEstablishments(city, offset, limit) {
 	// --
 	// load data from api
 	// then add to map
@@ -10,7 +10,7 @@ function loadCountyEstablishments(county, offset, limit) {
 	// if (usrMarkers.length !== 0) mymap.removeLayer(usrMarkers.pop()); //removes marker from user
 
 	// Creates a request URL for the API
-	var reqURL = '/api/bycounty/' + county;
+	var reqURL = '/api/bycity/' + city;
 	if (offset) {
 		reqURL += '?offset=' + offset;
 		if (limit) {
@@ -27,12 +27,13 @@ function loadCountyEstablishments(county, offset, limit) {
 			} else {
 				mapEstablishments(data);
 				loadPieChart(data);
-				loadDatatable(data);
-				loadHistogram(data);
-				updateSearchInfo('County', county.toUpperCase());
+                loadDatatable(data);
+                // TODO: NEED FIX HISTOGRAM
+				// loadHistogram(data); 
+				updateSearchInfo('City', city.toUpperCase());
 
 				//Get Query layer/ bounding box
-				d3.json('/api/getcounty/' + county)
+				d3.json('/api/getcity/' + city)
 					.then(data => {
 						loadQueryOverlay(data);
 					}, function (err) {
@@ -41,7 +42,7 @@ function loadCountyEstablishments(county, offset, limit) {
 					});
 			}
 		}, function (err) {
-			alert("Query Error on County Establishment");
+			alert("Query Error on City Establishment");
 			console.log(err);
 		});
 }

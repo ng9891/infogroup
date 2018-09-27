@@ -22,6 +22,7 @@ function loadAdvancedSearchEstablishments(industry, employee, borough) {
 			}
 		}
 	}
+
 	// console.log(reqURL);
 	
 	d3.json(reqURL)
@@ -29,6 +30,7 @@ function loadAdvancedSearchEstablishments(industry, employee, borough) {
 			if (data.data.length == 0) {
 				$("#search-message").show().delay(2000).fadeOut();
 				$('#jq_datatable_search').DataTable().clear().draw();
+				updateSearchInfo('NOT FOUND', searchValue);
 			} 
 			else {
 				mapEstablishments(data);
@@ -36,6 +38,17 @@ function loadAdvancedSearchEstablishments(industry, employee, borough) {
 				loadHistogram(data);
 				loadDatatableAdvancedSearch(data);
 				updateSearchInfo(searchType, searchValue);
+
+				if (borough){
+					//Get Query layer/ bounding box
+					d3.json('/api/getcounty/' + borough)
+					.then(data => {
+						loadQueryOverlay(data);
+					}, function (err) {
+						alert("Query Error on Base Layer");
+						console.log(err);
+					});
+				}
 			}
 		}, function (err) {
 			alert("Query Error");

@@ -8,7 +8,15 @@ function mapEstablishments(establishments) {
 	// 	mymap.removeLayer(markers.pop());
 	// }
 
+	if(queryLayer.length > 0) {
+        let cLayer= queryLayer.pop();
+		mymap.removeLayer(cLayer);
+        queryLayer = [];
+        layerControl.removeLayer(cLayer);
+	}
+
 	if(markerList.length > 0) {
+		layerControl.removeLayer(markers);
 		markers.clearLayers();
 		markerList = [];
 	}
@@ -26,7 +34,7 @@ function mapEstablishments(establishments) {
 	// 1 - 1000 employees
 	// mapped to 5 - 30 pixel width
 	// --
-	var employmentScale = d3.scaleLinear().domain([1, 999]).range([5, 15]);
+	var employmentScale = d3.scaleLinear().domain([1, 999]).range([7, 15]);
 
 	establishments = establishments.data.map(est => {
 		est.geopoint = JSON.parse(est.geopoint);
@@ -38,7 +46,7 @@ function mapEstablishments(establishments) {
 		}
 
 		// get markerRadius
-		var circleRadius = est.ALEMPSZ ? employmentScale(+est.ALEMPSZ) : 5;
+		var circleRadius = est.ALEMPSZ ? employmentScale(+est.ALEMPSZ) : 7;
 		circleRadius = circleRadius.toFixed(2);
 
 		// get color by NAICS industry
@@ -118,7 +126,8 @@ function mapEstablishments(establishments) {
 	});
 	markers.addLayers(markerList);
 	mymap.addLayer(markers);
-
+	layerControl.addOverlay(markers, "Establishments");
+	
 	// mymap.setZoom(15);
 	// calculate the bounding Box
 	bbox = [

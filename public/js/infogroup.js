@@ -22,21 +22,43 @@ $(".infoContainerButton").click(() => {
 // END EVENT LISTENERS
 //---
 
-
 //------------------------------------------------------------------------------
+
 //Nav bar search Listeners
-$(document).ready(function() {
-    $('#query-search').keydown(function(event){
-      if(event.keyCode == 13) {
-        event.preventDefault();
-        $('#query-button').click();
-      }
+$(document).ready(function () {
+    let query_input, query_type;
+    $("#query-search").keydown((event) => {
+        //Enter Key
+        if (event.keyCode == 13) {
+            event.preventDefault();
+            $('#query-button').click();
+        }
     });
+    //Autocomplete
+    $("#query-search").autocomplete(); //Declare the AC on ready
+    $("#query-search").on('input', () => {
+        query_type = d3.select('#query-dropdown').property("value");
+        switch (query_type) {
+            case 'zip':
+                autoComplete_url('zip');
+                break;
+            case 'county':
+                autoComplete_url('county');
+                break;
+            case 'mpo':
+                autoComplete_url('mpo');
+                break;
+            case 'city':
+                autoComplete_url('city');
+                break;
+        }
+    });
+    //Search button
     d3.select('#query-button').on('click', (e) => {
-        let query_input = d3.select('#query-search').property("value");
-        let query_type = d3.select('#query-dropdown').property("value");
-    
-        switch(query_type){
+        query_input = d3.select('#query-search').property("value");
+        query_type = d3.select('#query-dropdown').property("value");
+        query_input = query_input.trim();
+        switch (query_type) {
             case 'zip':
                 if (query_input.length !== 5 || isNaN(+query_input)) {
                     alert("Invalid Input");
@@ -45,26 +67,25 @@ $(document).ready(function() {
                 }
                 break;
             case 'county':
-                if (query_input.length <= 4) {
+                if (query_input.length <= 3) {
                     alert("Invalid Input");
                 } else {
                     loadCountyEstablishments(query_input);
                 }
+            case 'mpo':
+                //TODO: validate entry
+                loadMpoEstablishments(query_input);
+                break;
+            case 'city':
+                //TODO: validate entry
+                loadCityEstablishments(query_input);
+                break;
         }
-    });
-    d3.select('.county_next-button').on('click', (e) => {
-        //TODO: Find a way to save the offset value in a var or URL for offsetting
-        //Send the amount of current points for offset
-    
-        //redirect to /county
-        window.location.href = window.location.href + '?offset=0';
-    
-        // loadCountyEstablishments(value, markers.length);
     });
 });
 
 
-$( window ).on( "load", function() {
+$(window).on("load", function () {
     // Animate loader off screen
     $(".loader").fadeOut("slow");
 });
@@ -87,45 +108,44 @@ function updateProgressBar(processed, total, elapsed, layersArray) {
     }
 }
 
-//END OF TEST
 //------------------------------------------------------------------------------
 // JS For Advanced Search Form
-$(document).ready(function() {
+$(document).ready(function () {
 
     $("#search-message").hide();
 
     d3.json(`/api/getindustries`).then(data => {
-           loadIndustries(data);
-		}, function (err) {
-		alert("Query Error");
-		console.log(err);
+        loadIndustries(data);
+    }, function (err) {
+        alert("Query Error");
+        console.log(err);
     });
 
     function loadIndustries(input) {
-       
+
         var arr_data = [];
 
-        input.data.map( est => {
+        input.data.map(est => {
             arr_data.push(est.NAICSDS);
         });
 
-        $( "#tags" ).autocomplete({
+        $("#tags").autocomplete({
             delay: 0,
             minLength: 2,
             //source: arr_data,
-            source: function(request, response) {
+            source: function (request, response) {
                 var results = $.ui.autocomplete.filter(arr_data, request.term);
                 response(results.slice(0, 10));
             },
             messages: {
                 noResults: '',
-                results: function(){}
+                results: function () {}
             }
         });
     }
 
     var borough;
-    $(".dropdown-menu a").click(function(){
+    $(".dropdown-menu a").click(function () {
         borough = $(this).text();
         $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
         $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
@@ -139,8 +159,8 @@ $(document).ready(function() {
 
 });
 
-function updateSearchInfo(searchType, searchValue){
-    if(!searchType) searchType = 'error';
-    if(!searchValue) searchValue = '';
+function updateSearchInfo(searchType, searchValue) {
+    if (!searchType) searchType = 'error';
+    if (!searchValue) searchValue = '';
     $('#search-description').html('<h4>' + searchType + ' ' + searchValue + '</h4>');
 }

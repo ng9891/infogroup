@@ -2,14 +2,14 @@
 let db_service = require('../utils/db_service');
 
 //Takes an offset and limit to load the county with pagination.
-function geobycounty(county_name, offset, limit) {
+function geobycity(city_name, offset, limit) {
     return new Promise(function (resolve, reject) {
         let sql =
-            `WITH county AS (
+            `WITH city AS (
                 SELECT 
                 geom
-                FROM counties as county
-                WHERE UPPER(county.name) LIKE UPPER('%${county_name}%')
+                FROM cities_towns as cities
+                WHERE UPPER(cities.name) LIKE UPPER('%${city_name}%')
                 LIMIT 1
             )
             SELECT
@@ -27,8 +27,8 @@ function geobycounty(county_name, offset, limit) {
             "BE_Payroll_Expense_Code",
             "BE_Payroll_Expense_Range",
             "BE_Payroll_Expense_Description"
-            FROM businesses_2014 as business, county
-            WHERE ST_Contains(county.geom, business.geom)
+            FROM businesses_2014 as business, city
+            WHERE ST_Contains(city.geom, business.geom)
             ORDER BY COALESCE("ALEMPSZ", 0) DESC
             OFFSET ${offset}
         `;
@@ -45,12 +45,12 @@ function geobycounty(county_name, offset, limit) {
     });
 }
 
-const geoByCountyRequest = function (request, response) {
-    if (!request.params.county) {
+const geoByCityRequest = function (request, response) {
+    if (!request.params.city) {
         return response.status(400)
             .json({
                 status: 'Error',
-                responseText: 'No county specified'
+                responseText: 'No city specified'
             });
     }
 
@@ -63,7 +63,7 @@ const geoByCountyRequest = function (request, response) {
     //     request.query.limiter = process.env.QUERY_LIMIT; //QUERY_LIMIT from env file.
     // }
 
-    geobycounty(request.params.county, request.query.offset, request.query.limiter)
+    geobycity(request.params.city, request.query.offset, request.query.limiter)
         .then(data => {
             return response.status(200)
                 .json({
@@ -78,4 +78,4 @@ const geoByCountyRequest = function (request, response) {
         });
 }
 
-module.exports = geoByCountyRequest;
+module.exports = geoByCityRequest;

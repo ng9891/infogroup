@@ -98,7 +98,7 @@ function loadDrawingEstablishments() {
 	d3.json(reqURL)
 		.then(data => {
 			if (data.data.length === 0){
-				console.log("Query not found.");
+				updateSearchInfo(searchType, searchValue);
 			}else{
 				mapEstablishments(data);
 				loadPieChart(data);
