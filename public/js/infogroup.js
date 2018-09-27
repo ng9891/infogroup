@@ -72,6 +72,7 @@ $(document).ready(function () {
                 } else {
                     loadCountyEstablishments(query_input);
                 }
+                break;
             case 'mpo':
                 //TODO: validate entry
                 loadMpoEstablishments(query_input);
