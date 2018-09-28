@@ -34,6 +34,10 @@ $(document).ready(function () {
             $('#query-button').click();
         }
     });
+    //Select all on focus
+    $("#query-search").on("click", function () {
+        $(this).select();
+     });
     //Autocomplete
     $("#query-search").autocomplete(); //Declare the AC on ready
     $("#query-search").on('input', () => {
@@ -48,8 +52,8 @@ $(document).ready(function () {
             case 'mpo':
                 autoComplete_url('mpo');
                 break;
-            case 'city':
-                autoComplete_url('city');
+            case 'mun':
+                autoComplete_url('mun');
                 break;
         }
     });
@@ -74,12 +78,29 @@ $(document).ready(function () {
                 }
                 break;
             case 'mpo':
-                //TODO: validate entry
-                loadMpoEstablishments(query_input);
+                if (query_input.length <= 3) {
+                    alert("Invalid Input");
+                } else {
+                    loadMpoEstablishments(query_input);
+                }
                 break;
-            case 'city':
-                //TODO: validate entry
-                loadCityEstablishments(query_input);
+            case 'mun':
+                if (query_input.length <= 3) {
+                    alert("Invalid Input");
+                } else {
+                    let indexOfDash = query_input.indexOf('-');
+                    let mun, county;
+                    if(indexOfDash !== -1){
+                        let type = query_input.slice(indexOfDash+2);
+
+                        mun = type.slice(0, type.indexOf('/'));
+                        county = type.slice(type.indexOf('/')+1);
+    
+                        query_input = query_input.slice(0, indexOfDash-1);
+                    }
+                                       
+                    loadMunEstablishments(query_input, mun, county);
+                }
                 break;
         }
     });

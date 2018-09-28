@@ -7,8 +7,12 @@ function loadQueryOverlay(data){
         layerControl.removeLayer(cLayer);
     }
     
-    var layer = JSON.parse(data.data[0].geom);
-
+    // console.log(data.data);
+    var layer = [];
+    data.data.map((d)=>{
+        layer.push(JSON.parse(d.geom));
+    });
+    
     let layerStyle = {
         "color": "#4169e1",
         "weight": 4,

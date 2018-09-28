@@ -2,7 +2,7 @@ function autoComplete_url(type) {
     // query_input = d3.select('#query-search').property("value");
     // query_input = query_input.trim();
 
-    let arr_data2 = [];
+    let arr_data = [];
     $("#query-search").autocomplete({
         delay: 1000,
         minLength: 2,
@@ -16,10 +16,13 @@ function autoComplete_url(type) {
                 success: function (data) {
                     if (data) {
                         data.data.map((d) => {
-                            arr_data2.push(d.name);
-                            if(d.abbrv) arr_data2.push(d.abbrv);
+                            if(d.muni_type){
+                                d.name += ' - ' + capitalizeFirstLetter(d.muni_type) + '/' + capitalizeFirstLetter(d.county);
+                            }
+                            arr_data.push(d.name);
+                            if(d.abbrv) arr_data.push(d.abbrv);
                         });
-                        var results = $.ui.autocomplete.filter(arr_data2, input);
+                        var results = $.ui.autocomplete.filter(arr_data, input);
                         response(results.slice(0, 15));
                     }
                 }
@@ -30,4 +33,7 @@ function autoComplete_url(type) {
             results: function () {}
         }
     });
+}
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
