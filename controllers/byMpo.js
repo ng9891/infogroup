@@ -9,8 +9,8 @@ function geobympo(mpo_name, offset, limit) {
                 SELECT 
                 geom
                 FROM mpo
-                WHERE UPPER(mpo.mpo) LIKE UPPER('%${mpo_name}%')
-                OR UPPER(mpo.mpo_name) LIKE UPPER('%${mpo_name}%')
+                WHERE UPPER(mpo.mpo) = UPPER('${mpo_name}')
+                OR UPPER(mpo.mpo_name) = UPPER('${mpo_name}')
                 LIMIT 1
             )
             SELECT

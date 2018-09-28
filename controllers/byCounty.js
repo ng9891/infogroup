@@ -9,7 +9,7 @@ function geobycounty(county_name, offset, limit) {
                 SELECT 
                 geom
                 FROM counties as county
-                WHERE UPPER(county.name) LIKE UPPER('%${county_name}%')
+                WHERE UPPER(county.name) = UPPER('${county_name}')
                 LIMIT 1
             )
             SELECT
