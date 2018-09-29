@@ -101,8 +101,14 @@ $(document).ready(function() {
 		console.log(err);
     });
 
+    d3.json(`/api/getsalesvolume`).then(data => {
+           loadSalesVolume(data);
+		}, function (err) {
+		alert("Query Error");
+		console.log(err);
+    });
+
     function loadIndustries(input) {
-       
         var arr_data = [];
 
         input.data.map( est => {
@@ -122,10 +128,23 @@ $(document).ready(function() {
                 results: function(){}
             }
         });
-    }
+    };
 
-    var borough;
-    $(".dropdown-menu a").click(function(){
+    var salvol, borough;
+    function loadSalesVolume(input) {
+        var dropdown = document.getElementById("salesvolume-dropdown");
+        $("#salesvolume-dropdown").empty();
+        dropdown.innerHTML = input.data.map(est=>`<a class='dropdown-item' href='#'>${est.LSALVOLDS}</a>`).join("");
+        
+        $("#salesvolume-dropdown a").click(function(){
+            salvol = $(this).text();
+            $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+            $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+        });
+
+    };
+
+    $("#borough-dropdown a").click(function(){
         borough = $(this).text();
         $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
         $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
@@ -133,8 +152,11 @@ $(document).ready(function() {
 
     d3.select('#advsearch-button').on('click', (e) => {
         var industry = $("#tags").val();
-        var employee = $("#emplsize").val();
-        loadAdvancedSearchEstablishments(industry, employee, borough);
+        var minempl = $("#min-emplsize").val();
+        var maxempl = $("#max-emplsize").val();
+
+        loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, borough);
+        $(".advancedSearchContainer").toggleClass("open");
     });
 
 });

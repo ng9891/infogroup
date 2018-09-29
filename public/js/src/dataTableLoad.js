@@ -51,6 +51,7 @@ function loadDatatable(establishments) {
 	} );
 }
 
+/*
 function loadDatatableAdvancedSearch(establishments) {
 	
 	var calcDataTableHeight = function() {
@@ -100,3 +101,4 @@ function loadDatatableAdvancedSearch(establishments) {
 		});
 	});
 }
+*/

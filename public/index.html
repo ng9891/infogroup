@@ -78,42 +78,58 @@
 			<!-- Temporary -->
 			<fieldset>
 				<legend>Advanced Search</legend>
-				<div class="input-group mb-3">
+				<div class="input-group col-md-12 mb-3">
 					<div class="input-group-prepend">
 						<span class="input-group-text" id="basic-addon1">Industry</span>
 					</div>
 					<input type="text" id="tags" class="form-control" placeholder="e.g. Financial">
 				</div>
-				<div class="input-group mb-3">
-					<div class="input-group-prepend">
+				<div class="input-group col-md-12 mb-3 ui-content">
+					<!-- <div class="input-group-prepend">
 						<span class="input-group-text" id="basic-addon1">Employee Size</span>
 					</div>
-					<input type="text" class="form-control" id="emplsize" placeholder="e.g. >100">
-				</div>
-				<div class="dropdown">
-					<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-					    aria-haspopup="true" aria-expanded="false">
-						Select Borough
-					</button>
-					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-						<a class="dropdown-item" href="#">Bronx</a>
-						<a class="dropdown-item" href="#">Kings</a>
-						<a class="dropdown-item" href="#">Nassau</a>
-						<a class="dropdown-item" href="#">New York</a>
-						<a class="dropdown-item" href="#">Putnam</a>
-						<a class="dropdown-item" href="#">Queens</a>
-						<a class="dropdown-item" href="#">Richmond</a>
-						<a class="dropdown-item" href="#">Rockland</a>
-						<a class="dropdown-item" href="#">Suffolk</a>
-						<a class="dropdown-item" href="#">Westchester</a>
+					<input type="text" class="form-control" id="emplsize" placeholder="e.g. >100"> -->
+					<div class="input-group-prepend">
+						<span class="input-group-text" id="basic-addon2">Employees</span>
 					</div>
-					&nbsp;<label id="search-message">No match found</label>
+					<input type="text" class="form-control" id="min-emplsize" placeholder="Min">&nbsp;
+					<input type="text" class="form-control" id="max-emplsize" placeholder="Max">
 				</div>
-				<div class="d-flex">
+				<div class="col-md-12 btn-group">
+					<div class="dropdown dropdown-btn">
+						<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownSalesVolume" data-toggle="dropdown"
+							aria-haspopup="true" aria-expanded="false">
+							Select Sales Volume
+						</button>
+						<div class="dropdown-menu" id="salesvolume-dropdown" aria-labelledby="dropdownSalesVolume">
+							<a class="dropdown-item" href="#">Bronx</a>
+							<a class="dropdown-item" href="#">Kings</a>
+							<a class="dropdown-item" href="#">Nassau</a>
+						</div>&nbsp;
+					</div> &nbsp;
+					<div class="dropdown dropdown-btn">
+						<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+							aria-haspopup="true" aria-expanded="false">
+							Select Borough
+						</button>
+						<div class="dropdown-menu" id="borough-dropdown" aria-labelledby="dropdownMenuButton">
+							<a class="dropdown-item" href="#">Bronx</a>
+							<a class="dropdown-item" href="#">Kings</a>
+							<a class="dropdown-item" href="#">Nassau</a>
+							<a class="dropdown-item" href="#">New York</a>
+							<a class="dropdown-item" href="#">Putnam</a>
+							<a class="dropdown-item" href="#">Queens</a>
+							<a class="dropdown-item" href="#">Richmond</a>
+							<a class="dropdown-item" href="#">Rockland</a>
+							<a class="dropdown-item" href="#">Suffolk</a>
+							<a class="dropdown-item" href="#">Westchester</a>
+						</div>
+					</div>
+					&nbsp;<label id="search-message">*No match found</label>
+				</div>
+				<div class=" col-md-12 d-flex">
 					<button class="btn btn-primary btn-lg ml-auto" id="advsearch-button" type="submit">Search</button>
 				</div>
-				<hr />
-				<table id="jq_datatable_search" class="datatable stripe compact"></table>
 			</fieldset>
 		</div>
 	</div>

@@ -15,6 +15,7 @@ function geobydistance(lon, lat, dist) {
             "ALEMPSZ", 
             "PRMSICDS", 
             "LSALVOLDS", 
+            "ALSLSVOL", 
             "SQFOOTCD", 
             "BE_Payroll_Expense_Code",
             "BE_Payroll_Expense_Range",

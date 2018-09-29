@@ -16,6 +16,7 @@ function geobyzip(zipcode) {
         "ALEMPSZ", 
         "PRMSICDS", 
         "LSALVOLDS", 
+        "ALSLSVOL", 
         "SQFOOTCD", 
         "BE_Payroll_Expense_Code",
         "BE_Payroll_Expense_Range",

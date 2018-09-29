@@ -15,6 +15,7 @@ function geobyrectangle(minLon, minLat, maxLon, maxLat) {
             "ALEMPSZ", 
             "PRMSICDS", 
             "LSALVOLDS", 
+            "ALSLSVOL", 
             "SQFOOTCD", 
             "BE_Payroll_Expense_Code",
             "BE_Payroll_Expense_Range",
