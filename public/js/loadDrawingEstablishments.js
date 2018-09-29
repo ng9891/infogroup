@@ -67,17 +67,24 @@ function loadDrawingEstablishments() {
     // console.log(usrMarkers.length);
     if(usrMarkers.length===0) return;
 
-    let reqURL;
+    let reqURL, searchValue, searchType;
     let layer = usrMarkers[usrMarkers.length - 1]; //last layer
     switch(drawingType(layer)){
         case 'marker':
             reqURL = markerQuery(layer);
+            searchType = 'Marker Query';
+            searchValue = '1mi';
             break;
         case 'circle':
             reqURL = circleQuery(layer);
+            searchType = 'Circle Query';
+            let radius = layer.getRadius() * 0.00062137;
+            searchValue = radius.toFixed(4) + 'mi';
             break;
         case 'rectangle':
             reqURL = rectangleQuery(layer);
+            searchType = 'Rectangle Query';
+            searchValue = '';
             break;
         case 'polygon':
             break;
@@ -91,11 +98,12 @@ function loadDrawingEstablishments() {
 	d3.json(reqURL)
 		.then(data => {
 			if (data.data.length === 0){
-				console.log("Query not found.");
+				updateSearchInfo(searchType, searchValue);
 			}else{
 				mapEstablishments(data);
 				loadPieChart(data);
                 loadDatatable(data);
+                updateSearchInfo(searchType, searchValue);
                 loadHistogram(data);
 			}
 		}, function (err) {

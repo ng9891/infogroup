@@ -3,6 +3,7 @@ let db_service = require('../utils/db_service');
 
 function advancedSearch(industry,  minempl, maxempl, salvol, borough) {
     return new Promise(function (resolve, reject) {
+
     //TODO: BETTER TO USE Squel.Js or simial packages for sql query generation
 
         let sql, where_clause;

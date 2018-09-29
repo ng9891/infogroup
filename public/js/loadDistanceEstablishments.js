@@ -6,7 +6,8 @@ function loadDistanceEstablishments(lon, lat, dist) {
 	// --
 	$("div.Object-desc").empty();
 	$("#pieChart").empty();
-
+	if (usrMarkers.length !== 0) mymap.removeLayer(usrMarkers.pop()); //removes marker from user
+	
 	// Creates a request URL for the API
 	var reqURL = '/api/bydistance';
 	if (lon) {
@@ -24,12 +25,13 @@ function loadDistanceEstablishments(lon, lat, dist) {
 	d3.json(reqURL)
 		.then(data => {
 			if (data.data.length === 0){
-				console.log("Query not found.");
+				updateSearchInfo('NOT FOUND');
 			}else{
 				mapEstablishments(data);
 				loadPieChart(data);
 				loadDatatable(data);
 				loadHistogram(data);
+				updateSearchInfo('Distance Query', dist);
 			}
 		}, function (err) {
 			alert("Query Error");

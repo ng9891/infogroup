@@ -22,21 +22,47 @@ $(".infoContainerButton").click(() => {
 // END EVENT LISTENERS
 //---
 
-
 //------------------------------------------------------------------------------
+
 //Nav bar search Listeners
-$(document).ready(function() {
-    $('#query-search').keydown(function(event){
-      if(event.keyCode == 13) {
-        event.preventDefault();
-        $('#query-button').click();
-      }
+$(document).ready(function () {
+    let query_input, query_type;
+    $("#query-search").keydown((event) => {
+        //Enter Key
+        if (event.keyCode == 13) {
+            event.preventDefault();
+            $('#query-button').click();
+        }
     });
+    //Select all on focus
+    $("#query-search").on("click", function () {
+        $(this).select();
+     });
+    //Autocomplete
+    $("#query-search").autocomplete(); //Declare the AC on ready
+    $("#query-search").on('input', () => {
+        query_type = d3.select('#query-dropdown').property("value");
+        switch (query_type) {
+            case 'zip':
+                autoComplete_url('zip');
+                break;
+            case 'county':
+                autoComplete_url('county');
+                break;
+            case 'mpo':
+                autoComplete_url('mpo');
+                break;
+            case 'mun':
+                autoComplete_url('mun');
+                break;
+        }
+    });
+    //Search button
     d3.select('#query-button').on('click', (e) => {
-        let query_input = d3.select('#query-search').property("value");
-        let query_type = d3.select('#query-dropdown').property("value");
-    
-        switch(query_type){
+        query_input = d3.select('#query-search').property("value");
+        query_type = d3.select('#query-dropdown').property("value");
+        query_input = query_input.trim();
+        switch (query_type) {
             case 'zip':
                 if (query_input.length !== 5 || isNaN(+query_input)) {
                     alert("Invalid Input");
@@ -45,26 +71,43 @@ $(document).ready(function() {
                 }
                 break;
             case 'county':
-                if (query_input.length <= 4) {
+                if (query_input.length <= 3) {
                     alert("Invalid Input");
                 } else {
                     loadCountyEstablishments(query_input);
                 }
+                break;
+            case 'mpo':
+                if (query_input.length <= 3) {
+                    alert("Invalid Input");
+                } else {
+                    loadMpoEstablishments(query_input);
+                }
+                break;
+            case 'mun':
+                if (query_input.length <= 3) {
+                    alert("Invalid Input");
+                } else {
+                    let indexOfDash = query_input.indexOf('-');
+                    let mun, county;
+                    if(indexOfDash !== -1){
+                        let type = query_input.slice(indexOfDash+2);
+
+                        mun = type.slice(0, type.indexOf('/'));
+                        county = type.slice(type.indexOf('/')+1);
+    
+                        query_input = query_input.slice(0, indexOfDash-1);
+                    }
+                                       
+                    loadMunEstablishments(query_input, mun, county);
+                }
+                break;
         }
-    });
-    d3.select('.county_next-button').on('click', (e) => {
-        //TODO: Find a way to save the offset value in a var or URL for offsetting
-        //Send the amount of current points for offset
-    
-        //redirect to /county
-        window.location.href = window.location.href + '?offset=0';
-    
-        // loadCountyEstablishments(value, markers.length);
     });
 });
 
 
-$( window ).on( "load", function() {
+$(window).on("load", function () {
     // Animate loader off screen
     $(".loader").fadeOut("slow");
 });
@@ -87,18 +130,17 @@ function updateProgressBar(processed, total, elapsed, layersArray) {
     }
 }
 
-//END OF TEST
 //------------------------------------------------------------------------------
 // JS For Advanced Search Form
-$(document).ready(function() {
+$(document).ready(function () {
 
     $("#search-message").hide();
 
     d3.json(`/api/getindustries`).then(data => {
-           loadIndustries(data);
-		}, function (err) {
-		alert("Query Error");
-		console.log(err);
+        loadIndustries(data);
+    }, function (err) {
+        alert("Query Error");
+        console.log(err);
     });
 
     d3.json(`/api/getsalesvolume`).then(data => {
@@ -109,23 +151,24 @@ $(document).ready(function() {
     });
 
     function loadIndustries(input) {
+
         var arr_data = [];
 
-        input.data.map( est => {
+        input.data.map(est => {
             arr_data.push(est.NAICSDS);
         });
 
-        $( "#tags" ).autocomplete({
+        $("#tags").autocomplete({
             delay: 0,
             minLength: 2,
             //source: arr_data,
-            source: function(request, response) {
+            source: function (request, response) {
                 var results = $.ui.autocomplete.filter(arr_data, request.term);
                 response(results.slice(0, 10));
             },
             messages: {
                 noResults: '',
-                results: function(){}
+                results: function () {}
             }
         });
     };
@@ -160,3 +203,9 @@ $(document).ready(function() {
     });
 
 });
+
+function updateSearchInfo(searchType, searchValue) {
+    if (!searchType) searchType = 'error';
+    if (!searchValue) searchValue = '';
+    $('#search-description').html('<h4>' + searchType + ' ' + searchValue + '</h4>');
+}

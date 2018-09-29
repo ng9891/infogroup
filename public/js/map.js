@@ -1,30 +1,68 @@
 //File for the initialization of the leaflet Map and Event listeners
 //Setup Leaflet Map
-var markerList = []; //contains all the points from query
+
 //markers will contain the markers for the plugin markerClusterGroup
 var markers = L.markerClusterGroup({
     spiderfyOnMaxZoom: false,
-    disableClusteringAtZoom: 20,
+    disableClusteringAtZoom: 19,
     chunkedLoading: true,
     chunkProgress: updateProgressBar
 });
+var markerList = []; //contains all the points from query
+var queryLayer = []; //contains the query layer or bounding box of query
 var usrMarkers = []; //contains all the marker drawn by user
 var table;
 var lat, lon;
 // var redoBuffer = [];
 
-var mymap = L.map('mapid', {
-    editable: true
-}).setView([40.755, -74.00], 13);
-var drawnItems = new L.FeatureGroup().addTo(mymap);
-L.tileLayer(
+var mapBox = L.tileLayer(
     'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-        maxZoom: 20,
+        maxZoom: 19,
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
             '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
             'Imagery © <a href="http://mapbox.com">Mapbox</a>',
         id: 'mapbox.streets'
-    }).addTo(mymap);
+    });
+
+var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+});
+
+var OpenMapSurfer_Roads = L.tileLayer('https://korona.geog.uni-heidelberg.de/tiles/roads/x={x}&y={y}&z={z}', {
+    maxZoom: 19,
+    attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+});
+
+var OpenStreetMap_BlackAndWhite = L.tileLayer('http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
+	maxZoom: 18,
+	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+});
+
+var Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+});
+
+var mymap = L.map('mapid', {
+    editable: true,
+    maxZoom: 19,
+    layers: [mapBox]
+}).setView([40.755, -74.00], 13);
+
+var baseMaps = {
+    "MapBox": mapBox,
+    "OSM-Mapnik": OpenStreetMap_Mapnik,
+    "OSM-Black & White": OpenStreetMap_BlackAndWhite,
+    "OpenMapSurfer-Roads" : OpenMapSurfer_Roads,
+    "Esri-WorldStreetMap" : Esri_WorldStreetMap
+};
+
+var layerControl = L.control.layers(baseMaps, null, {position: 'bottomleft'}).addTo(mymap);
+// mapBox.addTo(mymap);
+// OpenStreetMap_Mapnik.addTo(mymap);
+// OpenMapSurfer_Roads.addTo(mymap);
+
+var drawnItems = new L.FeatureGroup().addTo(mymap); //Array containing drawing objects
 
 //---
 // MAP CONTROL TOOLS
@@ -152,13 +190,14 @@ function drawingType(layer) {
 }
 
 var tooltip = L.DomUtil.get('tooltip');
-function queryDrawing(){
+
+function queryDrawing() {
     loadDrawingEstablishments();
     // Clear tooltip but we don't want to get rid of the listeners for edits.
     tooltip.style.display = 'none';
 }
 // Converts radius to miles and display it in the #tooltip div.
-function printRadius(e){
+function printRadius(e) {
     let radius = e.layer.getRadius() * 0.00062137;
     radius = radius.toFixed(4) + 'mi';
     tooltip.innerHTML = radius;
@@ -167,7 +206,8 @@ function printRadius(e){
 
 function addTooltip(e) {
     removeTooltip(); //Get rid of old tooltip
-    if (e.layer instanceof L.Circle){
+    //Draw radius if its circle query
+    if (e.layer instanceof L.Circle) {
         mymap.on('editable:drawing:move', printRadius); // To print radius
         L.DomEvent.on(document, 'mousemove', moveTooltip); // To update div position
     }
@@ -190,7 +230,7 @@ function addUsrMarker(e) {
     usrMarkers.push(e.layer);
     drawnItems.addLayer(e.layer);
     $('.leaflet-control-queryBtn').css('display', 'block'); // Display the query button
-    $('.leaflet-control-queryBtn').on('click', queryDrawing);   // QUERY BUTTON LISTENER
+    $('.leaflet-control-queryBtn').on('click', queryDrawing); // QUERY BUTTON LISTENER
     // drawnItems.clearLayers();
 }
 

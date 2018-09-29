@@ -28,6 +28,7 @@ function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, bo
 				$(".advancedSearchContainer").toggleClass("open");
 				$("#search-message").show().delay(5000).fadeOut();
 				$('#jq_datatable_search').DataTable().clear().draw();
+				updateSearchInfo('NOT FOUND', searchValue);
 			} 
 			else {
 				//TODO: check for max data length and alert user
@@ -35,6 +36,18 @@ function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, bo
 				loadPieChart(data);
 				loadHistogram(data);
 				loadDatatable(data);
+				updateSearchInfo(searchType, searchValue);
+
+				if (borough) {
+					//Get Query layer/ bounding box
+					d3.json('/api/getcounty/' + borough)
+					.then(data => {
+						loadQueryOverlay(data);
+					}, function (err) {
+						alert("Query Error on Base Layer");
+						console.log(err);
+					});
+				}
 			}
 		}, function (err) {
 			alert("Query Error");

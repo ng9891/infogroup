@@ -2,14 +2,15 @@
 let db_service = require('../utils/db_service');
 
 //Takes an offset and limit to load the county with pagination.
-function geobycounty(county_name, offset, limit) {
+function geobympo(mpo_name, offset, limit) {
     return new Promise(function (resolve, reject) {
         let sql =
-            `WITH county AS (
+            `WITH mpo AS (
                 SELECT 
                 geom
-                FROM counties as county
-                WHERE UPPER(county.name) = UPPER('${county_name}')
+                FROM mpo
+                WHERE UPPER(mpo.mpo) = UPPER('${mpo_name}')
+                OR UPPER(mpo.mpo_name) = UPPER('${mpo_name}')
                 LIMIT 1
             )
             SELECT
@@ -23,13 +24,12 @@ function geobycounty(county_name, offset, limit) {
             "ALEMPSZ", 
             "PRMSICDS", 
             "LSALVOLDS", 
-            "ALSLSVOL", 
             "SQFOOTCD", 
             "BE_Payroll_Expense_Code",
             "BE_Payroll_Expense_Range",
             "BE_Payroll_Expense_Description"
-            FROM businesses_2014 as business, county
-            WHERE ST_Contains(county.geom, business.geom)
+            FROM businesses_2014 as business, mpo
+            WHERE ST_Contains(mpo.geom, business.geom)
             ORDER BY COALESCE("ALEMPSZ", 0) DESC
             OFFSET ${offset}
         `;
@@ -46,8 +46,8 @@ function geobycounty(county_name, offset, limit) {
     });
 }
 
-const geoByCountyRequest = function (request, response) {
-    if (!request.params.county) {
+const geoByMpoRequest = function (request, response) {
+    if (!request.params.mpo) {
         return response.status(400)
             .json({
                 status: 'Error',
@@ -64,7 +64,7 @@ const geoByCountyRequest = function (request, response) {
     //     request.query.limiter = process.env.QUERY_LIMIT; //QUERY_LIMIT from env file.
     // }
 
-    geobycounty(request.params.county, request.query.offset, request.query.limiter)
+    geobympo(request.params.mpo, request.query.offset, request.query.limiter)
         .then(data => {
             return response.status(200)
                 .json({
@@ -79,4 +79,4 @@ const geoByCountyRequest = function (request, response) {
         });
 }
 
-module.exports = geoByCountyRequest;
+module.exports = geoByMpoRequest;

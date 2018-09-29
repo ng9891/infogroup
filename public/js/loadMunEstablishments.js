@@ -1,6 +1,6 @@
 //Takes an offset and limit to load the county with pagination.
 //Limit is usually undefined and set to default value unless specified by api.
-function loadCountyEstablishments(county, offset, limit) {
+function loadMunEstablishments(mun, mun_type, county, offset, limit) {
 	// --
 	// load data from api
 	// then add to map
@@ -10,9 +10,16 @@ function loadCountyEstablishments(county, offset, limit) {
 	if (usrMarkers.length !== 0) mymap.removeLayer(usrMarkers.pop()); //removes marker from user
 
 	// Creates a request URL for the API
-	var reqURL = '/api/bycounty/' + county;
+	var reqURL = '/api/bymun/' + mun;
+	let param = '';
+	if(mun_type && county){
+		param += '?mun_type=' + mun_type + '&county=' + county;
+		reqURL += param;
+	}else{
+		param += '?exact=1'
+	}
 	if (offset) {
-		reqURL += '?offset=' + offset;
+		reqURL += '&offset=' + offset;
 		if (limit) {
 			reqURL += '&limiter=' + limit;
 		}
@@ -23,16 +30,17 @@ function loadCountyEstablishments(county, offset, limit) {
 		.then(data => {
 			if (data.data.length === 0) {
 				console.log("Query not found.");
-				updateSearchInfo('NOT FOUND', county.toUpperCase());
+				updateSearchInfo('NOT FOUND', mun.toUpperCase());
 			} else {
 				mapEstablishments(data);
 				loadPieChart(data);
-				loadDatatable(data);
-				loadHistogram(data);
-				updateSearchInfo('County', county.toUpperCase());
+                loadDatatable(data);
+                // TODO: NEED FIX HISTOGRAM
+				// loadHistogram(data); 
+				updateSearchInfo('Mun', mun.toUpperCase());
 
 				//Get Query layer/ bounding box
-				d3.json('/api/getcounty/' + county)
+				d3.json('/api/getmun/' + mun + param)
 					.then(data => {
 						loadQueryOverlay(data);
 					}, function (err) {
@@ -41,7 +49,7 @@ function loadCountyEstablishments(county, offset, limit) {
 					});
 			}
 		}, function (err) {
-			alert("Query Error on County Establishment");
+			alert("Query Error on Mun Establishment");
 			console.log(err);
 		});
 }
