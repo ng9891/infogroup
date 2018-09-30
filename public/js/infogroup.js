@@ -3,8 +3,14 @@
 //---
 
 //Button listener to show statisticsContainer
-$(".statisticsContainerButton").click(() => {
-    $(".statisticsContainer").toggleClass("open");
+$(".statisticsContainer").click(() => {
+    if (LessThan17inch) {
+        $(".statisticsContainer").toggleClass("open2");
+    }
+    else {
+        $(".statisticsContainer").toggleClass("open");
+    }
+
 });
 
 //Button listener to show advancedSearchContainer

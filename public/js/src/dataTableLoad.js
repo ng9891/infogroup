@@ -2,13 +2,8 @@
 //Creates a Datatable with the information in data
 function loadDatatable(establishments) {
 
-	var calcDataTableHeight = function() {
-		var wh = $(window).height();
-		if (wh >= 670 && wh < 800)
-			return  wh * 0.2;
-		else
-			return wh * 0.32
-	};
+	var wh = $(window).height();
+	var calcDataTableHeight = (LessThan17inch) ? wh * 0.23 : wh * 0.32;
 
 	var obj = {
 		data: []
@@ -42,7 +37,7 @@ function loadDatatable(establishments) {
 			],
 			"fixedColumns" : true,
 			"bLengthChange" : false,
-			"scrollY":        calcDataTableHeight(),
+			"scrollY":        calcDataTableHeight,
 			"scrollCollapse": true,
 			"pageResize": true,
 			"destroy": true
