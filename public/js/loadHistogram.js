@@ -3,13 +3,15 @@ function loadHistogram(establishments) {
     /*****************************/
     // preparing data for histogram
 
-    var arr_employees = [], arr_maxemp_companies = [], arr_minemp_companies=[], result_content = [];
-    var i=0, x, total_empl_size=0, total_comp_num=0, count, item, it;
+    var arr_employees = [], arr_maxemp_companies = [], arr_minemp_companies=[], arr_sales_vol=[], result_content = [];
+    var i=0, x, total_empl_size=0, total_comp_num=0, total_sales_vol=0, count, item, it;
 
     establishments.data.map( est => {
       total_comp_num += 1;
       total_empl_size += est.ALEMPSZ;
+      total_sales_vol += est.ALSLSVOL;
       arr_employees.push(est.ALEMPSZ);
+      arr_sales_vol.push(est.ALSLSVOL);
     });
 
     // grouping companies according to employee size (number of companies - unique employee size)
@@ -31,8 +33,10 @@ function loadHistogram(establishments) {
       ++i;
     }
 
-    var max_employee_size = result_content.reduce((max, p) => p.employees > max ? p.employees : max, result_content[0].employees);
-    var min_employee_size = result_content.reduce((min, p) => p.employees < min ? p.employees : min, result_content[0].employees);
+    var max_employee_size = d3.max(result_content, function(d) { return d.employees }); //result_content.reduce((max, p) => p.employees > max ? p.employees : max, result_content[0].employees);
+    var min_employee_size = d3.min(result_content, function(d) { return d.employees }); //result_content.reduce((min, p) => p.employees < min ? p.employees : min, result_content[0].employees);
+    var avg_employee_size = Math.round(d3.mean(result_content, function(d) { return d.employees; }));
+    var avg_sales_vol = Math.round(d3.mean(arr_sales_vol));
 
     establishments.data.map( est => {
       if (est.ALEMPSZ === max_employee_size) {
@@ -67,8 +71,10 @@ function loadHistogram(establishments) {
     for ( var key in obj )
         result_content.push(obj[key]);
     ///
+    
+    var counter = (result_content.length < 7) ? result_content.length : 7;
 
-    for (var i=0; i<7; i++) {
+    for (var i=0; i<counter; i++) {
         if (result_content[i]["employees"] > min_employee_size && result_content[i]["employees"] < max_employee_size) {
             var companies_with_given_employees = result_content.find(o => o.employees === result_content[i]["employees"]).companies;
             if (companies_with_given_employees !== companies_with_max_employees && companies_with_given_employees !== companies_with_min_employees) { // avoiding bars in bar
@@ -243,21 +249,37 @@ function loadHistogram(establishments) {
         .attr('x', width + margin + 10)
         .attr('y', 200)
         .attr('text-anchor', 'start')
-        .text('Total sales volume: ?')
+        .text('Average number of employees: ' + avg_employee_size)
+
+        svg
+        .append('text')
+        .attr('class', 'label stat-desc')
+        .attr('x', width + margin + 10)
+        .attr('y', 250)
+        .attr('text-anchor', 'start')
+        .text('Total sales volume: $' + total_sales_vol.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"))
+
+        svg
+        .append('text')
+        .attr('class', 'label stat-desc')
+        .attr('x', width + margin + 10)
+        .attr('y', 300)
+        .attr('text-anchor', 'start')
+        .text('Average sales volume: $' + avg_sales_vol.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"))
 
         if (arr_maxemp_companies[0].length > 26) {
           svg
           .append('text')
           .attr('class', 'label stat-desc')
           .attr('x', width + margin + 10)
-          .attr('y', 250)
+          .attr('y', 350)
           .attr('text-anchor', 'start')
           .text('Max employee size comp.: ')
           svg
           .append('text')
           .attr('class', 'label stat-desc')
           .attr('x', width + margin + 10)
-          .attr('y', 270)
+          .attr('y', 370)
           .attr('text-anchor', 'start')
           .text(arr_maxemp_companies[0])
         }
@@ -266,7 +288,7 @@ function loadHistogram(establishments) {
           .append('text')
           .attr('class', 'label stat-desc')
           .attr('x', width + margin + 10)
-          .attr('y', 250)
+          .attr('y', 350)
           .attr('text-anchor', 'start')
           .text('Max employee size comp.: ' + arr_maxemp_companies[0])
         }
@@ -276,14 +298,14 @@ function loadHistogram(establishments) {
           .append('text')
           .attr('class', 'label stat-desc')
           .attr('x', width + margin + 10)
-          .attr('y', 300)
+          .attr('y', 400)
           .attr('text-anchor', 'start')
           .text('Min employee size comp.: ')
           svg
           .append('text')
           .attr('class', 'label stat-desc')
           .attr('x', width + margin + 10)
-          .attr('y', 320)
+          .attr('y', 420)
           .attr('text-anchor', 'start')
           .text(arr_minemp_companies[0])
         }
@@ -292,7 +314,7 @@ function loadHistogram(establishments) {
           .append('text')
           .attr('class', 'label stat-desc')
           .attr('x', width + margin + 10)
-          .attr('y', 300)
+          .attr('y', 400)
           .attr('text-anchor', 'start')
           .text('Min employee size comp.: ' + arr_minemp_companies[0])
         }

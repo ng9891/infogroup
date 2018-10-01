@@ -34,10 +34,8 @@ function loadPieChart(establishments) {
 	}
 	//console.log(pie_content);
 
-	var wh = $(window).height();
-
-	pie_h = (wh >= 660 && wh < 800) ? 260 : 380;
-	pie_w = (wh >= 660 && wh < 800) ? 560 : 750;
+	pie_h = (LessThan17inch) ? 260 : 380;
+	pie_w = (LessThan17inch) ? 560 : 750;
 
 	var pie_c = new d3pie("pieChart", {
 		"header": {

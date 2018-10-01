@@ -1,45 +1,44 @@
-function loadAdvancedSearchEstablishments(industry, employee, borough) {
-	// --
-	// load data from api
-	// then add to map
-	// --
+function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, borough) {
+	
 	$("div.Object-desc").empty();
 	$("#pieChart").empty();
 
-	// Creates a request URL for the API
-	let searchType = 'Filter';
-	let searchValue = '';
-	var reqURL = '/api/advancedSearch';
-	if (industry) {
-		reqURL += '?industry=' + industry;
-		searchValue += 'Industry = ' + industry;
-		if (employee) {
-			reqURL += '&employee=' + employee;
-			searchValue += ' Employee = ' + employee;
-			if (borough) {
-				reqURL += '&borough=' + borough;
-				searchValue += ' Borough = '+ borough;
-			}
-		}
-	}
+	industry = ($.trim(industry)!=='') ? industry : 'null';
+	minempl = ($.trim(minempl)!=='') ? minempl : 0;
+	maxempl = ($.trim(maxempl)!=='') ? maxempl : 'null';
+	salvol = ($.trim(salvol)!=='') ? salvol : 'null';
+	borough = ($.trim(borough)!=='') ? borough : 'null';
 
-	// console.log(reqURL);
+	var reqURL = '/api/advancedSearch?';
+	var params = {
+		'industry': industry,
+		'minempl': minempl,
+		'maxempl': maxempl,
+		'salvol': salvol,
+		'borough': borough 
+	};
+
+	var query = $.param(params);
+	reqURL += query;
+	//console.log(reqURL);
 	
 	d3.json(reqURL)
 		.then(data => {
 			if (data.data.length == 0) {
-				$("#search-message").show().delay(2000).fadeOut();
+				$(".advancedSearchContainer").toggleClass("open");
+				$("#search-message").show().delay(5000).fadeOut();
 				$('#jq_datatable_search').DataTable().clear().draw();
 				updateSearchInfo('NOT FOUND', searchValue);
 			} 
 			else {
+				//TODO: check for max data length and alert user
 				mapEstablishments(data);
 				loadPieChart(data);
 				loadHistogram(data);
-				loadDatatableAdvancedSearch(data);
+				loadDatatable(data);
 				updateSearchInfo(searchType, searchValue);
 
-				if (borough){
+				if (borough) {
 					//Get Query layer/ bounding box
 					d3.json('/api/getcounty/' + borough)
 					.then(data => {

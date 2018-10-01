@@ -1,30 +1,18 @@
 'use strict';
 let db_service = require('../utils/db_service')
 
-function geobyzip(zipcode) {
+function getSalesVolume() {
     return new Promise(function (resolve, reject) {
         let sql =
             `
-        select 
-        id, 
-        ST_ASGeoJSON(ST_transform(geom,4326)) as geoPoint, 
-        "CONAME",
-        "NAICSCD",
-        "NAICSDS", 
-        "LEMPSZCD", 
-        "LEMPSZDS", 
-        "ALEMPSZ", 
-        "PRMSICDS", 
-        "LSALVOLDS", 
-        "ALSLSVOL", 
-        "SQFOOTCD", 
-        "BE_Payroll_Expense_Code",
-        "BE_Payroll_Expense_Range",
-        "BE_Payroll_Expense_Description"
-        from businesses_2014  
-        where "PRMZIP" = ${zipcode};
+        SELECT 
+        DISTINCT "LSALVOLDS", "LSALVOLCD" 
+        FROM businesses_2014 
+        ORDER BY "LSALVOLCD";
         `
-
+        // first time 3.2 sec, then ~436 msec --table need to be indexed
+        // must be written in a local file once,
+        // then check the file if not empty use the list from there.
         db_service.runQuery(sql, [], (err, data) => {
             if (err) return reject(err);
             resolve(data.rows);
@@ -32,8 +20,8 @@ function geobyzip(zipcode) {
     });
 }
 
-const geoByZipRequest = function (request, response) {
-    if (!request.params.zipcode) {
+const getSalesVolumeRequest = function (request, response) {
+    if (!request) {
         response.status(400)
             .json({
                 status: 'Error',
@@ -41,7 +29,7 @@ const geoByZipRequest = function (request, response) {
             });
     }
 
-    geobyzip(request.params.zipcode)
+    getSalesVolume()
         .then(data => {
             response.status(200)
                 .json({
@@ -56,4 +44,4 @@ const geoByZipRequest = function (request, response) {
         });
 }
 
-module.exports = geoByZipRequest;
+module.exports = getSalesVolumeRequest;
