@@ -1,22 +1,22 @@
 .marker-cluster-small {
-	background-color: rgba(93, 172, 252, 0.6);
+	background-color: rgba(242, 81, 22, 0.6);
 	}
 .marker-cluster-small div {
-	background-color: rgba(93, 172, 252, 0.6);
+	background-color: rgba(242, 81, 22, 0.6);
 	}
 
 .marker-cluster-medium {
-	background-color: rgba(93, 172, 252, 0.6);
+	background-color: rgba(242, 81, 22, 0.6);
 	}
 .marker-cluster-medium div {
-	background-color: rgba(93, 172, 252, 0.6);
+	background-color: rgba(242, 81, 22, 0.6);
 	}
 
 .marker-cluster-large {
-	background-color: rgba(93, 172, 252, 0.6);
+	background-color: rgba(242, 81, 22, 0.6);
 	}
 .marker-cluster-large div {
-	background-color: rgba(93, 172, 252, 0.6);
+	background-color: rgba(242, 81, 22, 0.6);
 	}
 
 	/* IE 6-8 fallback colors */
