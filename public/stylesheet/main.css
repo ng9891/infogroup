@@ -336,9 +336,9 @@ body{
   /* border: 2px solid red; */
 }
 
-/* .leaflet-control-zoom {
-  top: 50px;
-} */
+.leaflet-control.leaflet-bar.queryBtn {
+  top: 30px;
+}
 
 #pieChart svg text {
   font-size: 9px !important;

@@ -91,16 +91,13 @@ L.EditControl = L.Control.extend({
                 break;
             case 'query':
                 //Defines the query button
-                container = L.DomUtil.create('div', 'leaflet-control leaflet-bar');
+                container = L.DomUtil.create('div', 'leaflet-control leaflet-bar queryBtn');
                 var link = L.DomUtil.create('a', 'leaflet-control-queryBtn', container);
-                link.style = 'display:none;'
+                container.style = 'display:none;'
                 link.href = '#';
                 link.title = 'Query the drawing';
                 link.innerHTML = this.options.html;
                 L.DomEvent.on(link, 'click', L.DomEvent.stop);
-                break;
-            default:
-                var container = L.DomUtil.create('div', 'leaflet-control leaflet-bar');
                 break;
         }
         return container;
@@ -157,22 +154,11 @@ L.NewQueryControl = L.EditControl.extend({
         type: 'query'
     }
 });
-L.EmptyControl = L.EditControl.extend({
-    options: {
-        position: 'topleft',
-        callback: null,
-        kind: '',
-        html: '',
-        type: ''
-    }
-});
 
 // mymap.addControl(new L.NewPolygonControl());
 mymap.addControl(new L.NewRectangleControl());
 mymap.addControl(new L.NewCircleControl());
 mymap.addControl(new L.NewMarkerControl());
-mymap.addControl(new L.EmptyControl()); //space
-mymap.addControl(new L.EmptyControl()); //space
 mymap.addControl(new L.NewQueryControl());
 //---
 // END MAP CONTROL TOOLS
@@ -207,12 +193,11 @@ function printRadius(e) {
 
 function addTooltip(e) {
     removeTooltip(); //Get rid of old drwaing tooltip
-    if (e){
-        //Draw radius if its circle query
-        if (e.layer instanceof L.Circle) {
-            mymap.on('editable:drawing:move', printRadius); // To print radius
-            L.DomEvent.on(document, 'mousemove', moveTooltip); // To update div position
-        }
+    if (!e) return;
+    //Draw radius if its circle query
+    if (e.layer instanceof L.Circle) {
+        mymap.on('editable:drawing:move', printRadius); // To print radius
+        L.DomEvent.on(document, 'mousemove', moveTooltip); // To update div position
     }
 }
 
@@ -232,8 +217,8 @@ function addUsrMarker(e) {
     // On drawing commit, push drawing
     usrMarkers.push(e.layer);
     drawnItems.addLayer(e.layer);
-    $('.leaflet-control-queryBtn').css('display', 'block'); // Display the query button
-    $('.leaflet-control-queryBtn').on('click', queryDrawing); // QUERY BUTTON LISTENER
+    $('.leaflet-control.leaflet-bar.queryBtn ').css('display', 'block'); // Display the query button
+    $('.leaflet-control.leaflet-bar.queryBtn ').on('click', queryDrawing); // QUERY BUTTON LISTENER
     // drawnItems.clearLayers();
 }
 
@@ -241,8 +226,8 @@ function clearUsrMarker(e) {
     // On drawing start, clear prev marker and add tooltip.
     usrMarkers.pop();
     drawnItems.clearLayers();
-    $('.leaflet-control-queryBtn').css('display', 'none'); // hide btn so no meaningless query request
-    $('.leaflet-control-queryBtn').off('click');
+    $('.leaflet-control.leaflet-bar.queryBtn ').css('display', 'none'); // hide btn so no meaningless query request
+    $('.leaflet-control.leaflet-bar.queryBtn ').off('click');
     addTooltip(e);
 }
 
@@ -268,7 +253,7 @@ var onKeyDown = function (e) {
                 //usually 1 drawing
                 usrMarkers.pop();
                 drawnItems.clearLayers();
-                $('.leaflet-control-queryBtn').css('display', 'none');
+                $('.leaflet-control.leaflet-bar.queryBtn').css('display', 'none');
                 removeTooltip();
             }
             return;

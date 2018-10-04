@@ -64,7 +64,7 @@ $(document).ready(function () {
     });
     //Search button
     d3.select('#query-button').on('click', (e) => {
-        clearUsrMarker(); //function in map.js to clear user markers
+        clearUsrMarker(); // function in map.js to clear user drawings
         query_input = d3.select('#query-search').property("value");
         query_type = d3.select('#query-dropdown').property("value");
         query_input = query_input.trim();
