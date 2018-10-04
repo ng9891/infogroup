@@ -380,7 +380,7 @@ body{
   border-radius: 4px;
 } */
 
-#tooltip {
+#draw-tooltip {
   display: none;
   position: absolute;
   background: #666;

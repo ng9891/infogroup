@@ -2,7 +2,7 @@
 This project aims at creating a Web-GIS tool to allow users to explore Information about firm-level, business establishments and their locations for the understanding of economic activities and related transportation movements at various geographical regions and scales. 
 The project will use business establishment data, which includes street address location, number of employees, annual sales volume, NAICS and SICS industry classification codes, and other attributes provided by Infogroup (formally known as InfoUSA). 
 
-# InfogGroup API Start
+# InfoGroup API Start
 Requires node (recommended version 8.9.4LTS)
 Requires an enviromental file in utils called postgres.env
 

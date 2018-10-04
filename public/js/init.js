@@ -9,22 +9,22 @@ var url = new URL(window.location.href);
 var path = url.pathname.substr(url.pathname.indexOf('/') + 1, url.pathname.lastIndexOf('/') - 1);
 //locate the last occurrence of the / character in your URL and cut it.
 
-switch (path) {
-    case 'county':
-        console.log("County Page");
-        var county = url.pathname.substr(url.pathname.lastIndexOf('/') + 1);
-        console.log(county);
-        if (url.search !== '') {
-            console.log(url.search);
-            let params = new URLSearchParams(url.search.substring(1)); //drop the leading "?"
-            console.log(parseInt(params.get("offset")));
-        } else {
-            console.log('Empty query');
-        }
-        break;
-    default:
-        console.log("HomePage");
-}
+// switch (path) {
+//     case 'county':
+//         console.log("County Page");
+//         var county = url.pathname.substr(url.pathname.lastIndexOf('/') + 1);
+//         console.log(county);
+//         if (url.search !== '') {
+//             console.log(url.search);
+//             let params = new URLSearchParams(url.search.substring(1)); //drop the leading "?"
+//             console.log(parseInt(params.get("offset")));
+//         } else {
+//             console.log('Empty query');
+//         }
+//         break;
+//     default:
+//         console.log("HomePage");
+// }
 //-----
 // END Test to PARSE URL
 //-----

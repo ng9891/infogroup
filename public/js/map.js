@@ -11,7 +11,7 @@ var markers = L.markerClusterGroup({
 var markerList = []; //contains all the points from query
 var queryLayer = []; //contains the query layer or bounding box of query
 var usrMarkers = []; //contains all the marker drawn by user
-var table;
+// var table;
 var lat, lon;
 // var redoBuffer = [];
 
@@ -189,14 +189,15 @@ function drawingType(layer) {
     if (layer instanceof L.Polygon) return 'polygon';
 }
 
-var tooltip = L.DomUtil.get('tooltip');
+var tooltip = L.DomUtil.get('draw-tooltip'); // Tooltip providing info of radius for circle drawing
 
+// Loads the establishments around the drawing area
 function queryDrawing() {
     loadDrawingEstablishments();
-    // Clear tooltip but we don't want to get rid of the listeners for edits.
+    // Clear tooltip but we don't want to get rid of the listeners for drawing edits.
     tooltip.style.display = 'none';
 }
-// Converts radius to miles and display it in the #tooltip div.
+// Converts radius to miles and display it in the #draw-tooltip div.
 function printRadius(e) {
     let radius = e.layer.getRadius() * 0.00062137;
     radius = radius.toFixed(4) + 'mi';
@@ -205,11 +206,13 @@ function printRadius(e) {
 }
 
 function addTooltip(e) {
-    removeTooltip(); //Get rid of old tooltip
-    //Draw radius if its circle query
-    if (e.layer instanceof L.Circle) {
-        mymap.on('editable:drawing:move', printRadius); // To print radius
-        L.DomEvent.on(document, 'mousemove', moveTooltip); // To update div position
+    removeTooltip(); //Get rid of old drwaing tooltip
+    if (e){
+        //Draw radius if its circle query
+        if (e.layer instanceof L.Circle) {
+            mymap.on('editable:drawing:move', printRadius); // To print radius
+            L.DomEvent.on(document, 'mousemove', moveTooltip); // To update div position
+        }
     }
 }
 
