@@ -20,9 +20,9 @@ function geobyid(bp_id) {
         where id = ${bp_id};`
 
         db_service.runQuery(sql, [], (err, data) => {
-            if (err) return reject(err)
+            if (err) return reject(err.stack)
             resolve(data.rows)
-        })
+        });
     });
 }
 
@@ -45,7 +45,7 @@ const requestGeoById = function (request, response) {
             response.status(500)
                 .json({
                     status: 'Error',
-                    responseText: 'Error in query'
+                    responseText: 'Error in query ' + err
                 });
         });
 }

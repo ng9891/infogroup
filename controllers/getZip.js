@@ -13,7 +13,7 @@ function geogetzip(zip) {
             ORDER BY CAST(zcta5ce10 AS int);
             `;
         db_service.runQuery(sql, [], (err, data) => {
-            if (err) return reject(err);
+            if (err) return reject(err.stack);
             resolve(data.rows);
         });
     });
@@ -38,7 +38,7 @@ const geoGetZipRequest = function (request, response) {
             return response.status(500)
                 .json({
                     status: 'Error',
-                    responseText: 'Error in query'
+                    responseText: 'Error in query ' + err
                 });
         });
 }

@@ -14,9 +14,9 @@ function getIndustries() {
         // must be written in a local file once,
         // then check the file if not empty use the list from there.
         db_service.runQuery(sql, [], (err, data) => {
-            if (err) return reject(err);
+            if (err) return reject(err.stack);
             resolve(data.rows);
-        })
+        });
     });
 }
 
@@ -39,7 +39,7 @@ const getIndustriesRequest = function (request, response) {
             response.status(500)
                 .json({
                     status: 'Error',
-                    responseText: 'Error in query'
+                    responseText: 'Error in query ' + err
                 });
         });
 }

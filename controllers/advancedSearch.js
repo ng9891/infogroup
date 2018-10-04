@@ -90,9 +90,9 @@ function advancedSearch(industry,  minempl, maxempl, salvol, borough) {
         //console.log(sql);
 
         db_service.runQuery(sql, [], (err, data) => {
-            if (err) return reject(err);
+            if (err) return reject(err.stack);
             resolve(data.rows);
-        })
+        });
     });
 }
 
@@ -143,7 +143,7 @@ const advancedSearchRequest = function (request, response) {
             return response.status(500)
                 .json({
                     status: 'Error',
-                    responseText: 'Error in query'
+                    responseText: 'Error in query ' + err
                 });
         });
 }
