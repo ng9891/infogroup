@@ -57,12 +57,12 @@ function advancedSearch(industry,  minempl, maxempl, salvol, borough) {
                     `+where_clause+`
                  `;
         } 
-        else { // borough specified
-            sql = `WITH borough AS ( 
+        else { // borough (previously was in nymtc table) specified
+            sql = `WITH county AS ( 
                         SELECT 
                         ST_Transform(geom, 4326) AS geom 
-                        FROM nymtc 
-                        WHERE nymtc.county LIKE '%${borough}%' 
+                        FROM counties as county 
+                        WHERE county.name LIKE '%${borough}%' 
                         LIMIT 1 
                     ) 
                     SELECT 
@@ -81,9 +81,9 @@ function advancedSearch(industry,  minempl, maxempl, salvol, borough) {
                     "BE_Payroll_Expense_Code", 
                     "BE_Payroll_Expense_Range", 
                     "BE_Payroll_Expense_Description" 
-                    FROM businesses_2014 as business, borough 
+                    FROM businesses_2014 as business, county  
                     `+where_clause+`
-                    AND ST_Contains(borough.geom, ST_Transform(business.geom, 4326)) 
+                    AND ST_Contains(county.geom, ST_Transform(business.geom, 4326)) 
                 `;
         }
         

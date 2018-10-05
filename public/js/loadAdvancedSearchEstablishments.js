@@ -9,6 +9,8 @@ function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, bo
 	salvol = ($.trim(salvol)!=='') ? salvol : 'null';
 	borough = ($.trim(borough)!=='') ? borough : 'null';
 
+	var searchType = "Search Results";
+	var searchValue="";
 	var reqURL = '/api/advancedSearch?';
 	var params = {
 		'industry': industry,
@@ -28,7 +30,7 @@ function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, bo
 				$(".advancedSearchContainer").toggleClass("open");
 				$("#search-message").show().delay(5000).fadeOut();
 				$('#jq_datatable_search').DataTable().clear().draw();
-				updateSearchInfo('NOT FOUND', searchValue);
+				updateSearchInfo('Search: NOT FOUND', searchValue);
 			} 
 			else {
 				//TODO: check for max data length and alert user
@@ -37,7 +39,7 @@ function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, bo
 				loadHistogram(data);
 				loadDatatable(data);
 				updateSearchInfo(searchType, searchValue);
-
+				
 				if (borough) {
 					//Get Query layer/ bounding box
 					d3.json('/api/getcounty/' + borough)
@@ -48,6 +50,7 @@ function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, bo
 						console.log(err);
 					});
 				}
+			
 			}
 		}, function (err) {
 			alert("Query Error");

@@ -29,11 +29,13 @@ function loadDatatable(establishments) {
 				{ title: "Industry", data: "industry" },
 				{ title: "PR.SIC", data: "prmsic" },
 				{ title: "Sales Vol.", data: "sales_volume" },
-				{ title: "SQF", data: "square_foot" }
+				{ title: "SQF", data: "square_foot" },
+				{ title: "ED", data: null, defaultContent: "<button type='button' id='btn_edit' class='btn btn-primary btn-xs'>Edit</button>" }
 			],
 			"columnDefs" : [
 				{"width": 34, "targets": 1},
-				{"width": 34, "targets": 5}
+				{"width": 34, "targets": 5},
+				{"width": 34, "targets": 6}
 			],
 			"fixedColumns" : true,
 			"bLengthChange" : false,
@@ -42,6 +44,11 @@ function loadDatatable(establishments) {
 			"pageResize": true,
 			"destroy": true
 		});
+
+		$('#jq_datatable tbody').on( 'click', 'button', function () {
+			//TODO: call function for editing specific entry
+        	$('.editEntity').show();
+		} );
 
 	} );
 }
