@@ -21,7 +21,7 @@ function loadZipEstablishments(zip) {
 				loadDatatable(data);
 				loadHistogram(data);
 				updateSearchInfo('ZipCode', zip);
-
+				
 				//Get Query layer/ bounding box
 				d3.json('/api/getzip/' + zip)
 					.then(data => {
@@ -30,6 +30,7 @@ function loadZipEstablishments(zip) {
 						alert("Query Error on Base Layer");
 						console.log(err);
 					});
+					
 			}
 		}, function (err) {
 			console.log(err);
