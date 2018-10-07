@@ -194,6 +194,8 @@ body{
   -ms-transform: rotate(-90deg);
   /* Opera */
   -o-transform: rotate(-90deg);
+
+  transform: rotate(-90deg);
 }
 
 .infoContainerButton {

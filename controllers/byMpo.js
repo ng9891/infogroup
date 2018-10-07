@@ -71,6 +71,7 @@ const geoByMpoRequest = function (request, response) {
                     data: data,
                 });
         }, function (err) {
+            console.error(err);
             return response.status(500)
                 .json({
                     status: 'Error',

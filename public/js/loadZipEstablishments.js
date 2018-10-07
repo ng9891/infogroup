@@ -32,7 +32,7 @@ function loadZipEstablishments(zip) {
 					});
 			}
 		}, function (err) {
-			alert("Query Error on Zip Establishment");
 			console.log(err);
+			alert("Query Error on Zip Establishment");
 		});
 }
