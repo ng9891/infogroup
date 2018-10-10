@@ -402,7 +402,7 @@ body{
 .ui-autocomplete {
   position: fixed;
   background:inherit;
-  z-index: 4002;
+  z-index: 6002;
   max-height: 200px;
   /* prevent horizontal scrollbar */
   overflow-x: hidden;
@@ -413,7 +413,7 @@ body{
 * html .ui-autocomplete {
   border: 1px solid lightgray;
   position: fixed;
-  z-index: 4002;
+  z-index: 6002;
   height: 200px;
   overflow-x: hidden;
   background:inherit;
@@ -486,18 +486,19 @@ body{
 }
 
 .editEntity {
+  font-size: 12px !important;
   border: 1px dotted #000;
   border-radius: 5px;
   background-color: #cfcccc;
   position: fixed;
-  width: 350px;
-  height: 460px;
+  width: 400px;
+  height: 420px;
   top:0;
   bottom: 0;
   left: 0;
   right: 0;
   margin: auto;
-  padding: 15px;
+  padding: 20px;
   z-index: 6000;
   display: none;
 }

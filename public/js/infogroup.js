@@ -138,16 +138,46 @@ function updateProgressBar(processed, total, elapsed, layersArray) {
 
 //------------------------------------------------------------------------------
 // JS For Advanced Search Form
-$(document).ready(function () {
-
-    $("#search-message").hide();
+function loadIndustries(inputId) {
 
     d3.json(`/api/getindustries`).then(data => {
-        loadIndustries(data);
+        textAutocomplete(data, inputId);
     }, function (err) {
         alert("Query Error");
         console.log(err);
     });
+
+};
+
+function textAutocomplete(dataValues, inputId) {
+
+    var arr_data = [];
+
+    dataValues.data.map(est => {
+        arr_data.push(est.NAICSDS);
+    });
+
+    $(inputId).autocomplete({
+        delay: 0,
+        minLength: 2,
+        //source: arr_data,
+        source: function (request, response) {
+            var results = $.ui.autocomplete.filter(arr_data, request.term);
+            response(results.slice(0, 10));
+        },
+        messages: {
+            noResults: '',
+            results: function () {}
+        }
+    });
+};
+
+$(document).ready(function () {
+
+    $("#search-message").hide();
+
+    loadIndustries("#industriesId");
+    loadIndustries("#entityIndustryId");
 
     d3.json(`/api/getsalesvolume`).then(data => {
            loadSalesVolume(data);
@@ -155,29 +185,6 @@ $(document).ready(function () {
 		alert("Query Error");
 		console.log(err);
     });
-
-    function loadIndustries(input) {
-
-        var arr_data = [];
-
-        input.data.map(est => {
-            arr_data.push(est.NAICSDS);
-        });
-
-        $("#tags").autocomplete({
-            delay: 0,
-            minLength: 2,
-            //source: arr_data,
-            source: function (request, response) {
-                var results = $.ui.autocomplete.filter(arr_data, request.term);
-                response(results.slice(0, 10));
-            },
-            messages: {
-                noResults: '',
-                results: function () {}
-            }
-        });
-    };
 
     var salvol, borough;
     function loadSalesVolume(input) {
@@ -214,4 +221,22 @@ function updateSearchInfo(searchType, searchValue) {
     if (!searchType) searchType = 'error';
     if (!searchValue) searchValue = '';
     $('#search-description').html('<h4>' + searchType + ' ' + searchValue + '</h4>');
+}
+
+function showEditBox(dt_row) {
+    //console.log(dt_row);
+    if (!$.isEmptyObject({dt_row}) && typeof dt_row !== 'undefined') {
+        var row_id = dt_row["id"];
+        $("#entityNameId").val(dt_row["name"]);
+        $("#entityEmplId").val(dt_row["employee"]);
+        $("#entityIndustryId").val(dt_row["industry"]);
+        $("#entitySalesVolumeId").val(dt_row["sales_volume"]);
+        $("#entityPrimarySicDescId").val(dt_row["prmsic"]);
+        $("#entitySqrFootageId").val(dt_row["square_foot"]);
+
+        $(".editEntity").show();
+    }
+    else {
+        console.log("Datatable row is undefined or empty");
+    }
 }

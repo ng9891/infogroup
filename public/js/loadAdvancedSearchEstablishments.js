@@ -29,7 +29,7 @@ function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, bo
 			if (data.data.length == 0) {
 				$(".advancedSearchContainer").toggleClass("open");
 				$("#search-message").show().delay(5000).fadeOut();
-				$('#jq_datatable_search').DataTable().clear().draw();
+				clearDatatable(); //loadDatatable.js
 				updateSearchInfo('Search: NOT FOUND', searchValue);
 			} 
 			else {
