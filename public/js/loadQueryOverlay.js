@@ -1,3 +1,6 @@
+// Function will load every overlay layer from JSON data.
+// Expected input: an object data with an array of json object called data. eg. data.data[0]
+// Output: polygons will be added into 'mymap' and queryLayer array.
 function loadQueryOverlay(data){
 
     if(queryLayer.length > 0) {

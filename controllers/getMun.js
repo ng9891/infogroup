@@ -32,7 +32,7 @@ function geogetmun(mun_name, mun_type, county, exact) {
         sql += `ORDER BY name;`
         // console.log(sql);
         db_service.runQuery(sql, [], (err, data) => {
-            if (err) return reject(err);
+            if (err) return reject(err.stack);
             resolve(data.rows);
         });
     });
@@ -57,7 +57,7 @@ const geoGetMunRequest = function (request, response) {
             return response.status(500)
                 .json({
                     status: 'Error',
-                    responseText: 'Error in query'
+                    responseText: 'Error in query ' + err
                 });
         });
 }

@@ -36,8 +36,9 @@ function loadMunEstablishments(mun, mun_type, county, offset, limit) {
 				loadPieChart(data);
                 loadDatatable(data);
                 // TODO: NEED FIX HISTOGRAM
-				// loadHistogram(data); 
-				updateSearchInfo('Mun', mun.toUpperCase());
+				// loadHistogram(data);
+				if(mun_type) updateSearchInfo(mun_type, mun.toUpperCase());
+				else updateSearchInfo('Municipal', mun.toUpperCase());
 
 				//Get Query layer/ bounding box
 				d3.json('/api/getmun/' + mun + param)

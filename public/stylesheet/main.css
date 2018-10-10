@@ -194,6 +194,8 @@ body{
   -ms-transform: rotate(-90deg);
   /* Opera */
   -o-transform: rotate(-90deg);
+
+  transform: rotate(-90deg);
 }
 
 .infoContainerButton {
@@ -340,9 +342,9 @@ body{
   /* border: 2px solid red; */
 }
 
-/* .leaflet-control-zoom {
-  top: 50px;
-} */
+.leaflet-control.leaflet-bar.queryBtn {
+  top: 30px;
+}
 
 #pieChart svg text {
   font-size: 9px !important;
@@ -384,7 +386,7 @@ body{
   border-radius: 4px;
 } */
 
-#tooltip {
+#draw-tooltip {
   display: none;
   position: absolute;
   background: #666;

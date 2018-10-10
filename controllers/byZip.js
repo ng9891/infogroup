@@ -26,9 +26,9 @@ function geobyzip(zipcode) {
         `
 
         db_service.runQuery(sql, [], (err, data) => {
-            if (err) return reject(err);
+            if (err) return reject(err.stack);
             resolve(data.rows);
-        })
+        });
     });
 }
 
@@ -43,15 +43,16 @@ const geoByZipRequest = function (request, response) {
 
     geobyzip(request.params.zipcode)
         .then(data => {
-            response.status(200)
+            return response.status(200)
                 .json({
                     data: data,
                 });
         }, function (err) {
-            response.status(500)
+            console.error(err);
+            return response.status(500)
                 .json({
                     status: 'Error',
-                    responseText: 'Error in query'
+                    responseText: 'Error in query ' + err
                 });
         });
 }
