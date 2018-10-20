@@ -5,6 +5,7 @@ function advancedSearch(industry,  minempl, maxempl, salvol, borough) {
     return new Promise(function (resolve, reject) {
 
     //TODO: BETTER TO USE Squel.Js or simial packages for sql query generation
+    //Trying to install and use Knex.Js - query builder/helper
 
         let sql, where_clause;
 
@@ -34,6 +35,7 @@ function advancedSearch(industry,  minempl, maxempl, salvol, borough) {
                             AND "ALEMPSZ" BETWEEN ${minempl} AND ${maxempl} 
                             AND "LSALVOLDS" = '${salvol}' `;
         }
+
 
         if (borough == 'null') { // borough not specified 
 

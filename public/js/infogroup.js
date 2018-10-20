@@ -207,7 +207,7 @@ $(document).ready(function () {
     });
 
     d3.select('#advsearch-button').on('click', (e) => {
-        var industry = $("#tags").val();
+        var industry = $("#industriesId").val();
         var minempl = $("#min-emplsize").val();
         var maxempl = $("#max-emplsize").val();
 

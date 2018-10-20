@@ -151,3 +151,17 @@ function mapEstablishments(establishments) {
 
 	mymap.fitBounds(bbox);
 }
+
+function locatePointByCoordinate(lat, lon) {
+    if (lat != null && lon != null) {
+
+		// create marker
+		marker = L.marker([lat, lon], {});
+
+		markerList.push(marker);
+		markers.addLayers(markerList);
+		mymap.addLayer(markers);
+		
+        mymap.setView([lat, lon], 19);
+    }
+}

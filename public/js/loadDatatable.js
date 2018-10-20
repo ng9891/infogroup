@@ -12,6 +12,8 @@ function loadDatatable(establishments) {
 	establishments = establishments.data.map(est =>{
 		obj.data.push({
 			id: est.id,
+			lat: (est.geopoint.coordinates[1] && est.geopoint.coordinates[0]) ? est.geopoint.coordinates[1] : null,
+			lon: (est.geopoint.coordinates[1] && est.geopoint.coordinates[0]) ? est.geopoint.coordinates[0] : null,
 			name: est.CONAME,
 			employee: est.ALEMPSZ,
 			industry: est.NAICSDS,
@@ -25,20 +27,31 @@ function loadDatatable(establishments) {
 		var table = $('#jq_datatable').DataTable({
 			"data" : obj.data,
 			"columns" : [
-				{ title: "id", data: "id"},
-				{ title: "Name", data: "name" },
+				{ title: "id", data: "id" },
+				{ title: "Name", data: "name",
+				  render: function (data, type, row, meta) {
+							if(type === 'display') {
+								data = '<a href="#" onclick="locatePointByCoordinate('+row["lat"]+', '+row["lon"]+')" data-zoom="12">' + data + '</a>';
+							}
+							return data;
+						}
+				},
 				{ title: "Emp", data: "employee" },
 				{ title: "Industry", data: "industry" },
 				{ title: "PR.SIC", data: "prmsic" },
 				{ title: "Sales Vol.", data: "sales_volume" },
 				{ title: "SQF", data: "square_foot" },
-				{ title: "ED", data: null, defaultContent: "<button type='button' id='btn_edit' class='btn btn-primary btn-xs'>Edit</button>" }
+				{ title: "ED", data: null, defaultContent: "<button type='button' id='btn_edit' class='btn btn-primary btn-xs'>Edit</button>" },
+				{ title: "lat", data: "lat" },
+				{ title: "lon", data: "lon" }
 			],
 			"columnDefs" : [
 				{"visible": false, "targets": 0},
 				{"width": 34, "targets": 2},
 				{"width": 34, "targets": 6},
-				{"width": 34, "targets": 7}
+				{"width": 34, "targets": 7},
+				{"visible": false, "targets": 8},
+				{"visible": false, "targets": 9}
 			],
 			"fixedColumns" : true,
 			"bLengthChange" : false,
