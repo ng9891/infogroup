@@ -1,11 +1,14 @@
 'use strict';
 let db_service = require('../utils/db_service');
+let knex       = require('../utils/knex/knex');
 
 function advancedSearch(industry,  minempl, maxempl, salvol, borough) {
     return new Promise(function (resolve, reject) {
 
     //TODO: BETTER TO USE Squel.Js or simial packages for sql query generation
     //Trying to install and use Knex.Js - query builder/helper
+
+    /*
 
         let sql, where_clause;
 
@@ -88,7 +91,44 @@ function advancedSearch(industry,  minempl, maxempl, salvol, borough) {
                     AND ST_Contains(county.geom, ST_Transform(business.geom, 4326)) 
                 `;
         }
+
+        */
+
+        var with_clause = knex.with('county', knex.raw('SELECT ST_Transform(geom, 4326) AS geom FROM counties as county WHERE county.name LIKE \'%'+borough+'%\' LIMIT 1' ));
+        var from_clause = {business: 'businesses_2014', county: 'county'};
+        var where_county = 'ST_Contains(county.geom, ST_Transform(business.geom, 4326))';
+        var where_industry = (industry != 'null') ? {NAICSDS: industry} : {};
+        var where_salvol = (salvol != 'null') ? {LSALVOLDS: salvol} : {};
+        var where_emplsize = (maxempl != 'null') ? '"ALEMPSZ" BETWEEN '+minempl+' AND '+maxempl+' ' : '';
+        if (borough == 'null') {
+            with_clause = knex;
+            from_clause = {business: 'businesses_2014'};
+            where_county = '';
+        }
+        var sql = with_clause.
+                            column('id', 
+                            knex.raw('ST_ASGeoJSON(ST_Transform(business.geom, 4326)) AS geoPoint'),
+                            'CONAME',
+                            'NAICSCD',
+                            'NAICSDS',
+                            'LEMPSZCD',
+                            'LEMPSZDS',
+                            'ALEMPSZ',
+                            'PRMSICDS',
+                            'LSALVOLDS',
+                            'ALSLSVOL',
+                            'SQFOOTCD',
+                            'BE_Payroll_Expense_Code',
+                            'BE_Payroll_Expense_Range',
+                            'BE_Payroll_Expense_Description',
+                            'BE_Payroll_Expense_Description').select().from(from_clause).
+                            where(where_industry).
+                            where(where_salvol).
+                            whereRaw(where_emplsize).
+                            whereRaw(where_county);
         
+        sql = sql.toString();
+
         //console.log(sql);
 
         db_service.runQuery(sql, [], (err, data) => {
