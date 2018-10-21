@@ -146,63 +146,74 @@
 
 	<div class='advancedSearchContainer'>
 		<button class='advancedSearchContainerButton'>SEARCH</button>
-		<div class="ui-widget">
-			<!-- Temporary -->
-			<fieldset>
-				<legend>Advanced Search</legend>
-				<div class="input-group col-md-12 mb-3">
+		<div class="container mt-3">
+			<div class="input-group col-md-12 mb-3">
+				<div class="input-group-prepend">
+					<span class="input-group-text">Industry</span>
+				</div>
+				<input type="text" id="industriesId" class="form-control" placeholder="e.g. Financial">
+			</div>
+			<div class="input-group col-md-12 mb-3 ui-content">
+				<div class="input-group-prepend">
+					<span class="input-group-text">Employees</span>
+				</div>
+				<input type="text" class="form-control" id="min-emplsize" placeholder="Min">&nbsp;
+				<input type="text" class="form-control" id="max-emplsize" placeholder="Max">
+			</div>
+			<div class="col-md-14 input-group mb-3">
+				<div class="input-group col-md-6">
 					<div class="input-group-prepend">
-						<span class="input-group-text" id="basic-addon1">Industry</span>
+						<span class="input-group-text">County</span>
 					</div>
-					<input type="text" id="industriesId" class="form-control" placeholder="e.g. Financial">
+					<input type="text" id="countyId" class="form-control" placeholder="e.g. Montgomery">
 				</div>
-				<div class="input-group col-md-12 mb-3 ui-content">
-					<!-- <div class="input-group-prepend">
-						<span class="input-group-text" id="basic-addon1">Employee Size</span>
-					</div>
-					<input type="text" class="form-control" id="emplsize" placeholder="e.g. >100"> -->
+				<div class="input-group col-md-6">
 					<div class="input-group-prepend">
-						<span class="input-group-text" id="basic-addon2">Employees</span>
+						<span class="input-group-text">MPO</span>
 					</div>
-					<input type="text" class="form-control" id="min-emplsize" placeholder="Min">&nbsp;
-					<input type="text" class="form-control" id="max-emplsize" placeholder="Max">
+					<input type="text" id="mpoId" class="form-control" placeholder="e.g. CDTC">
 				</div>
-				<div class="col-md-12 btn-group">
-					<div class="dropdown dropdown-btn">
-						<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownSalesVolume" data-toggle="dropdown"
-							aria-haspopup="true" aria-expanded="false">
-							Select Sales Volume
-						</button>
-						<div class="dropdown-menu" id="salesvolume-dropdown" aria-labelledby="dropdownSalesVolume">
-							<a class="dropdown-item" href="#">Bronx</a>
-							<a class="dropdown-item" href="#">Kings</a>
-							<a class="dropdown-item" href="#">Nassau</a>
-						</div>&nbsp;
+			</div>
+			<div class="col-md-14 input-group mb-3">
+				<div class="col-md-8 input-group">
+					<div class="input-group-prepend">
+						<span class="input-group-text">Municipality</span>
 					</div>
-					<div class="dropdown dropdown-btn">
-						<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-							aria-haspopup="true" aria-expanded="false">
-							Select Borough
-						</button>
-						<div class="dropdown-menu" id="borough-dropdown" aria-labelledby="dropdownMenuButton">
-							<a class="dropdown-item" href="#">Bronx</a>
-							<a class="dropdown-item" href="#">Kings</a>
-							<a class="dropdown-item" href="#">Nassau</a>
-							<a class="dropdown-item" href="#">New York</a>
-							<a class="dropdown-item" href="#">Putnam</a>
-							<a class="dropdown-item" href="#">Queens</a>
-							<a class="dropdown-item" href="#">Richmond</a>
-							<a class="dropdown-item" href="#">Rockland</a>
-							<a class="dropdown-item" href="#">Suffolk</a>
-							<a class="dropdown-item" href="#">Westchester</a>
-						</div>
-					</div> &nbsp;
-					<button class="btn btn-primary btn-md ml-auto" id="advsearch-button" type="submit">Search</button>
+					<input type="text" id="munId" class="form-control" placeholder="e.g. Hudson">
 				</div>
-				<div class=" col-md-12 d-flex">
-					<label id="search-message">*No match found</label>
+				<div class="dropdown dropdown-btn">
+					<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownSalesVolume" data-toggle="dropdown"
+						aria-haspopup="true" aria-expanded="false">
+						Select Sales Volume
+					</button>
+					<div class="dropdown-menu" id="salesvolume-dropdown" aria-labelledby="dropdownSalesVolume">
+					</div>&nbsp;
 				</div>
-			</fieldset>
+				<!--
+				<div class="dropdown dropdown-btn">
+					<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+						aria-haspopup="true" aria-expanded="false">
+						Select Borough
+					</button>
+					<div class="dropdown-menu" id="borough-dropdown" aria-labelledby="dropdownMenuButton">
+						<a class="dropdown-item" href="#">Bronx</a>
+						<a class="dropdown-item" href="#">Kings</a>
+						<a class="dropdown-item" href="#">Nassau</a>
+						<a class="dropdown-item" href="#">New York</a>
+						<a class="dropdown-item" href="#">Putnam</a>
+						<a class="dropdown-item" href="#">Queens</a>
+						<a class="dropdown-item" href="#">Richmond</a>
+						<a class="dropdown-item" href="#">Rockland</a>
+						<a class="dropdown-item" href="#">Suffolk</a>
+						<a class="dropdown-item" href="#">Westchester</a>
+					</div>
+				</div> &nbsp;
+				-->
+			</div>
+			<div class="col-md-12">
+				<button class="btn btn-primary btn-md ml-auto" id="advsearch-button" type="submit">Search</button>&nbsp;<label id="search-message">*No match found</label>
+			</div>
+			<!-- </fieldset> -->
 		</div>
 	</div>
 

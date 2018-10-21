@@ -1,11 +1,11 @@
 // This function will take the parement 'type' and adds it to the URL for a GET request to get a list for the autocomplete feature.
 // Expected input: a string that creates a valid API URL with the param 'type'. eg. 'zip' -> getzip route, 'county'->getcounty route
 // Output: An expected list of autocompletion displayed below '#query-search' input box
-function autoComplete_url(type) {
+function autoComplete_url(inputId, type) {
     // query_input = d3.select('#query-search').property("value");
     // query_input = query_input.trim();
 
-    $("#query-search").autocomplete({
+    $(inputId).autocomplete({
         delay: 1000,
         minLength: 2,
         source: function (request, response) {

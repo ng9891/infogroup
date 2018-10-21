@@ -49,16 +49,16 @@ $(document).ready(function () {
         query_type = d3.select('#query-dropdown').property("value");
         switch (query_type) {
             case 'zip':
-                autoComplete_url('zip');
+                autoComplete_url("#query-search", 'zip');
                 break;
             case 'county':
-                autoComplete_url('county');
+                autoComplete_url("#query-search", 'county');
                 break;
             case 'mpo':
-                autoComplete_url('mpo');
+                autoComplete_url("#query-search", 'mpo');
                 break;
             case 'mun':
-                autoComplete_url('mun');
+                autoComplete_url("#query-search", 'mun');
                 break;
         }
     });
@@ -138,24 +138,32 @@ function updateProgressBar(processed, total, elapsed, layersArray) {
 
 //------------------------------------------------------------------------------
 // JS For Advanced Search Form
-function loadIndustries(inputId) {
+function loadData(inputId, controller) {
 
-    d3.json(`/api/getindustries`).then(data => {
-        textAutocomplete(data, inputId);
-    }, function (err) {
-        alert("Query Error");
-        console.log(err);
-    });
+    switch (controller) {
+        case "getindustries":
+            d3.json(`/api/getindustries`).then(data => {
+                textAutocomplete(data, inputId, controller);
+            }, function (err) {
+                alert("Query Error");
+                console.log(err);
+            });
+        break;
+    }
 
 };
 
-function textAutocomplete(dataValues, inputId) {
+function textAutocomplete(dataValues, inputId, controller) {
 
     var arr_data = [];
 
-    dataValues.data.map(est => {
-        arr_data.push(est.NAICSDS);
-    });
+    switch (controller) {
+        case "getindustries":
+            dataValues.data.map(est => {
+                arr_data.push(est.NAICSDS);
+            });
+        break;
+    }
 
     $(inputId).autocomplete({
         delay: 0,
@@ -176,9 +184,14 @@ $(document).ready(function () {
 
     $("#search-message").hide();
 
-    loadIndustries("#industriesId");
-    loadIndustries("#entityIndustryId");
+    loadData("#industriesId", "getindustries"); //needs to be changed to use autoComplete_url
+    loadData("#entityIndustryId", "getindustries"); //needs to be changed to use autoComplete_url
 
+    autoComplete_url("#countyId", 'county');
+    autoComplete_url("#mpoId", 'mpo');
+    autoComplete_url("#munId", 'mun');
+
+    
     d3.json(`/api/getsalesvolume`).then(data => {
            loadSalesVolume(data);
 		}, function (err) {
@@ -186,7 +199,7 @@ $(document).ready(function () {
 		console.log(err);
     });
 
-    var salvol, borough;
+    var salvol;
     function loadSalesVolume(input) {
         var dropdown = document.getElementById("salesvolume-dropdown");
         $("#salesvolume-dropdown").empty();
@@ -200,22 +213,35 @@ $(document).ready(function () {
 
     };
 
-    $("#borough-dropdown a").click(function(){
-        borough = $(this).text();
-        $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
-        $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
-    });
-
     d3.select('#advsearch-button').on('click', (e) => {
-        var industry = $("#industriesId").val();
-        var minempl = $("#min-emplsize").val();
-        var maxempl = $("#max-emplsize").val();
+        var industry    = $("#industriesId").val();
+        var minempl     = $("#min-emplsize").val();
+        var maxempl     = $("#max-emplsize").val();
+        var county_name = $("#countyId").val();
+        var mpo_name    = $("#mpoId").val();
+        var mun_name    = $("#munId").val(), mun_type, mun_county;
 
-        loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, borough);
+        var indexOfDash = mun_name.indexOf('-');
+        if(indexOfDash !== -1){
+            var type = mun_name.slice(indexOfDash+2);
+            mun_type = type.slice(0, type.indexOf('/'));
+            mun_county = type.slice(type.indexOf('/')+1);
+            mun_name = mun_name.slice(0, indexOfDash-1);
+        }
+
+        // console.log("County: " + county);
+        // console.log("MPO: " + mpo);
+        // console.log("Mun: " + mun);
+        // console.log("Mun Type: " + mun_type);
+        // console.log("Mun County: " + mun_county);
+
+        loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county);
         $(".advancedSearchContainer").toggleClass("open");
     });
 
 });
+// END Advanced Search
+//------------------------------------------------------------------------------
 
 function updateSearchInfo(searchType, searchValue) {
     if (!searchType) searchType = 'error';
@@ -223,6 +249,7 @@ function updateSearchInfo(searchType, searchValue) {
     $('#search-description').html('<h4>' + searchType + ' ' + searchValue + '</h4>');
 }
 
+// Entity Edit Modal Form
 function showEditBox(dt_row) {
     //console.log(dt_row);
     if (!$.isEmptyObject({dt_row}) && typeof dt_row !== 'undefined') {
@@ -240,3 +267,4 @@ function showEditBox(dt_row) {
         console.log("Datatable row is undefined or empty");
     }
 }
+// END Entity Edit Modal Form

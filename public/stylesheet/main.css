@@ -114,7 +114,7 @@ body{
   position: fixed;
   top: 20%;
   right: 0px;
-  height: 250px;
+  height: 300px;
   background-color:#cfcccc;
   z-index: 4000;
   border-radius: 5px;
@@ -434,13 +434,14 @@ body{
   display: none
 }
 
-.ui-widget fieldset, 
-.statisticsContainer fieldset {
+/*
+.row fieldset {
   border: 1px solid #333;
   padding: 14px 18px;
+  width: auto;
 }
 
-.ui-widget legend,
+.row legend,
 .statisticsContainer legend {
   text-align: center;
   width: 250px;
@@ -449,6 +450,7 @@ body{
   color: #ffffff;
   padding: 0.2em 0.5em;
 }
+*/
 
 .dropdown-menu {
   z-index: 4002;
