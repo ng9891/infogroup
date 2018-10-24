@@ -218,7 +218,7 @@ function addUsrMarker(e) {
     usrMarkers.push(e.layer);
     drawnItems.addLayer(e.layer);
     $('.leaflet-control.leaflet-bar.queryBtn ').css('display', 'block'); // Display the query button
-    $('.leaflet-control.leaflet-bar.queryBtn ').on('click', queryDrawing); // QUERY BUTTON LISTENER
+    $('.leaflet-control-queryBtn').on('click', queryDrawing); // QUERY BUTTON LISTENER
     // drawnItems.clearLayers();
 }
 
@@ -227,7 +227,7 @@ function clearUsrMarker(e) {
     usrMarkers.pop();
     drawnItems.clearLayers();
     $('.leaflet-control.leaflet-bar.queryBtn ').css('display', 'none'); // hide btn so no meaningless query request
-    $('.leaflet-control.leaflet-bar.queryBtn ').off('click');
+    $('.leaflet-control-queryBtn').off('click');
     addTooltip(e);
 }
 
