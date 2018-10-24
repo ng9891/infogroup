@@ -8,7 +8,7 @@ function geobycounty(county_name, offset, limit) {
             `WITH county AS (
                 SELECT 
                 geom
-                FROM counties as county
+                FROM counties_shoreline as county
                 WHERE UPPER(county.name) = UPPER('${county_name}')
                 LIMIT 1
             )

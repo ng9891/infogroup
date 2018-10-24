@@ -179,6 +179,7 @@ var tooltip = L.DomUtil.get('draw-tooltip'); // Tooltip providing info of radius
 
 // Loads the establishments around the drawing area
 function queryDrawing() {
+    console.log(0);
     loadDrawingEstablishments();
     // Clear tooltip but we don't want to get rid of the listeners for drawing edits.
     tooltip.style.display = 'none';
@@ -217,7 +218,7 @@ function addUsrMarker(e) {
     // On drawing commit, push drawing
     usrMarkers.push(e.layer);
     drawnItems.addLayer(e.layer);
-    $('.leaflet-control.leaflet-bar.queryBtn ').css('display', 'block'); // Display the query button
+    $('.leaflet-control.leaflet-bar.queryBtn').css('display', 'block'); // Display the query button
     $('.leaflet-control-queryBtn').on('click', queryDrawing); // QUERY BUTTON LISTENER
     // drawnItems.clearLayers();
 }
@@ -226,7 +227,7 @@ function clearUsrMarker(e) {
     // On drawing start, clear prev marker and add tooltip.
     usrMarkers.pop();
     drawnItems.clearLayers();
-    $('.leaflet-control.leaflet-bar.queryBtn ').css('display', 'none'); // hide btn so no meaningless query request
+    $('.leaflet-control.leaflet-bar.queryBtn').css('display', 'none'); // hide btn so no meaningless query request
     $('.leaflet-control-queryBtn').off('click');
     addTooltip(e);
 }
