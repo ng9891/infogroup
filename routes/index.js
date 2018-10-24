@@ -19,6 +19,9 @@ let getCounty = require('../controllers/getCounty');
 let getMpo = require('../controllers/getMpo');
 let getMun = require('../controllers/getMun');
 
+let editBusiness = require('../controllers/editing/editBusiness');
+let approveBusiness = require('../controllers/editing/approveBusiness');
+
 
 //API ROUTES
 router.get('/api/byzip/:zipcode', byZip);
@@ -37,6 +40,11 @@ router.get('/api/getzip/:zip', getZip);
 router.get('/api/getcounty/:county', getCounty);
 router.get('/api/getmpo/:mpo', getMpo);
 router.get('/api/getmun/:mun', getMun);
+
+//EDIT ROUTES
+//TODO: check for auth and permission
+router.post('/:bus_id', editBusiness);
+// router.put('/:audit_id', approveBusiness);
 
 
 /* GET home page. */

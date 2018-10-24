@@ -246,7 +246,11 @@ $(document).ready(function () {
 function updateSearchInfo(searchType, searchValue) {
     if (!searchType) searchType = 'error';
     if (!searchValue) searchValue = '';
-    $('#search-description').html('<h4>' + searchType + ' ' + searchValue + '</h4>');
+    if (searchType == 'Search:'){
+        $('#search-description').html('<h6>' + searchType + ' ' + searchValue + '</h6>');
+    }else{
+        $('#search-description').html('<h4>' + searchType + ' ' + searchValue + '</h4>');
+    }
 }
 
 // Entity Edit Modal Form
@@ -254,6 +258,7 @@ function showEditBox(dt_row) {
     //console.log(dt_row);
     if (!$.isEmptyObject({dt_row}) && typeof dt_row !== 'undefined') {
         var row_id = dt_row["id"];
+        $("#entityId").html('<h4>' + row_id + '</h4>');
         $("#entityNameId").val(dt_row["name"]);
         $("#entityEmplId").val(dt_row["employee"]);
         $("#entityIndustryId").val(dt_row["industry"]);

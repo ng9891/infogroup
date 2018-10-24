@@ -29,6 +29,27 @@ const pool = new Pool(config);
  //code based on example found here: https://github.com/brianc/node-postgres/wiki/Example
 const runQuery = (text, values, cb) => pool.query(text, values, cb);
 
+//Code based on example in: https://node-postgres.com/features/transactions
+const transQuery = async (text, cb) => {
+  // note: we don't try/catch this because if connecting throws an exception
+  // we don't need to dispose of the client (it will be undefined)
+  const client = await pool.connect()
+   try {
+    await client.query('BEGIN')
+     const insert = `INSERT INTO business_audit(business_id,created_at,record_status,status,"PRMSICCD","NAICSCD") VALUES (123,(now() at time zone 'utc'), 0, 0, 1523, 1456)`;
+     await client.query(insert);
+    await client.query('COMMIT')
+    cb();
+  } catch (e) {
+    await client.query('ROLLBACK')
+    cb(e);
+  } finally {
+    client.release();
+  }
+}
+
+
 module.exports = {
-  runQuery
+  runQuery,
+  transQuery
 }

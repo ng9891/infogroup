@@ -11,13 +11,14 @@
 	    crossorigin="anonymous">
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
 	    crossorigin="" />
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
 		crossorigin="" />
 	<link rel="stylesheet" type="text/css" href="/stylesheet/histogram.css" />
 	<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
 	    crossorigin=""></script>
 
+	<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" /> -->
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/b-1.5.4/b-html5-1.5.4/datatables.min.css"/>
 	<link rel="stylesheet" type="text/css" href="/stylesheet/src/MarkerCluster.css" />
 	<link rel="stylesheet" type="text/css" href="/stylesheet/src/MarkerCluster.Default.css" />
 	<link rel="stylesheet" type="text/css" href="/js/src/jquery-ui.min.css" />
@@ -70,7 +71,7 @@
 			non-spatial (add, modify, delete) PRIMARY_SIC_CODE; PRIMARY_SIC_DESC; NAICS_CODE; NAICS_DESC; 
 			ACTUAL_LOCATION_EMPLOYMENT_SIZE; ACTUAL_CORPORATE_EMPLOYMENT_SIZE; MODELED_EMPLOYMENT_SIZE; ACTUAL_LOCATION_SALES_VOLUME; 
 			ACTUAL_CORPORATE_SALES_VOLUME; SQUARE_FOOTAGE_CODE; LATITUDE; LONGITUDE)..-->
-			
+			<div id="entityId">blah</div>
 			<div class="form-row">
 				<div class="col-md-9">
 					<label for="entityNameId">ENTITY NAME</label>
@@ -124,7 +125,7 @@
 			</div> -->
 			<div class="form-row">
 				<div class=" col-md-6 mb-3">
-					<button class="btn btn-primary" type="submit">Submit changes</button>
+					<button class="btn btn-primary" onclick="loadEditBusiness();" type="submit">Submit changes</button>
 				</div>
 				<div class=" col-md-6 mb-3">
 					<button class="btn btn-secondary float-right" onclick="$('.editEntity').hide();">Close</button>
@@ -233,7 +234,8 @@
     crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
     crossorigin="anonymous"></script>
-<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<!-- <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script> -->
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.18/b-1.5.4/b-html5-1.5.4/datatables.min.js"></script>
 <script src="https://d3js.org/d3.v5.js"></script>
 <script src="/js/src/d3pie.js"></script>
 <script src="/js/src/leaflet.markercluster.js"></script>
@@ -253,6 +255,7 @@
 <!-- <script src="/js/loadDistanceEstablishments.js"></script> -->
 <script src="/js/loadDrawingEstablishments.js"></script>
 <script src="/js/loadAdvancedSearchEstablishments.js"></script>
+<script src="/js/editing/loadEditBusiness.js"></script>
 <script src="/js/loadQueryOverlay.js"></script>
 <script src="/js/infogroup.js"></script>
 <script src="/js/autoComplete_url.js"></script>

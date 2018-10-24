@@ -24,7 +24,22 @@ function loadDatatable(establishments) {
 	});
 
 	$(document).ready(function() {
+		let columnsToExport= [ 0, 1, 2, 3, 4, 5, 6 ];	
 		var table = $('#jq_datatable').DataTable({
+			dom: 'Bfrtip',
+			"buttons": [
+				{
+					extend: 'csvHtml5',
+					text: 'Export',
+					action: actionFunc,
+					exportOptions: {
+						modifier: {
+							search: 'none',
+						},
+						columns: columnsToExport
+					}
+				}
+			],
 			"data" : obj.data,
 			"columns" : [
 				{ title: "id", data: "id" },
@@ -76,3 +91,23 @@ function clearDatatable() {
 function destroyDatatable() {
 	$('#jq_datatable').DataTable().destroy();
 }
+
+function actionFunc(e, dt, button, config) {
+	// Add code to make changes to table here
+	// Add option to export other things
+
+	// Call the original action function afterwards to
+	// continue the action.
+	// Otherwise you're just overriding it completely.
+	$.fn.dataTable.ext.buttons.csvHtml5.action.call(this, e, dt, button, config);
+}
+/*
+				{
+					extend: 'csvHtml5',
+					text: 'CSV',
+					action: actionFunc,
+					exportOptions: {
+						columns: columnsToExport
+					}
+				}
+*/
