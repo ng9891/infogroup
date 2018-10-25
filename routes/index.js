@@ -43,7 +43,7 @@ router.get('/api/getmun/:mun', getMun);
 
 //EDIT ROUTES
 //TODO: check for auth and permission
-router.post('/:bus_id', editBusiness);
+// router.post('/:bus_id', editBusiness);
 // router.put('/:audit_id', approveBusiness);
 
 
