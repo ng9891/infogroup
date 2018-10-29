@@ -152,16 +152,17 @@ function mapEstablishments(establishments) {
 	mymap.fitBounds(bbox);
 }
 
+var mkr;
 function locatePointByCoordinate(lat, lon) {
     if (lat != null && lon != null) {
-
-		// create marker
-		marker = L.marker([lat, lon], {});
-
-		markerList.push(marker);
-		markers.addLayers(markerList);
-		mymap.addLayer(markers);
-		
-        mymap.setView([lat, lon], 19);
+		mymap.setView([lat, lon], 19);
+		if (mkr) {
+			mymap.removeLayer(mkr);
+		}
+		mkr = new L.marker([lat, lon], {}).addTo(mymap);
+		mkr.on("click", function () {
+			mymap.removeLayer(mkr);
+		});
+		markerList.push(mkr);
     }
 }
