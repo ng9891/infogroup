@@ -36,6 +36,8 @@ function loadPieChart(establishments) {
 
 	pie_h = (LessThan17inch) ? 260 : 380;
 	pie_w = (LessThan17inch) ? 560 : 750;
+	var industries = [];
+	var lastChosenSegment;
 
 	var pie_c = new d3pie("pieChart", {
 		"header": {
@@ -116,12 +118,34 @@ function loadPieChart(establishments) {
 			}
 		},
 		"callbacks": {
-			// onClickSegment: function(a) {
-			// 	alert("Segment clicked!");
-			// 	console.log(a);
-			//}
-			onload: function(){
+			onClickSegment: function(a) { 
+				// Filter Datatable on PieChart Segment Click
+				var industry = a.data.label;
+				var dtable = $('#jq_datatable').DataTable();
+				industries.push(industry);
+				if (industry != 'MISCELLANEOUS') {
+					dtable.columns(3).search(industry, false, true, true).draw();
+				}
+				else {
+					var miscellaneous = [];
+					a.data.groupedData.map(est =>{
+						miscellaneous.push('(' + est.label + ')');
+					});
+					// Filter using RegEx in all other industries
+					dtable.columns(3).search(miscellaneous.join('|'), true, false, true).draw();
+				}
+				// On clicking twice to the same segment filter clears
+				if (lastChosenSegment == industry) {
+					dtable.search( '' ).columns().search( '' ).draw();
+					industries = [];
+				}
+				lastChosenSegment = industries.slice(-1)[0];
+			},
+			onload: function() {
 				$(".pieChart-loader").fadeOut("slow");
+			},
+			oncloseSegment: function() {
+				alert("test");
 			}
 		}
 	});
