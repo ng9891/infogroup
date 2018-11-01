@@ -81,10 +81,8 @@ function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, co
 						});
 				} else if (county_name != 'null') {
 					//Get Query layer/ bounding box
-					console.log('COUNTY OVERLAY CALLED ' + county_name)
 					d3.json('/api/getcounty/' + county_name)
 						.then(data => {
-							console.log(data);
 							loadQueryOverlay(data);
 						}, function (err) {
 							alert("Query Error on Base Layer");

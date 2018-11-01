@@ -255,6 +255,7 @@ function updateSearchInfo(searchType, searchValue) {
 
 // Entity Edit Modal Form
 function showEditBox(dt_row) {
+    //TODO: Query by ID
     //console.log(dt_row);
     if (!$.isEmptyObject({dt_row}) && typeof dt_row !== 'undefined') {
         var row_id = dt_row["id"];

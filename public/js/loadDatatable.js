@@ -31,7 +31,7 @@ function loadDatatable(establishments) {
 				{
 					extend: 'csvHtml5',
 					text: 'Export',
-					action: actionFunc,
+					action: exportDatatable,
 					exportOptions: {
 						modifier: {
 							search: 'none',
@@ -91,23 +91,39 @@ function clearDatatable() {
 function destroyDatatable() {
 	$('#jq_datatable').DataTable().destroy();
 }
+// Marker creation when a business is selected
+var mkr;
+function locatePointByCoordinate(lat, lon) {
+    if (lat != null && lon != null) {
+		mymap.setView([lat, lon], 19);
+		if (mkr) {
+			mymap.removeLayer(mkr);
+		}
+		mkr = new L.marker([lat, lon], {}).addTo(mymap);
+		mkr.on("click", function () {
+			mymap.removeLayer(mkr);
+		});
+		markerList.push(mkr);
+    }
+}
 
-function actionFunc(e, dt, button, config) {
+function exportDatatable(e, dt, button, config) {
 	// Add code to make changes to table here
 	// Add option to export other things
 
 	// Call the original action function afterwards to
 	// continue the action.
 	// Otherwise you're just overriding it completely.
-	$.fn.dataTable.ext.buttons.csvHtml5.action.call(this, e, dt, button, config);
+	exportEstablishmentInfo();	//PDF
+	$.fn.dataTable.ext.buttons.csvHtml5.action.call(this, e, dt, button, config);	//Datatable as csv
 }
-/*
-				{
-					extend: 'csvHtml5',
-					text: 'CSV',
-					action: actionFunc,
-					exportOptions: {
-						columns: columnsToExport
-					}
-				}
+/*	option to export everything for datatable
+	{
+		extend: 'csvHtml5',
+		text: 'CSV',
+		action: actionFunc,
+		exportOptions: {
+			columns: columnsToExport
+		}
+	}
 */
