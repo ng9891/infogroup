@@ -253,24 +253,3 @@ function updateSearchInfo(searchType, searchValue) {
     }
 }
 
-// Entity Edit Modal Form
-function showEditBox(dt_row) {
-    //TODO: Query by ID
-    //console.log(dt_row);
-    if (!$.isEmptyObject({dt_row}) && typeof dt_row !== 'undefined') {
-        var row_id = dt_row["id"];
-        $("#entityId").html('<h4>' + row_id + '</h4>');
-        $("#entityNameId").val(dt_row["name"]);
-        $("#entityEmplId").val(dt_row["employee"]);
-        $("#entityIndustryId").val(dt_row["industry"]);
-        $("#entitySalesVolumeId").val(dt_row["sales_volume"]);
-        $("#entityPrimarySicDescId").val(dt_row["prmsic"]);
-        $("#entitySqrFootageId").val(dt_row["square_foot"]);
-
-        $(".editEntity").show();
-    }
-    else {
-        console.log("Datatable row is undefined or empty");
-    }
-}
-// END Entity Edit Modal Form

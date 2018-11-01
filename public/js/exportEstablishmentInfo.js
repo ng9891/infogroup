@@ -34,6 +34,8 @@ function exportEstablishmentInfo() {
                                 map_img.src = dataUrl;
                                 map_img.onload = function () { //Get image width and height and scale it to fit the PDF
                                     doc.addImage(dataUrl, 'PNG', 0, 100, map_img.width * 0.5, map_img.height * 0.5);
+
+                                    //TODO: Better naming?
                                     doc.save('infogroup.pdf');
                                 };
                             })

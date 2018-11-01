@@ -109,10 +109,10 @@ function build_query(id, form) {
     geom
     LSALVOLCD
     LSALVOLDS
-    ALSLVOL
+    
     CSALVOLCD
     CSALVOLDS
-    ACSLVOL
+    ACSLSVOL
 */
 
 /*

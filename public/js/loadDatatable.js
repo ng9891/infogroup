@@ -56,7 +56,7 @@ function loadDatatable(establishments) {
 				{ title: "PR.SIC", data: "prmsic" },
 				{ title: "Sales Vol.", data: "sales_volume" },
 				{ title: "SQF", data: "square_foot" },
-				{ title: "ED", data: null, defaultContent: "<button type='button' id='btn_edit' class='btn btn-primary btn-xs'>Edit</button>" },
+				{ title: "ED", data: null, defaultContent: "<button type='button' id='btn_edit' class='btn btn-primary btn-xs' data-toggle='modal' data-target='#editModal'>Edit</button>" },
 				{ title: "lat", data: "lat" },
 				{ title: "lon", data: "lon" }
 			],
@@ -78,7 +78,7 @@ function loadDatatable(establishments) {
 
 		$('#jq_datatable tbody').on( 'click', 'button', function () {
 			var data_row = table.row( $(this).parents('tr') ).data();
-        	showEditBox(data_row); //infogroup.js
+        	loadEditModal(data_row);
 		} );
 
 	} );

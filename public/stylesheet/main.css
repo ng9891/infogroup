@@ -495,8 +495,8 @@ body{
   border-radius: 5px;
   background-color: #cfcccc;
   position: fixed;
-  width: 400px;
-  height: 460px;
+  width: 500px;
+  height: 700px;
   top:0;
   bottom: 0;
   left: 0;
@@ -505,4 +505,11 @@ body{
   padding: 20px;
   z-index: 6000;
   display: none;
+}
+
+#editModal{
+  z-index: 6000;
+}
+#business_id{
+  color: red;
 }
