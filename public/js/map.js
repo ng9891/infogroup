@@ -44,10 +44,11 @@ var Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/re
 });
 
 var mymap = L.map('mapid', {
-    editable: true,
-    maxZoom: 19,
-    layers: [mapBox]
-}).setView([40.755, -74.00], 13);
+        preferCanvas: true,
+        editable: true,
+        maxZoom: 19,
+        layers: [mapBox]
+    }).setView([40.755, -74.00], 13);
 
 var baseMaps = {
     "MapBox": mapBox,
