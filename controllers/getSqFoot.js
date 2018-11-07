@@ -1,15 +1,15 @@
 'use strict';
 let db_service = require('../utils/db_service')
 
-function getIndustries() {
+function getSqFoot() {
     return new Promise(function (resolve, reject) {
         let sql =
             `
-        SELECT  
-        DISTINCT "NAICSDS", "NAICSCD"
-        FROM businesses_2014 
-        WHERE "NAICSDS" IS NOT NULL;
-        `
+            SELECT DISTINCT "SQFOOTCD", "SQFOOTDS"
+            FROM businesses_2014 
+            WHERE "SQFOOTCD" IS NOT NULL
+            ORDER BY "SQFOOTCD";
+            `;
         // ~500 msec, 931 rows
         // must be written in a local file once,
         // then check the file if not empty use the list from there.
@@ -20,16 +20,16 @@ function getIndustries() {
     });
 }
 
-const getIndustriesRequest = function (request, response) {
+const getSqFootRequest = function (request, response) {
     if (!request) {
         response.status(400)
             .json({
                 status: 'Error',
-                responseText: 'No zipcode specified'
+                responseText: 'No request specified'
             });
     }
 
-    getIndustries()
+    getSqFoot()
         .then(data => {
             response.status(200)
                 .json({
@@ -44,4 +44,4 @@ const getIndustriesRequest = function (request, response) {
         });
 }
 
-module.exports = getIndustriesRequest;
+module.exports = getSqFootRequest;

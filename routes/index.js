@@ -12,12 +12,14 @@ let byRectangle= require('../controllers/byRectangle');
 
 let getIndustries = require('../controllers/getIndustries');
 let getSalesVolume = require('../controllers/getSalesVolume');
-let advancedSearch = require('../controllers/advancedSearch')
-
+let getEmpSize = require('../controllers/getEmpSize');
+let getSqFoot = require('../controllers/getSqFoot');
 let getZip = require('../controllers/getZip');
 let getCounty = require('../controllers/getCounty');
 let getMpo = require('../controllers/getMpo');
 let getMun = require('../controllers/getMun');
+
+let advancedSearch = require('../controllers/advancedSearch')
 
 let editBusiness = require('../controllers/editing/editBusiness');
 let approveBusiness = require('../controllers/editing/approveBusiness');
@@ -34,12 +36,15 @@ router.get('/api/byrectangle', byRectangle);
 
 router.get('/api/getindustries', getIndustries);
 router.get('/api/getsalesvolume', getSalesVolume);
-router.get('/api/advancedSearch', advancedSearch);
-
+router.get('/api/getempsize', getEmpSize);
+router.get('/api/getsqfoot', getSqFoot);
 router.get('/api/getzip/:zip', getZip);
 router.get('/api/getcounty/:county', getCounty);
 router.get('/api/getmpo/:mpo', getMpo);
 router.get('/api/getmun/:mun', getMun);
+
+router.get('/api/advancedSearch', advancedSearch);
+
 
 //EDIT ROUTES
 //TODO: check for auth and permission

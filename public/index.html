@@ -76,13 +76,34 @@
 				<div class="modal-body">
 					<div class="form-row">
 						<div class="col-md-3 mb-3">
-							<label for="LEMPSZCD">EMP SIZE CODE </label>
-							<input type="text" class="form-control" id="LEMPSZCD" placeholder="0" value="" required>
+							<!-- <label for="LEMPSZCD">EMP SIZE CODE </label>
+							<input type="text" class="form-control" id="LEMPSZCD" required> -->
+							<label for="LEMPSZCD">EMP SIZE CODE</label>
+							<!-- <input type="text" class="form-control" id="SQFOOTCD" required> -->
+							<div class="dropdown">
+								<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="LEMPSZCD_button" data-toggle="dropdown"
+								 aria-haspopup="true" aria-expanded="false">
+								 	EMP SIZE
+								</button>
+								<div class="dropdown-menu" id="LEMPSZCD" aria-labelledby="dropdownMenuButton"></div>
+							</div>
 						</div>
 						<div class="col-md-9">
-							<label for="ALEMPSZ">EMP SIZE DESC </label>
-							<input type="text" class="form-control" id="ALEMPSZ" value="" required>
+							<label for="LEMPSZDS">EMP SIZE DESC </label>
+							<input type="text" class="form-control" id="LEMPSZDS" disabled>
 						</div>
+					</div>
+					<div class="form-group row">
+						<div class="input-group col-md-12">
+							<div class="input-group-prepend">
+								<span class="input-group-text">Actual Employment Size</span>
+							</div>
+							<input type="text" class="form-control" id="ALEMPSZ">
+						</div>
+						<!-- <label for="ALEMPSZ">ALEMPSZ</label>
+						<input type="text" class="form-control" id="ALEMPSZ"> -->
+					</div>
+					<div class="form-row">
 						<div class="col-md-3 mb-3">
 							<label for="NAICSCD">NAICS CODE</label>
 							<input type="text" class="form-control" id="NAICSCD" required>
@@ -97,49 +118,63 @@
 						</div>
 						<div class="col-md-9 mb-3">
 							<label for="PRMSICDS">PRIMARY SIC DESC</label>
-							<input type="text" class="form-control" id="PRMSICDS" aria-describedby="inputGroupPrepend"
-							 required>
+							<input type="text" class="form-control" id="PRMSICDS" aria-describedby="inputGroupPrepend" required>
 						</div>
 						<div class="col-md-3 mb-3">
 							<label for="SQFOOTCD">SQF CODE</label>
-							<input type="text" class="form-control" id="SQFOOTCD" required>
+							<div class="dropdown">
+								<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="SQFOOTCD_button" data-toggle="dropdown"
+								 aria-haspopup="true" aria-expanded="false">
+									SQF CODE
+								</button>
+								<div class="dropdown-menu" id="SQFOOTCD" aria-labelledby="dropdownMenuButton"></div>
+							</div>
 						</div>
 						<div class="col-md-9 mb-3">
 							<label for="SQFOOTDS">SQF DESC</label>
-							<input type="text" class="form-control" id="SQFOOTDS" aria-describedby="inputGroupPrepend"
-							 required>
+							<input type="text" class="form-control" id="SQFOOTDS" aria-describedby="inputGroupPrepend" disabled>
 						</div>
 						<div class="col-md-3 mb-3">
 							<label for="LSALVOLCD">LSALVOLCD</label>
-							<input type="text" class="form-control" id="LSALVOLCD" required>
+							<div class="dropdown">
+								<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="LSALVOLCD_button" data-toggle="dropdown"
+								 aria-haspopup="true" aria-expanded="false">
+									Sales Volume
+								</button>
+								<div class="dropdown-menu" id="LSALVOLCD" aria-labelledby="dropdownMenuButton"></div>
+							</div>
 						</div>
 						<div class="col-md-9 mb-3">
 							<label for="LSALVOLDS">LSALVOLDS</label>
-							<input type="text" class="form-control" id="LSALVOLDS" aria-describedby="inputGroupPrepend"
-							 required>
+							<input type="text" class="form-control" id="LSALVOLDS" aria-describedby="inputGroupPrepend" disabled>
 						</div>
-						<div class="col-md-12 mb-12">
-								<label for="ACSLSVOL">ALSLSVOL</label>
-								<input type="text" class="form-control" id="ALSLSVOL" aria-describedby="inputGroupPrepend"
-								 required>
-						</div>
+					</div>
+					<div class="form-group row">
+						<div class="input-group col-md-12">
+								<div class="input-group-prepend">
+									<span class="input-group-text">Actual Location Sales Volume</span>
+								</div>
+								<input type="text" class="form-control" id="ALSLSVOL">
+							</div>
+					</div>
+					<div class="form-row">
 						<div class="col-md-3 mb-3">
-								<label for="CSALVOLCD">CSALVOLCD</label>
-								<input type="text" class="form-control" id="CSALVOLCD" required>
-							</div>
-							<div class="col-md-9 mb-3">
-								<label for="CSALVOLDS">CSALVOLDS</label>
-								<input type="text" class="form-control" id="CSALVOLDS" aria-describedby="inputGroupPrepend"
-								 required>
-							</div>
-
+							<label for="CSALVOLCD">CSALVOLCD</label>
+							<input type="text" class="form-control" id="CSALVOLCD" required>
+						</div>
+						<div class="col-md-9 mb-3">
+							<label for="CSALVOLDS">CSALVOLDS</label>
+							<input type="text" class="form-control" id="CSALVOLDS" aria-describedby="inputGroupPrepend" required>
+						</div>
 					</div>
 				</div>
+				<!--end of modal body-->
 				<div class="modal-footer">
 					<button class="btn btn-primary" onclick="loadEditBusiness();" type="submit">Submit changes</button>
 					<button type="button" id="byemodal" class="btn btn-secondary" data-dismiss="modal">Close</button>
 				</div>
 			</div>
+			<!--end of modal-content-->
 		</div>
 	</div>
 	<div class='infoContainer'>

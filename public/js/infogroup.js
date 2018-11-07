@@ -45,6 +45,7 @@ $(document).ready(function () {
      });
     //Autocomplete
     $("#query-search").autocomplete(); //Declare the AC on ready
+    $("#NAICSDS").autocomplete(); //MODAL AC declaration
     $("#query-search").on('input', () => {
         query_type = d3.select('#query-dropdown').property("value");
         switch (query_type) {
