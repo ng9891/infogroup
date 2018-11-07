@@ -112,8 +112,9 @@ function loadDatatable(establishments) {
 			"destroy": true
 		});
 
-		$('#jq_datatable tbody').on('click', 'button', function () {
-			var data_row = table.row($(this).parents('tr')).data();
+		$('#jq_datatable tbody').unbind("click").on('click', 'td button', function (){
+			var data_row = table.row( $(this).parents('tr') ).data();
+			// console.log(data_row);
 			loadEditModal(data_row);
 		});
 

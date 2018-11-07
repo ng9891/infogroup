@@ -1,12 +1,10 @@
 // Entity Edit Modal Form
-function loadEditModal(dt_row) {
-    if ($.isEmptyObject({
-            dt_row
-        }) && typeof dt_row == 'undefined') {
-        console.log("Datatable row is undefined or empty");
+function loadEditModal(dt_row) { 
+
+    if (!dt_row['id'] || dt_row['id'] === '') {
+        console.log(dt_row);
         return;
     }
-
     d3.json(`/api/getsalesvolume`).then(data => {
         loadSalesVolume(data); //function in file
     }, function (err) {
@@ -28,7 +26,7 @@ function loadEditModal(dt_row) {
         console.log(err);
     });
 
-    //TEST
+    // TEST *********************************************
     function loadData(inputId, controller) {
         switch (controller) {
             case "getindustries":
@@ -38,9 +36,10 @@ function loadEditModal(dt_row) {
                     alert("Query Error");
                     console.log(err);
                 });
-            break;
+                break;
         }
     };
+
     function textAutocomplete(dataValues, inputId, controller) {
         var arr_data_ds = [];
         var arr_data_cd = [];
@@ -51,7 +50,7 @@ function loadEditModal(dt_row) {
                     arr_data_cd.push(est.NAICSCD.toString());
                 });
                 // console.log(arr_data_cd);
-            break;
+                break;
         }
         $(inputId).autocomplete({
             delay: 0,
@@ -81,8 +80,8 @@ function loadEditModal(dt_row) {
         });
     };
     loadData("#NAICSDS", "getindustries"); //needs to be changed to use autoComplete_url
-    //END OF TEST
-    
+    //END OF TEST ******************************************************
+
     let business_id = dt_row["id"];
     let reqURL = '/api/byid/' + business_id;
     d3.json(reqURL)
@@ -108,21 +107,31 @@ function loadEditModal(dt_row) {
             alert("Query Error on ID");
             console.log(err);
         });
+
+    $('#ALEMPSZ').change(()=>{
+        //TODO: parse entry
+        console.log('ALEMPSZ change');
+    });
+    $('#ALSLSVOL').change(()=>{
+        //TODO: parse entry
+        console.log('ALSLSVOL change');
+    });
 }
+
 function loadSalesVolume(input) {
     let dropdown = document.getElementById("LSALVOLCD");
     $("#LSALVOLCD").empty();
     dropdown.innerHTML = input.data.map(est => {
-        if(est.LSALVOLCD !== null) return `<a class='dropdown-item' href='#'>${est.LSALVOLCD} - ${est.LSALVOLDS}</a>`;
+        if (est.LSALVOLCD !== null) return `<li><a class='dropdown-item' href='#'>${est.LSALVOLCD} - ${est.LSALVOLDS}</a></li>`;
     }).join("");
 
     $("#LSALVOLCD a").click(function () {
         let str = $(this).text();
         let chosen_LSALVOLCD, chosen_LSALVOLDS;
         let indexOfDash = str.indexOf('-');
-        if(indexOfDash !== -1){
-            chosen_LSALVOLCD = str.slice(0, indexOfDash-1);
-            chosen_LSALVOLDS = str.slice(indexOfDash+2);
+        if (indexOfDash !== -1) {
+            chosen_LSALVOLCD = str.slice(0, indexOfDash - 1);
+            chosen_LSALVOLDS = str.slice(indexOfDash + 2);
         }
         $(this).parents(".dropdown").find('.btn').html(chosen_LSALVOLCD + ' <span class="caret"></span>');
         $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
@@ -130,20 +139,21 @@ function loadSalesVolume(input) {
         $("#ALSLSVOL").val('');
     });
 }
+
 function loadEmpSize(input) {
     let dropdown = document.getElementById("LEMPSZCD");
     $("#LEMPSZCD").empty();
     dropdown.innerHTML = input.data.map(est => {
-        if(est.LSALVOLCD !== null) return `<a class='dropdown-item' href='#'>${est.LEMPSZCD} - ${est.LEMPSZDS}</a>`;
+        if (est.LSALVOLCD !== null) return `<li><a class='dropdown-item' href='#'>${est.LEMPSZCD} - ${est.LEMPSZDS}</a></li>`;
     }).join("");
 
     $("#LEMPSZCD a").click(function () {
         let str = $(this).text();
         let chosen_LEMPSZCD, chosen_LEMPSZDS;
         let indexOfDash = str.indexOf('-');
-        if(indexOfDash !== -1){
-            chosen_LEMPSZCD = str.slice(0, indexOfDash-1);
-            chosen_LEMPSZDS = str.slice(indexOfDash+2);
+        if (indexOfDash !== -1) {
+            chosen_LEMPSZCD = str.slice(0, indexOfDash - 1);
+            chosen_LEMPSZDS = str.slice(indexOfDash + 2);
         }
         $(this).parents(".dropdown").find('.btn').html(chosen_LEMPSZCD + ' <span class="caret"></span>');
         $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
@@ -151,20 +161,21 @@ function loadEmpSize(input) {
         $("#ALEMPSZ").val('');
     });
 }
+
 function loadSqFoot(input) {
     let dropdown = document.getElementById("SQFOOTCD");
     $("#SQFOOTCD").empty();
     dropdown.innerHTML = input.data.map(est => {
-        if(est.LSALVOLCD !== null) return `<a class='dropdown-item' href='#'>${est.SQFOOTCD} - ${est.SQFOOTDS}</a>`;
+        if (est.LSALVOLCD !== null) return `<li><a class='dropdown-item' href='#'>${est.SQFOOTCD} - ${est.SQFOOTDS}</a></li>`;
     }).join("");
 
     $("#SQFOOTCD a").click(function () {
         let str = $(this).text();
         let chosen_SQFOOTCD, chosen_SQFOOTDS;
         let indexOfDash = str.indexOf('-');
-        if(indexOfDash !== -1){
-            chosen_SQFOOTCD = str.slice(0, indexOfDash-1);
-            chosen_SQFOOTDS = str.slice(indexOfDash+2);
+        if (indexOfDash !== -1) {
+            chosen_SQFOOTCD = str.slice(0, indexOfDash - 1);
+            chosen_SQFOOTDS = str.slice(indexOfDash + 2);
         }
         $(this).parents(".dropdown").find('.btn').html(chosen_SQFOOTCD + ' <span class="caret"></span>');
         $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
