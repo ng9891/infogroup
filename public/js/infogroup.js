@@ -1,35 +1,3 @@
-//---
-// EVENT LISTENERS
-//---
-
-//Button listener to show statisticsContainer
-$(".statisticsContainer").click(() => {
-    if (LessThan17inch) {
-        $(".statisticsContainer").toggleClass("open2");
-    }
-    else {
-        $(".statisticsContainer").toggleClass("open");
-    }
-});
-
-//Button listener to show advancedSearchContainer
-$(".advancedSearchContainerButton").click(() => {
-    $(".advancedSearchContainer").toggleClass("open");
-});
-
-//Button listener to hide infoContainer
-$(".infoContainerButton").click(() => {
-    $(".infoContainer").toggleClass("closed");
-});
-
-
-//---
-// END EVENT LISTENERS
-//---
-
-//------------------------------------------------------------------------------
-
-//Nav bar search Listeners
 $(document).ready(function () {
     let query_input, query_type;
     $("#query-search").keydown((event) => {
@@ -39,31 +7,12 @@ $(document).ready(function () {
             $('#query-button').click();
         }
     });
-    //Select all on focus
+    // Select all on focus on nav bar
     $("#query-search").on("click", function () {
         $(this).select();
-     });
-    //Autocomplete
-    $("#query-search").autocomplete(); //Declare the AC on ready
-    $("#NAICSDS").autocomplete(); //MODAL AC declaration
-    $("#query-search").on('input', () => {
-        query_type = d3.select('#query-dropdown').property("value");
-        switch (query_type) {
-            case 'zip':
-                autoComplete_url("#query-search", 'zip');
-                break;
-            case 'county':
-                autoComplete_url("#query-search", 'county');
-                break;
-            case 'mpo':
-                autoComplete_url("#query-search", 'mpo');
-                break;
-            case 'mun':
-                autoComplete_url("#query-search", 'mun');
-                break;
-        }
     });
-    //Search button
+
+    // Search button on nav bar
     d3.select('#query-button').on('click', (e) => {
         clearUsrMarker(); // function in map.js to clear user drawings
         query_input = d3.select('#query-search').property("value");
@@ -97,20 +46,44 @@ $(document).ready(function () {
                 } else {
                     let indexOfDash = query_input.indexOf('-');
                     let mun, county;
-                    if(indexOfDash !== -1){
-                        let type = query_input.slice(indexOfDash+2);
-
+                    if (indexOfDash !== -1) {
+                        let type = query_input.slice(indexOfDash + 2);
                         mun = type.slice(0, type.indexOf('/'));
-                        county = type.slice(type.indexOf('/')+1);
-    
-                        query_input = query_input.slice(0, indexOfDash-1);
+                        county = type.slice(type.indexOf('/') + 1);
+                        query_input = query_input.slice(0, indexOfDash - 1);
                     }
-                                       
                     loadMunEstablishments(query_input, mun, county);
                 }
                 break;
         }
     });
+
+    //Autocomplete
+    loadAutoComplete();
+    // EDITMODAL
+    loadDropdown();
+
+    //Button listener to show statisticsContainer
+    $(".statisticsContainer").click(() => {
+        if (LessThan17inch) {
+            $(".statisticsContainer").toggleClass("open2");
+        } else {
+            $(".statisticsContainer").toggleClass("open");
+        }
+    });
+
+    //Button listener to show advancedSearchContainer
+    $(".advancedSearchContainerButton").click(() => {
+        $(".advancedSearchContainer").toggleClass("open");
+        $("#search-message").hide();
+        loadAdvancedSearchListener();
+    });
+
+    //Button listener to hide infoContainer
+    $(".infoContainerButton").click(() => {
+        $(".infoContainer").toggleClass("closed");
+    });
+
 });
 
 
@@ -137,98 +110,32 @@ function updateProgressBar(processed, total, elapsed, layersArray) {
     }
 }
 
-//------------------------------------------------------------------------------
-// JS For Advanced Search Form
-function loadData(inputId, controller) {
-
-    switch (controller) {
-        case "getindustries":
-            d3.json(`/api/getindustries`).then(data => {
-                textAutocomplete(data, inputId, controller);
-            }, function (err) {
-                alert("Query Error");
-                console.log(err);
-            });
-        break;
-    }
-
-};
-
-function textAutocomplete(dataValues, inputId, controller) {
-
-    var arr_data = [];
-
-    switch (controller) {
-        case "getindustries":
-            dataValues.data.map(est => {
-                arr_data.push(est.NAICSDS);
-            });
-        break;
-    }
-
-    $(inputId).autocomplete({
-        delay: 0,
-        minLength: 2,
-        //source: arr_data,
-        source: function (request, response) {
-            var results = $.ui.autocomplete.filter(arr_data, request.term);
-            response(results.slice(0, 10));
-        },
-        messages: {
-            noResults: '',
-            results: function () {}
-        }
+function loadAdvancedSearchListener(){
+    $("#salesvolume-dropdown a").click(function (e) {
+        $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
+        $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
     });
-};
-
-$(document).ready(function () {
-
-    $("#search-message").hide();
-
-    loadData("#industriesId", "getindustries"); //needs to be changed to use autoComplete_url
-    loadData("#entityIndustryId", "getindustries"); //needs to be changed to use autoComplete_url
-
-    autoComplete_url("#countyId", 'county');
-    autoComplete_url("#mpoId", 'mpo');
-    autoComplete_url("#munId", 'mun');
-
-    
-    d3.json(`/api/getsalesvolume`).then(data => {
-           loadSalesVolume(data);
-		}, function (err) {
-		alert("Query Error");
-		console.log(err);
-    });
-
-    var salvol;
-    function loadSalesVolume(input) {
-        var dropdown = document.getElementById("salesvolume-dropdown");
-        $("#salesvolume-dropdown").empty();
-        dropdown.innerHTML = input.data.map(est=>`<a class='dropdown-item' href='#'>${est.LSALVOLDS}</a>`).join("");
-        
-        $("#salesvolume-dropdown a").click(function(){
-            salvol = $(this).text();
-            $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
-            $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
-        });
-
-    };
 
     d3.select('#advsearch-button').on('click', (e) => {
-        var industry    = $("#industriesId").val();
-        var minempl     = $("#min-emplsize").val();
-        var maxempl     = $("#max-emplsize").val();
+        var industry = $("#industriesId").val();
+        var minempl = $("#min-emplsize").val();
+        var maxempl = $("#max-emplsize").val();
         var county_name = $("#countyId").val();
-        var mpo_name    = $("#mpoId").val();
-        var mun_name    = $("#munId").val(), mun_type, mun_county;
+        var mpo_name = $("#mpoId").val();
+        var mun_name = $("#munId").val(),
+            mun_type, mun_county;
 
         var indexOfDash = mun_name.indexOf('-');
-        if(indexOfDash !== -1){
-            var type = mun_name.slice(indexOfDash+2);
+        if (indexOfDash !== -1) {
+            var type = mun_name.slice(indexOfDash + 2);
             mun_type = type.slice(0, type.indexOf('/'));
-            mun_county = type.slice(type.indexOf('/')+1);
-            mun_name = mun_name.slice(0, indexOfDash-1);
+            mun_county = type.slice(type.indexOf('/') + 1);
+            mun_name = mun_name.slice(0, indexOfDash - 1);
         }
+
+        var salvol;
+        let salvoltext = $('#dropdownSalesVolume').text().trim();
+        if( salvoltext !== 'Sales Volume') salvol = salvoltext;        
 
         // console.log("County: " + county);
         // console.log("MPO: " + mpo);
@@ -239,18 +146,4 @@ $(document).ready(function () {
         loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county);
         $(".advancedSearchContainer").toggleClass("open");
     });
-
-});
-// END Advanced Search
-//------------------------------------------------------------------------------
-
-function updateSearchInfo(searchType, searchValue) {
-    if (!searchType) searchType = 'error';
-    if (!searchValue) searchValue = '';
-    if (searchType == 'Search:'){
-        $('#search-description').html('<h4>' + searchType + ' ' + searchValue[0] + '</h4> <p>'+ searchValue[1] + '</p>');
-    }else{
-        $('#search-description').html('<h4>' + searchType + ' ' + searchValue + '</h4>');
-    }
 }
-

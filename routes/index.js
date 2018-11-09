@@ -48,7 +48,7 @@ router.get('/api/advancedSearch', advancedSearch);
 
 //EDIT ROUTES
 //TODO: check for auth and permission
-// router.post('/:bus_id', editBusiness);
+router.post('/:bus_id', editBusiness);
 // router.put('/:audit_id', approveBusiness);
 
 

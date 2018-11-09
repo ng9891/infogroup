@@ -30,7 +30,7 @@
 		<div class="col-sm-5">
 			<ul class="navbar-nav">
 				<li class="nav-item active">
-					<a class="nav-link active" href="#">Home</a>
+					<a class="nav-link active" href="/">Home</a>
 				</li>
 			</ul>
 		</div>
@@ -76,18 +76,18 @@
 				<div class="modal-body">
 					<div class="form-row">
 						<div class="col-md-3 mb-3">
-							<label for="LEMPSZCD">EMP SIZE CODE</label>
+							<label for="modal_LEMPSZCD">EMP SIZE CODE</label>
 							<div class="dropdown">
-								<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="LEMPSZCD_button" data-toggle="dropdown"
+								<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_LEMPSZCD_button" data-toggle="dropdown"
 								 aria-haspopup="true" aria-expanded="false">
 								 	EMP SIZE
 								</button>
-								<ul class="dropdown-menu" id="LEMPSZCD" aria-labelledby="dropdownMenuButton"></ul>
+								<ul class="dropdown-menu" id="modal_LEMPSZCD" aria-labelledby="dropdownMenuButton"></ul>
 							</div>
 						</div>
 						<div class="col-md-9">
-							<label for="LEMPSZDS">EMP SIZE DESC </label>
-							<input type="text" class="form-control" id="LEMPSZDS" disabled>
+							<label for="modal_LEMPSZDS">EMP SIZE DESC </label>
+							<input type="text" class="form-control" id="modal_LEMPSZDS" disabled>
 						</div>
 					</div>
 					<div class="form-group row">
@@ -95,79 +95,85 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text">Actual Employment Size</span>
 							</div>
-							<input type="text" class="form-control" id="ALEMPSZ">
+							<input type="text" class="form-control" id="modal_ALEMPSZ">
 						</div>
-						<!-- <label for="ALEMPSZ">ALEMPSZ</label>
-						<input type="text" class="form-control" id="ALEMPSZ"> -->
 					</div>
 					<div class="form-row">
 						<div class="col-md-3 mb-3">
-							<label for="NAICSCD">NAICS CODE</label>
-							<input type="text" class="form-control" id="NAICSCD" required>
+							<label for="modal_NAICSCD">NAICS CODE</label>
+							<input type="text" class="form-control" id="modal_NAICSCD" required>
 						</div>
 						<div class="col-md-9 mb-3">
-							<label for="NAICSDS">NAICS DESC</label>
-							<input type="text" class="form-control" id="NAICSDS" aria-describedby="inputGroupPrepend" required>
+							<label for="modal_NAICSDS">NAICS DESC</label>
+							<input type="text" class="form-control" id="modal_NAICSDS" aria-describedby="inputGroupPrepend" required>
 						</div>
 						<div class="col-md-3 mb-3">
-							<label for="PRMSICCD">PRIMARY SIC CODE</label>
-							<input type="text" class="form-control" id="PRMSICCD" required>
+							<label for="modal_PRMSICCD">PRIMARY SIC CODE</label>
+							<input type="text" class="form-control" id="modal_PRMSICCD" required>
 						</div>
 						<div class="col-md-9 mb-3">
-							<label for="PRMSICDS">PRIMARY SIC DESC</label>
-							<input type="text" class="form-control" id="PRMSICDS" aria-describedby="inputGroupPrepend" required>
+							<label for="modal_PRMSICDS">PRIMARY SIC DESC</label>
+							<input type="text" class="form-control" id="modal_PRMSICDS" aria-describedby="inputGroupPrepend" required>
 						</div>
 						<div class="col-md-3 mb-3">
-							<label for="SQFOOTCD">SQF CODE</label>
+							<label for="modal_SQFOOTCD">SQF CODE</label>
 							<div class="dropdown">
-								<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="SQFOOTCD_button" data-toggle="dropdown"
+								<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_SQFOOTCD_button" data-toggle="dropdown"
 								 aria-haspopup="true" aria-expanded="false">
 									SQF CODE
 								</button>
-								<ul class="dropdown-menu" id="SQFOOTCD" aria-labelledby="dropdownMenuButton"></ul>
+								<ul class="dropdown-menu" id="modal_SQFOOTCD" aria-labelledby="dropdownMenuButton"></ul>
 							</div>
 						</div>
 						<div class="col-md-9 mb-3">
-							<label for="SQFOOTDS">SQF DESC</label>
-							<input type="text" class="form-control" id="SQFOOTDS" aria-describedby="inputGroupPrepend" disabled>
+							<label for="modal_SQFOOTDS">SQF DESC</label>
+							<input type="text" class="form-control" id="modal_SQFOOTDS" aria-describedby="inputGroupPrepend" disabled>
 						</div>
 						<div class="col-md-3 mb-3">
-							<label for="LSALVOLCD">LSALVOLCD</label>
+							<label for="modal_LSALVOLCD">LSALVOLCD</label>
 							<div class="dropdown">
-								<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="LSALVOLCD_button" data-toggle="dropdown"
+								<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_LSALVOLCD_button" data-toggle="dropdown"
 								 aria-haspopup="true" aria-expanded="false">
 									Sales Volume
 								</button>
-								<ul class="dropdown-menu" id="LSALVOLCD" aria-labelledby="dropdownMenuButton"></ul>
+								<ul class="dropdown-menu" id="modal_LSALVOLCD" aria-labelledby="dropdownMenuButton"></ul>
 							</div>
 						</div>
 						<div class="col-md-9 mb-3">
-							<label for="LSALVOLDS">LSALVOLDS</label>
-							<input type="text" class="form-control" id="LSALVOLDS" aria-describedby="inputGroupPrepend" disabled>
+							<label for="modal_LSALVOLDS">LSALVOLDS</label>
+							<input type="text" class="form-control" id="modal_LSALVOLDS" aria-describedby="inputGroupPrepend" disabled>
 						</div>
 					</div>
 					<div class="form-group row">
 						<div class="input-group col-md-12">
 								<div class="input-group-prepend">
-									<span class="input-group-text">Actual Location Sales Volume</span>
+									<span class="input-group-text">Actual Sales Volume (in thousands)</span>
 								</div>
-								<input type="text" class="form-control" id="ALSLSVOL">
+								<input type="text" class="form-control" id="modal_ALSLSVOL">
 							</div>
 					</div>
 					<div class="form-row">
 						<div class="col-md-3 mb-3">
-							<label for="CSALVOLCD">CSALVOLCD</label>
-							<input type="text" class="form-control" id="CSALVOLCD" required>
+							<label for="modal_CSALVOLCD">CSALVOLCD</label>
+							<input type="text" class="form-control" id="modal_CSALVOLCD" required>
 						</div>
 						<div class="col-md-9 mb-3">
-							<label for="CSALVOLDS">CSALVOLDS</label>
-							<input type="text" class="form-control" id="CSALVOLDS" aria-describedby="inputGroupPrepend" required>
+							<label for="modal_CSALVOLDS">CSALVOLDS</label>
+							<input type="text" class="form-control" id="modal_CSALVOLDS" aria-describedby="inputGroupPrepend" required>
 						</div>
+					</div>
+					<div class="form-group row">
+						<div class="input-group col-md-12">
+								<div class="input-group-prepend">
+									<span class="input-group-text">Actual Corporate Sales Volume (in thousands)</span>
+								</div>
+								<input type="text" class="form-control" id="modal_ACSLSVOL">
+							</div>
 					</div>
 				</div>
 				<!--end of modal body-->
 				<div class="modal-footer">
-					<button class="btn btn-primary" onclick="loadEditBusiness();" type="submit">Submit changes</button>
+					<button class="btn btn-primary" onclick="sendBusinessEdit();" type="submit">Submit changes</button>
 					<button type="button" id="byemodal" class="btn btn-secondary" data-dismiss="modal">Close</button>
 				</div>
 			</div>
@@ -176,10 +182,6 @@
 	</div>
 	<div class='infoContainer'>
 		<button class='infoContainerButton'>MAIN</button>
-		<!-- <div class="Input">
-			<input type="text" id="zipInput" class="Input-text" placeholder="Zipcode eg. 12203">
-			<button class='go-button btn btn-primary btn-lg'>Search</button>
-		</div> -->
 		<div id="search-description" class="page-header">Default</div>
 		<div class="Object-desc"></div>
 		<div class="pieChart-loader"></div>
@@ -230,30 +232,10 @@
 						 aria-haspopup="true" aria-expanded="false">
 							Sales Volume
 						</button>
-						<div class="dropdown-menu" id="salesvolume-dropdown" aria-labelledby="dropdownSalesVolume">
-						</div>&nbsp;
+						<ul class="dropdown-menu" id="salesvolume-dropdown" aria-labelledby="dropdownSalesVolume">
+						</ul>&nbsp;
 					</div>
 				</div>
-				<!--
-				<div class="dropdown dropdown-btn">
-					<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-						aria-haspopup="true" aria-expanded="false">
-						Select Borough
-					</button>
-					<div class="dropdown-menu" id="borough-dropdown" aria-labelledby="dropdownMenuButton">
-						<a class="dropdown-item" href="#">Bronx</a>
-						<a class="dropdown-item" href="#">Kings</a>
-						<a class="dropdown-item" href="#">Nassau</a>
-						<a class="dropdown-item" href="#">New York</a>
-						<a class="dropdown-item" href="#">Putnam</a>
-						<a class="dropdown-item" href="#">Queens</a>
-						<a class="dropdown-item" href="#">Richmond</a>
-						<a class="dropdown-item" href="#">Rockland</a>
-						<a class="dropdown-item" href="#">Suffolk</a>
-						<a class="dropdown-item" href="#">Westchester</a>
-					</div>
-				</div> &nbsp;
-				-->
 			</div>
 			<div class="col-md-12">
 				<button class="btn btn-primary btn-md ml-auto" id="advsearch-button" type="submit">Search</button>&nbsp;<label id="search-message">*No
@@ -270,8 +252,6 @@
 		</div>
 	</div>
 </body>
-
-
 <!-- SOURCES -->
 <script src="/js/src/jquery-3.3.1.min.js"></script>
 <script src="/js/src/jquery-ui-1.12.1/jquery-ui.min.js "></script>
@@ -291,11 +271,10 @@
 <script src="/js/src/FileSaver.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
 
-
 <!-- SCRIPTS -->
 <script src="/meta/naicsKeys.js"></script>
-<script src="/js/checkScreenSize.js"></script>
-<script src="/js/MapEstablishments.js"></script>
+<script src="/js/loadDropdown.js"></script>
+<script src="/js/loadAutoComplete.js"></script>
 <script src="/js/loadDatatable.js"></script>
 <script src="/js/loadPieChart.js"></script>
 <script src="/js/loadHistogram.js"></script>
@@ -306,18 +285,22 @@
 <!-- <script src="/js/loadDistanceEstablishments.js"></script> -->
 <script src="/js/loadDrawingEstablishments.js"></script>
 <script src="/js/loadAdvancedSearchEstablishments.js"></script>
-<script src="/js/editing/loadEditBusiness.js"></script>
 <script src="/js/loadQueryOverlay.js"></script>
-<script src="/js/convertDomToImage.js"></script>
 <script src="/js/loadEditModal.js"></script>
-<script src="/js/infogroup.js"></script>
-<script src="/js/autoComplete_url.js"></script>
-<script src="/js/map.js"></script>
 
+<script src="/js/checkScreenSize.js"></script>
+<script src="/js/MapEstablishments.js"></script>
+<script src="/js/convertDomToImage.js"></script>
+<script src="/js/infogroup.js"></script>
+<script src="/js/updateSearchInfo.js"></script>
+<!-- <script src="/js/autoComplete_url.js"></script> -->
+<script src="/js/map.js"></script>
+<script src="/js/exportData.js"></script>
+
+<script src="/js/editing/sendBusinessEdit.js"></script>
 
 <!-- INIT -->
 <script src="/js/init.js"></script>
 
 </html>
-
 <!-- TODO: Add loading animation -->

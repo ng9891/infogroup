@@ -5,81 +5,8 @@ function loadEditModal(dt_row) {
         console.log(dt_row);
         return;
     }
-    d3.json(`/api/getsalesvolume`).then(data => {
-        loadSalesVolume(data); //function in file
-    }, function (err) {
-        alert("Query Error");
-        console.log(err);
-    });
-
-    d3.json(`/api/getempsize`).then(data => {
-        loadEmpSize(data); //function in file
-    }, function (err) {
-        alert("Query Error");
-        console.log(err);
-    });
-
-    d3.json(`/api/getsqfoot`).then(data => {
-        loadSqFoot(data); //function in file
-    }, function (err) {
-        alert("Query Error");
-        console.log(err);
-    });
-
-    // TEST *********************************************
-    function loadData(inputId, controller) {
-        switch (controller) {
-            case "getindustries":
-                d3.json(`/api/getindustries`).then(data => {
-                    textAutocomplete(data, inputId, controller);
-                }, function (err) {
-                    alert("Query Error");
-                    console.log(err);
-                });
-                break;
-        }
-    };
-
-    function textAutocomplete(dataValues, inputId, controller) {
-        var arr_data_ds = [];
-        var arr_data_cd = [];
-        switch (controller) {
-            case "getindustries":
-                dataValues.data.map(est => {
-                    arr_data_ds.push(est.NAICSDS);
-                    arr_data_cd.push(est.NAICSCD.toString());
-                });
-                // console.log(arr_data_cd);
-                break;
-        }
-        $(inputId).autocomplete({
-            delay: 0,
-            minLength: 2,
-            //source: arr_data,
-            source: function (request, response) {
-                var results = $.ui.autocomplete.filter(arr_data_ds, request.term);
-                response(results.slice(0, 10));
-            },
-            messages: {
-                noResults: '',
-                results: function () {}
-            }
-        });
-        $('#NAICSCD').autocomplete({
-            delay: 0,
-            minLength: 2,
-            //source: arr_data,
-            source: function (request, response) {
-                var results2 = $.ui.autocomplete.filter(arr_data_cd, request.term);
-                response(results2.slice(0, 10));
-            },
-            messages: {
-                noResults: '',
-                results: function () {}
-            }
-        });
-    };
-    loadData("#NAICSDS", "getindustries"); //needs to be changed to use autoComplete_url
+    
+    // loadData("#NAICSDS", "getindustries"); //needs to be changed to use autoComplete_url
     //END OF TEST ******************************************************
 
     let business_id = dt_row["id"];
@@ -88,44 +15,34 @@ function loadEditModal(dt_row) {
         .then(data => {
             let est = data.data[0];
             $("#modalLabel").html(est.CONAME + ' - ID: <span id ="business_id">' + business_id + '</span>');
-            $("#LEMPSZCD_button").text((est.LEMPSZCD !== null) ? est.LEMPSZCD : 'Emp Size');
-            $("#LEMPSZDS").val(est.LEMPSZDS);
-            $("#ALEMPSZ").val(est.ALEMPSZ);
-            $("#NAICSCD").val(est.NAICSCD);
-            $("#NAICSDS").val(est.NAICSDS);
-            $("#PRMSICCD").val(est.PRMSICCD);
-            $("#PRMSICDS").val(est.PRMSICDS);
-            $("#SQFOOTCD_button").text((est.SQFOOTCD !== null) ? est.SQFOOTCD : 'SQFOOT Code');
-            $("#SQFOOTDS").val(est.SQFOOTDS);
-            $("#LSALVOLCD_button").text((est.LSALVOLCD !== null) ? est.LSALVOLCD : 'Sales Volume');
-            $("#LSALVOLDS").val(est.LSALVOLDS);
-            $("#ALSLSVOL").val(est.ALSLSVOL);
-            $("#CSALVOLDS").val(est.CSALVOLDS);
-            $("#ACSLSVOL").val(est.ACSLSVOL);
+            $("#modal_LEMPSZCD_button").text((est.LEMPSZCD !== null) ? est.LEMPSZCD : 'Emp Size');
+            $("#modal_LEMPSZDS").val(est.LEMPSZDS);
+            $("#modal_ALEMPSZ").val(est.ALEMPSZ);
+            $("#modal_NAICSCD").val(est.NAICSCD);
+            $("#modal_NAICSDS").val(est.NAICSDS);
+            $("#modal_PRMSICCD").val(est.PRMSICCD);
+            $("#modal_PRMSICDS").val(est.PRMSICDS);
+
+            $("#modal_SQFOOTCD_button").text((est.SQFOOTCD !== null) ? est.SQFOOTCD : 'SQFOOT Code');
+            $("#modal_SQFOOTDS").val(est.SQFOOTDS);
+
+            $("#modal_LSALVOLCD_button").text((est.LSALVOLCD !== null) ? est.LSALVOLCD : 'Sales Volume');
+            $("#modal_LSALVOLDS").val(est.LSALVOLDS);
+            $("#modal_ALSLSVOL").val(est.ALSLSVOL);
+
+            $("#modal_CSALVOLCD").val(est.CSALVOLDS);
+            $("#modal_CSALVOLDS").val(est.CSALVOLDS);
+            $("#modal_ACSLSVOL").val(est.ACSLSVOL);
 
         }, function (err) {
             alert("Query Error on ID");
             console.log(err);
         });
 
-    $('#ALEMPSZ').change(()=>{
-        //TODO: parse entry
-        console.log('ALEMPSZ change');
-    });
-    $('#ALSLSVOL').change(()=>{
-        //TODO: parse entry
-        console.log('ALSLSVOL change');
-    });
+    loadEditModal_eventListeners();
 }
-
-function loadSalesVolume(input) {
-    let dropdown = document.getElementById("LSALVOLCD");
-    $("#LSALVOLCD").empty();
-    dropdown.innerHTML = input.data.map(est => {
-        if (est.LSALVOLCD !== null) return `<li><a class='dropdown-item' href='#'>${est.LSALVOLCD} - ${est.LSALVOLDS}</a></li>`;
-    }).join("");
-
-    $("#LSALVOLCD a").click(function () {
+function loadEditModal_eventListeners(){
+    $("#modal_LSALVOLCD a").click(function () {
         let str = $(this).text();
         let chosen_LSALVOLCD, chosen_LSALVOLDS;
         let indexOfDash = str.indexOf('-');
@@ -135,19 +52,11 @@ function loadSalesVolume(input) {
         }
         $(this).parents(".dropdown").find('.btn').html(chosen_LSALVOLCD + ' <span class="caret"></span>');
         $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
-        $('#LSALVOLDS').val(chosen_LSALVOLDS);
-        $("#ALSLSVOL").val('');
+        $('#modal_LSALVOLDS').val(chosen_LSALVOLDS);
+        $("#modal_ALSLSVOL").val('');
     });
-}
 
-function loadEmpSize(input) {
-    let dropdown = document.getElementById("LEMPSZCD");
-    $("#LEMPSZCD").empty();
-    dropdown.innerHTML = input.data.map(est => {
-        if (est.LSALVOLCD !== null) return `<li><a class='dropdown-item' href='#'>${est.LEMPSZCD} - ${est.LEMPSZDS}</a></li>`;
-    }).join("");
-
-    $("#LEMPSZCD a").click(function () {
+    $("#modal_LEMPSZCD a").click(function () {
         let str = $(this).text();
         let chosen_LEMPSZCD, chosen_LEMPSZDS;
         let indexOfDash = str.indexOf('-');
@@ -157,19 +66,11 @@ function loadEmpSize(input) {
         }
         $(this).parents(".dropdown").find('.btn').html(chosen_LEMPSZCD + ' <span class="caret"></span>');
         $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
-        $('#LEMPSZDS').val(chosen_LEMPSZDS);
-        $("#ALEMPSZ").val('');
+        $('#modal_LEMPSZDS').val(chosen_LEMPSZDS);
+        $("#modal_ALEMPSZ").val('');
     });
-}
 
-function loadSqFoot(input) {
-    let dropdown = document.getElementById("SQFOOTCD");
-    $("#SQFOOTCD").empty();
-    dropdown.innerHTML = input.data.map(est => {
-        if (est.LSALVOLCD !== null) return `<li><a class='dropdown-item' href='#'>${est.SQFOOTCD} - ${est.SQFOOTDS}</a></li>`;
-    }).join("");
-
-    $("#SQFOOTCD a").click(function () {
+    $("#modal_SQFOOTCD a").click(function () {
         let str = $(this).text();
         let chosen_SQFOOTCD, chosen_SQFOOTDS;
         let indexOfDash = str.indexOf('-');
@@ -179,7 +80,16 @@ function loadSqFoot(input) {
         }
         $(this).parents(".dropdown").find('.btn').html(chosen_SQFOOTCD + ' <span class="caret"></span>');
         $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
-        $('#SQFOOTDS').val(chosen_SQFOOTDS);
+        $('#modal_SQFOOTDS').val(chosen_SQFOOTDS);
+    });
+
+    $('#modal_ALEMPSZ').change(()=>{
+        //TODO: parse entry
+        console.log('ALEMPSZ change');
+    });
+    $('#modal_ALSLSVOL').change(()=>{
+        //TODO: parse entry
+        console.log('ALSLSVOL change');
     });
 }
 
@@ -215,14 +125,8 @@ geom
 LSALVOLCD
 LSALVOLDS
 ALSLSVOL //int
+
 CSALVOLCD
 CSALVOLDS
 ACSLSVOL //int
-
-
-SQFOOTCD / DS
-"A"	"0 - 2499"
-"B"	"2500 - 9999"
-"C"	"10000 - 39999"
-"D"	"40000+"
 */
