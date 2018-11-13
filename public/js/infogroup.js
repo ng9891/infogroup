@@ -7,7 +7,7 @@ $(document).ready(function () {
             $('#query-button').click();
         }
     });
-    // Select all on focus on nav bar
+    // Select all on focus of nav bar search
     $("#query-search").on("click", function () {
         $(this).select();
     });
@@ -58,9 +58,9 @@ $(document).ready(function () {
         }
     });
 
-    //Autocomplete
+    // Autocomplete
     loadAutoComplete();
-    // EDITMODAL
+    // Dropdowns for Advanced search and editModal
     loadDropdown();
 
     //Button listener to show statisticsContainer
@@ -92,6 +92,7 @@ $(window).on("load", function () {
     $(".loader").fadeOut("slow");
 });
 
+
 //Progress bar for chunk loading leaflet cluster
 var progress = document.getElementById('progress');
 var progressBar = document.getElementById('progress-bar');
@@ -110,7 +111,7 @@ function updateProgressBar(processed, total, elapsed, layersArray) {
     }
 }
 
-function loadAdvancedSearchListener(){
+function loadAdvancedSearchListener() {
     $("#salesvolume-dropdown a").click(function (e) {
         $(this).parents(".dropdown").find('.btn').html($(this).text() + ' <span class="caret"></span>');
         $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
@@ -135,7 +136,7 @@ function loadAdvancedSearchListener(){
 
         var salvol;
         let salvoltext = $('#dropdownSalesVolume').text().trim();
-        if( salvoltext !== 'Sales Volume') salvol = salvoltext;        
+        if (salvoltext !== 'Sales Volume') salvol = salvoltext;
 
         // console.log("County: " + county);
         // console.log("MPO: " + mpo);
@@ -146,4 +147,10 @@ function loadAdvancedSearchListener(){
         loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county);
         $(".advancedSearchContainer").toggleClass("open");
     });
+}
+
+function clearUI() {
+    $("div.Object-desc").empty();
+    $("#pieChart").empty();
+    if (usrMarkers.length !== 0) mymap.removeLayer(usrMarkers.pop()); //removes marker from user
 }

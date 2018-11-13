@@ -40,7 +40,8 @@ function getForm() {
         ALSLSVOL: isEmpty($("#modal_ALSLSVOL").val()) ? null : $("#modal_ALSLSVOL").val(),
         CSALVOLCD: null,
         CSALVOLDS: null,
-        ACSLSVOL: isEmpty($("#modal_ACSLSVOL").val()) ? null : `'${$("#modal_ACSLSVOL").val()}'`
+        ACSLSVOL: isEmpty($("#modal_ACSLSVOL").val()) ? null : `'${$("#modal_ACSLSVOL").val()}'`,
+        desc: isEmpty($("#modal_comment").val()) ? null : `'${$("#modal_comment").val()}'`
     }
     return obj;
 }
