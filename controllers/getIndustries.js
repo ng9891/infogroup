@@ -1,18 +1,21 @@
 'use strict';
 let db_service = require('../utils/db_service')
 
-function getIndustries(type) {
+function getIndustries(type = 'BOTH') {
     return new Promise(function (resolve, reject) {
         let selection = '';
-        if(!type) type='BOTH'
-        type = type.toUpperCase();
 
-        switch(type){
-            case('BOTH'):
-                selection = `"NAICSCD", "NAICSDS"`
+        type = type.trim().toUpperCase();
+
+        switch (type) {
+            case "'DS'":
+                selection = `"NAICSDS"`
+                break;
+            case "'CD'":
+                selection = `"NAICSCD"`
                 break;
             default:
-                selection = `"NAICS${type}"`
+                selection = `"NAICSCD", "NAICSDS"`
                 break;
         }
         let sql =
@@ -20,8 +23,9 @@ function getIndustries(type) {
             SELECT  
             DISTINCT ${selection}
             FROM businesses_2014 
-            WHERE "NAICSDS" IS NOT NULL;
-            `; 
+            WHERE "NAICSCD" IS NOT NULL;
+            `;
+
         // ~500 msec, 931 rows
         // must be written in a local file once,
         // then check the file if not empty use the list from there.

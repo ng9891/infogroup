@@ -15,7 +15,6 @@ function exportData() {
 		csvArray.push(line);
 	});
 	var csvString = csvArray.join("\n");
-	// console.log(csvContent);
 
 	// Generate PDF
 	var doc = new jsPDF('p', 'pt', 'a4');
@@ -25,57 +24,49 @@ function exportData() {
 	var title = $('#search-description').text();
 	title = doc.splitTextToSize(title, 550); //Split long text
 	doc.text(10, 25, title);
-	convertDomToImage('pieChart', (imgURI, width, height) => {
-		if(imgURI) doc.addImage(imgURI, 'PNG', 0, 40);
+	convertMapToImage('pieChart', (imgURL, width, height) => {
+		if(imgURL) doc.addImage(imgURL, 'PNG', 0, 40);
 		else doc.text(0, 40, "Error exporting the Pie Chart");
-		convertDomToImage('histogram-container', (imgURI, width, height) => {
-			if(imgURI) doc.addImage(imgURI, 'PNG', 0, 400, width * 0.5, height * 0.5), 'hist', 'NONE', 300;
+		convertMapToImage('histogram-container', (imgURL, width, height) => {
+			if(imgURL) doc.addImage(imgURL, 'PNG', 0, 400, width * 0.5, height * 0.5), 'hist', 'NONE', 300;
 			else doc.text(0, 400, "Error exporting the Histogram");
-			convertDomToImage('mapid', (imgURI, width, height) => {
-				//Add extra page in ledger format
-				if(imgURI) {
+			convertMapToImage('mapid', (imgURL, width, height) => {
+				if(imgURL) {
+					//Add extra page in ledger format
 					doc.addPage('a4', 'l');
-					doc.addImage(imgURI, 'PNG', 0, 70, width * 0.5, height * 0.5);
+					doc.addImage(imgURL, 'PNG', 0, 70, width * 0.5, height * 0.5);
+					zipFiles(csvString, doc);
 				}
 				else{
+					console.log('in error');
 					doc.text(0, 750, "Error exporting the Map. \nTry zooming out of the map before exporting");
-				} 
+					doc.addPage('a4', 'l');
 
-				var zip = new JSZip();
-				zip.file("graphs.pdf", doc.output(), {
-					binary: true
-				});
-				zip.file("datatable.csv", csvString);
-				zip.generateAsync({
-						type: "blob"
-					})
-					.then(function (content) {
-						//FileSaver.js
-						saveAs(content, "infogroup.zip");
+					// Try another way.
+					convertMapToImage_html2canvas('mapid', (imgURL, width, height) => {
+						doc.addImage(imgURL, 'PNG', 0, 70, width * 0.5, height * 0.5);
+						zipFiles(csvString, doc);
 					});
+					
+				} 
 			});
 		});
 	});
 }
 
-
-	// generatePDF((doc) => {
-	// 	if (!doc) {
-	// 		alert("There was an error on exporting");
-	// 		return;
-	// 	}
-	// 	var zip = new JSZip();
-	// 	zip.file("graphs.pdf", doc.output(), {
-	// 		binary: true
-	// 	});
-	// 	zip.file("datatable.csv", csvString);
-	// 	zip.generateAsync({
-	// 			type: "blob"
-	// 		})
-	// 		.then(function (content) {
-	// 			//FileSaver.js
-	// 			saveAs(content, "infogroup.zip");
-	// 		});
-	// 	// doc.save('infogroup.pdf');	//PDF
-	// 	// $.fn.dataTable.ext.buttons.csvHtml5.action.call(this, e, dt, button, config);	//Datatable as csv
-	// });
+function zipFiles(CSV_String, jsPDF_file){
+	if(!CSV_String) return;
+	if(!jsPDF_file) return;
+	var zip = new JSZip();
+	zip.file("graphs.pdf", jsPDF_file.output(), {
+		binary: true
+	});
+	zip.file("datatable.csv", CSV_String);
+	zip.generateAsync({
+			type: "blob"
+		})
+		.then(function (content) {
+			//FileSaver.js
+			saveAs(content, "infogroup.zip");
+		});
+}

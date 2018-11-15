@@ -6,9 +6,6 @@ function loadEditModal(dt_row) {
         return;
     }
     
-    // loadData("#NAICSDS", "getindustries"); //needs to be changed to use autoComplete_url
-    //END OF TEST ******************************************************
-
     let business_id = dt_row["id"];
     let reqURL = '/api/byid/' + business_id;
     d3.json(reqURL)
@@ -30,7 +27,7 @@ function loadEditModal(dt_row) {
             $("#modal_LSALVOLDS").val(est.LSALVOLDS);
             $("#modal_ALSLSVOL").val(est.ALSLSVOL);
 
-            $("#modal_CSALVOLCD").val(est.CSALVOLDS);
+            $("#modal_CSALVOLCD_button").text((est.CSALVOLCD !== null) ? est.CSALVOLCD : 'Corporate Sales Volume');
             $("#modal_CSALVOLDS").val(est.CSALVOLDS);
             $("#modal_ACSLSVOL").val(est.ACSLSVOL);
 
@@ -42,7 +39,30 @@ function loadEditModal(dt_row) {
     loadEditModal_eventListeners();
 }
 function loadEditModal_eventListeners(){
-    $("#modal_LSALVOLCD a").click(function () {
+    var form = $('#modal-form');
+    form.on('submit',(e)=>{
+        console.log('submitted');
+        if (form[0].checkValidity() === false) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          form[0].classList.add('was-validated');
+        // sendBusinessEdit();
+        e.preventDefault();
+    });
+
+    $('#submit_modal').click(()=>{
+        $('#modal-form').submit();
+    });
+
+    // Close modal listener. Turn form to novalidate
+    $('#editModal').on('hidden.bs.modal', function() {
+        var form = $('#modal-form');
+        form[0].classList.remove('was-validated');
+    });
+
+
+    $("#modal_LSALVOLCD li").click(function () {
         let str = $(this).text();
         let chosen_LSALVOLCD, chosen_LSALVOLDS;
         let indexOfDash = str.indexOf('-');
@@ -53,10 +73,10 @@ function loadEditModal_eventListeners(){
         $(this).parents(".dropdown").find('.btn').html(chosen_LSALVOLCD + ' <span class="caret"></span>');
         $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
         $('#modal_LSALVOLDS').val(chosen_LSALVOLDS);
-        $("#modal_ALSLSVOL").val('');
+        // $("#modal_ALSLSVOL").val('');
     });
 
-    $("#modal_LEMPSZCD a").click(function () {
+    $("#modal_LEMPSZCD li").click(function () {
         let str = $(this).text();
         let chosen_LEMPSZCD, chosen_LEMPSZDS;
         let indexOfDash = str.indexOf('-');
@@ -67,10 +87,10 @@ function loadEditModal_eventListeners(){
         $(this).parents(".dropdown").find('.btn').html(chosen_LEMPSZCD + ' <span class="caret"></span>');
         $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
         $('#modal_LEMPSZDS').val(chosen_LEMPSZDS);
-        $("#modal_ALEMPSZ").val('');
+        // $("#modal_ALEMPSZ").val('');
     });
 
-    $("#modal_SQFOOTCD a").click(function () {
+    $("#modal_SQFOOTCD li").click(function () {
         let str = $(this).text();
         let chosen_SQFOOTCD, chosen_SQFOOTDS;
         let indexOfDash = str.indexOf('-');
@@ -83,15 +103,119 @@ function loadEditModal_eventListeners(){
         $('#modal_SQFOOTDS').val(chosen_SQFOOTDS);
     });
 
-    $('#modal_ALEMPSZ').change(()=>{
-        //TODO: parse entry
-        console.log('ALEMPSZ change');
+    $("#modal_CSALVOLCD li").click(function () {
+        let str = $(this).text();
+        let chosen_CSALVOLCD, chosen_CSALVOLDS;
+        let indexOfDash = str.indexOf('-');
+        if (indexOfDash !== -1) {
+            chosen_CSALVOLCD = str.slice(0, indexOfDash - 1);
+            chosen_CSALVOLDS = str.slice(indexOfDash + 2);
+        }
+        $(this).parents(".dropdown").find('.btn').html(chosen_CSALVOLCD + ' <span class="caret"></span>');
+        $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+        $('#modal_CSALVOLDS').val(chosen_CSALVOLDS);
     });
-    $('#modal_ALSLSVOL').change(()=>{
-        //TODO: parse entry
-        console.log('ALSLSVOL change');
-    });
+
+    $('#modal_ALEMPSZ').change(selectRange_ALEMPSZ);
+    $('#modal_ALSLSVOL').change(selectRange_ALSLSVOL);
 }
+
+function selectRange_ALEMPSZ(){
+    //TODO: parse entry
+    let empszInput = $('#modal_ALEMPSZ').val().trim();
+    empszInput = parseInt(empszInput, 10);
+    if (isNaN(empszInput) ) {
+        console.log('nan')
+        return;
+    }
+    if(empszInput<1){
+        console.log('<1')
+        return;
+    }
+    if(isBetween(empszInput, 1, 4)){
+        $('#modal_LEMPSZCD li[value="A"]').click();
+    }else if(isBetween(empszInput, 5, 9)){
+        $('#modal_LEMPSZCD li[value="B"]').click();
+    }else if(isBetween(empszInput, 10, 19)){
+        $('#modal_LEMPSZCD li[value="C"]').click();
+    }else if(isBetween(empszInput, 20, 49)){
+        $('#modal_LEMPSZCD li[value="D"]').click();
+    }else if(isBetween(empszInput, 50, 99)){
+        $('#modal_LEMPSZCD li[value="E"]').click();
+    }else if(isBetween(empszInput, 100, 249)){
+        $('#modal_LEMPSZCD li[value="F"]').click();
+    }else if(isBetween(empszInput, 250, 499)){
+        $('#modal_LEMPSZCD li[value="G"]').click();
+    }else if(isBetween(empszInput, 500, 999)){
+        $('#modal_LEMPSZCD li[value="H"]').click();
+    }else if(isBetween(empszInput, 1000, 4999)){
+        $('#modal_LEMPSZCD li[value="I"]').click();
+    }else if(isBetween(empszInput, 5000, 9999)){
+        $('#modal_LEMPSZCD li[value="J"]').click();
+    }else {
+        $('#modal_LEMPSZCD li[value="K"]').click();
+    }
+}
+function selectRange_ALSLSVOL(){
+    //TODO: parse entry
+    let slsvolInput = $('#modal_ALSLSVOL').val().trim();
+    slsvolInput = parseInt(slsvolInput, 10);
+    if (isNaN(slsvolInput)) {
+        console.log('nan');
+        return;
+    }
+    if(slsvolInput<1){
+        console.log('<1')
+        return;
+    }
+    console.log(slsvolInput);
+    if(isBetween(slsvolInput, 1, 499)){
+        $('#modal_LSALVOLCD li[value="A"]').click();
+    }else if(isBetween(slsvolInput, 500, 999)){
+        $('#modal_LSALVOLCD li[value="B"]').click();
+    }else if(isBetween(slsvolInput, 1000, 2499)){
+        $('#modal_LSALVOLCD li[value="C"]').click();
+    }else if(isBetween(slsvolInput, 2500, 4999)){
+        $('#modal_LSALVOLCD li[value="D"]').click();
+    }else if(isBetween(slsvolInput, 5000, 9999)){
+        $('#modal_LSALVOLCD li[value="E"]').click();
+    }else if(isBetween(slsvolInput, 10000, 19999)){
+        $('#modal_LSALVOLCD li[value="F"]').click();
+    }else if(isBetween(slsvolInput, 20000, 49999)){
+        $('#modal_LSALVOLCD li[value="G"]').click();
+    }else if(isBetween(slsvolInput, 50000, 99999)){
+        $('#modal_LSALVOLCD li[value="H"]').click();
+    }else if(isBetween(slsvolInput, 100000, 499999)){
+        $('#modal_LSALVOLCD li[value="I"]').click();
+    }else if(isBetween(slsvolInput, 500000, 999999)){
+        $('#modal_LSALVOLCD li[value="J"]').click();
+    }else {
+        $('#modal_LSALVOLCD li[value="K"]').click();
+    }
+}
+function isBetween(x, min, max) {
+    return x >= min && x <= max;
+}
+
+// Boiler plate to check. 
+// function check_boilerplate(){
+//     console.log('change');
+    
+//     // this.setCustomValidity(""); // sets it Valid
+//     // this.setCustomValidity("anything"); // sets it invalid
+//     let msg= 'Please provide a valid Employment Size.';
+//     let reason = this.validity;
+//     if (reason.patternMismatch) {
+//         msg = 'pattern missmatch';
+//     }
+//     else if(isInvalid()){
+//         // check if it fall between code range
+//         this.setCustomValidity("wrong");
+//         msg = 'wrong';
+//     }
+//     this.nextElementSibling.innerText= msg; // Next div with error message
+// }
+
 
 // END Entity Edit Modal Form
 /*

@@ -74,107 +74,139 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<div class="form-row">
-						<div class="col-md-3 mb-3">
-							<label for="modal_LEMPSZCD">EMP SIZE CODE</label>
-							<div class="dropdown">
-								<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_LEMPSZCD_button" data-toggle="dropdown"
-								 aria-haspopup="true" aria-expanded="false">
-								 	EMP SIZE
-								</button>
-								<ul class="dropdown-menu" id="modal_LEMPSZCD" aria-labelledby="dropdownMenuButton"></ul>
+					<form id="modal-form" novalidate>
+						<div class="form-row">
+							<div class="col-sm-3 mb-3">
+								<label for="modal_LEMPSZCD">EMP SIZE CODE</label>
+								<div class="dropdown">
+									<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_LEMPSZCD_button"
+									 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										EMP SIZE
+									</button>
+									<ul class="dropdown-menu" id="modal_LEMPSZCD" aria-labelledby="dropdownMenuButton"></ul>
+								</div>
+							</div>
+							<div class="col-sm-9">
+								<label for="modal_LEMPSZDS">EMP SIZE DESC </label>
+								<input type="text" class="form-control" id="modal_LEMPSZDS" disabled>
 							</div>
 						</div>
-						<div class="col-md-9">
-							<label for="modal_LEMPSZDS">EMP SIZE DESC </label>
-							<input type="text" class="form-control" id="modal_LEMPSZDS" disabled>
-						</div>
-					</div>
-					<div class="form-group row">
-						<div class="input-group col-md-12">
-							<div class="input-group-prepend">
-								<span class="input-group-text">Actual Employment Size</span>
-							</div>
-							<input type="text" class="form-control" id="modal_ALEMPSZ">
-						</div>
-					</div>
-					<div class="form-row">
-						<div class="col-md-3 mb-3">
-							<label for="modal_NAICSCD">NAICS CODE</label>
-							<input type="text" class="form-control" id="modal_NAICSCD" required>
-						</div>
-						<div class="col-md-9 mb-3">
-							<label for="modal_NAICSDS">NAICS DESC</label>
-							<input type="text" class="form-control" id="modal_NAICSDS" aria-describedby="inputGroupPrepend" required>
-						</div>
-						<div class="col-md-3 mb-3">
-							<label for="modal_PRMSICCD">PRIMARY SIC CODE</label>
-							<input type="text" class="form-control" id="modal_PRMSICCD" required>
-						</div>
-						<div class="col-md-9 mb-3">
-							<label for="modal_PRMSICDS">PRIMARY SIC DESC</label>
-							<input type="text" class="form-control" id="modal_PRMSICDS" aria-describedby="inputGroupPrepend" required>
-						</div>
-						<div class="col-md-3 mb-3">
-							<label for="modal_SQFOOTCD">SQF CODE</label>
-							<div class="dropdown">
-								<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_SQFOOTCD_button" data-toggle="dropdown"
-								 aria-haspopup="true" aria-expanded="false">
-									SQF CODE
-								</button>
-								<ul class="dropdown-menu" id="modal_SQFOOTCD" aria-labelledby="dropdownMenuButton"></ul>
+						<div class="form-group row">
+							<div class="input-group col-sm-12">
+								<div class="input-group-prepend">
+									<span class="input-group-text">Actual Employment Size</span>
+								</div>
+								<input type="text" class="form-control" id="modal_ALEMPSZ" pattern="[0-9]*">
+								<div class="invalid-feedback">
+									Please provide a valid Employment Size.
+								</div>
 							</div>
 						</div>
-						<div class="col-md-9 mb-3">
-							<label for="modal_SQFOOTDS">SQF DESC</label>
-							<input type="text" class="form-control" id="modal_SQFOOTDS" aria-describedby="inputGroupPrepend" disabled>
-						</div>
-						<div class="col-md-3 mb-3">
-							<label for="modal_LSALVOLCD">LSALVOLCD</label>
-							<div class="dropdown">
-								<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_LSALVOLCD_button" data-toggle="dropdown"
-								 aria-haspopup="true" aria-expanded="false">
-									Sales Volume
-								</button>
-								<ul class="dropdown-menu" id="modal_LSALVOLCD" aria-labelledby="dropdownMenuButton"></ul>
+						<div class="form-row">
+							<div class="col-sm-3 mb-3">
+								<label for="modal_NAICSCD">NAICS CODE</label>
+								<input type="text" class="form-control" id="modal_NAICSCD" pattern="[0-9]*" required>
+								<div class="invalid-feedback">
+										Please provide a valid NAICS Code.
+								</div>
+							</div>
+							<div class="col-sm-9 mb-3">
+								<label for="modal_NAICSDS">NAICS DESC</label>
+								<input type="text" class="form-control" id="modal_NAICSDS" aria-describedby="inputGroupPrepend" required>
+								<div class="invalid-feedback">
+										Please provide a valid NAICS Description.
+								</div>
+							</div>
+							<div class="col-sm-3 mb-3">
+								<label for="modal_PRMSICCD">PRIMARY SIC CODE</label>
+								<input type="text" class="form-control" id="modal_PRMSICCD" pattern="[0-9]*" required>
+								<div class="invalid-feedback">
+										Please provide a valid SIC Code.
+								</div>
+							</div>
+							<div class="col-sm-9 mb-3">
+								<label for="modal_PRMSICDS">PRIMARY SIC DESC</label>
+								<input type="text" class="form-control" id="modal_PRMSICDS" aria-describedby="inputGroupPrepend" required>
+								<div class="invalid-feedback">
+										Please provide a valid SIC Description.
+								</div>
+							</div>
+							<div class="col-sm-3 mb-3">
+								<label for="modal_SQFOOTCD">SQF CODE</label>
+								<div class="dropdown">
+									<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_SQFOOTCD_button"
+									 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										SQF CODE
+									</button>
+									<ul class="dropdown-menu" id="modal_SQFOOTCD" aria-labelledby="dropdownMenuButton"></ul>
+								</div>
+							</div>
+							<div class="col-sm-9 mb-3">
+								<label for="modal_SQFOOTDS">SQF DESC</label>
+								<input type="text" class="form-control" id="modal_SQFOOTDS" aria-describedby="inputGroupPrepend" disabled>
+							</div>
+							<div class="col-sm-3 mb-3">
+								<label for="modal_LSALVOLCD">LSALVOLCD</label>
+								<div class="dropdown">
+									<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_LSALVOLCD_button"
+									 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										Sales Volume
+									</button>
+									<ul class="dropdown-menu" id="modal_LSALVOLCD" aria-labelledby="dropdownMenuButton"></ul>
+								</div>
+							</div>
+							<div class="col-sm-9 mb-3">
+								<label for="modal_LSALVOLDS">LSALVOLDS</label>
+								<input type="text" class="form-control" id="modal_LSALVOLDS" aria-describedby="inputGroupPrepend" disabled>
 							</div>
 						</div>
-						<div class="col-md-9 mb-3">
-							<label for="modal_LSALVOLDS">LSALVOLDS</label>
-							<input type="text" class="form-control" id="modal_LSALVOLDS" aria-describedby="inputGroupPrepend" disabled>
-						</div>
-					</div>
-					<div class="form-group row">
-						<div class="input-group col-md-12">
+						<div class="form-group row">
+							<div class="input-group col-sm-12">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Actual Sales Volume (in thousands)</span>
 								</div>
-								<input type="text" class="form-control" id="modal_ALSLSVOL">
+								<input type="text" class="form-control" id="modal_ALSLSVOL" pattern="[0-9]*">
+								<div class="invalid-feedback">
+										Please provide a valid Sales Volume.
+								</div>
 							</div>
-					</div>
-					<div class="form-row">
-						<div class="col-md-3 mb-3">
-							<label for="modal_CSALVOLCD">CSALVOLCD</label>
-							<input type="text" class="form-control" id="modal_CSALVOLCD" required>
 						</div>
-						<div class="col-md-9 mb-3">
-							<label for="modal_CSALVOLDS">CSALVOLDS</label>
-							<input type="text" class="form-control" id="modal_CSALVOLDS" aria-describedby="inputGroupPrepend" required>
+						<div class="form-row">
+							<div class="col-sm-4 mb-3">
+								<label for="modal_LSALVOLCD">CSALVOLCD</label>
+								<div class="dropdown">
+									<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_CSALVOLCD_button"
+										data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										Corporate Sales Volume
+									</button>
+									<ul class="dropdown-menu" id="modal_CSALVOLCD" aria-labelledby="dropdownMenuButton"></ul>
+								</div>
+							</div>
+							<div class="col-sm-8 mb-3">
+								<label for="modal_CSALVOLDS">CSALVOLDS</label>
+								<input type="text" class="form-control" id="modal_CSALVOLDS" aria-describedby="inputGroupPrepend" disabled>
+							</div>
 						</div>
-					</div>
-					<div class="form-group row">
-						<div class="input-group col-md-12">
+						<div class="form-group row">
+							<div class="input-group col-sm-12">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Actual Corporate Sales Volume (in thousands)</span>
 								</div>
 								<input type="text" class="form-control" id="modal_ACSLSVOL">
 							</div>
-					</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-sm-12">
+								<label for="modal_comment">Comments</label>
+								<textarea class="form-control" rows="2" id="modal_comment"></textarea>
+							</div>
+						</div>
+					</form>
 				</div>
 				<!--end of modal body-->
 				<div class="modal-footer">
-					<button class="btn btn-primary" onclick="sendBusinessEdit();" type="submit">Submit changes</button>
-					<button type="button" id="byemodal" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button id="submit_modal" class="btn btn-primary">Submit changes</button>
+					<button id="byemodal" class="btn btn-secondary" data-dismiss="modal">Close</button>
 				</div>
 			</div>
 			<!--end of modal-content-->
@@ -270,6 +302,7 @@
 <script src="/js/src/jszip.min.js"></script>
 <script src="/js/src/FileSaver.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+<script src="/js/src/html2canvas.min.js"></script>
 
 <!-- SCRIPTS -->
 <script src="/meta/naicsKeys.js"></script>
@@ -290,7 +323,7 @@
 
 <script src="/js/checkScreenSize.js"></script>
 <script src="/js/MapEstablishments.js"></script>
-<script src="/js/convertDomToImage.js"></script>
+<script src="/js/convertMapToImage.js"></script>
 <script src="/js/infogroup.js"></script>
 <script src="/js/updateSearchInfo.js"></script>
 <!-- <script src="/js/autoComplete_url.js"></script> -->

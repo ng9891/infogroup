@@ -18,6 +18,8 @@ let getZip = require('../controllers/getZip');
 let getCounty = require('../controllers/getCounty');
 let getMpo = require('../controllers/getMpo');
 let getMun = require('../controllers/getMun');
+let getSic_AutoComplete = require('../controllers/getSic');
+let getSic = require('../controllers/getSic');
 
 let advancedSearch = require('../controllers/advancedSearch')
 
@@ -42,13 +44,15 @@ router.get('/api/getzip/:zip', getZip);
 router.get('/api/getcounty/:county', getCounty);
 router.get('/api/getmpo/:mpo', getMpo);
 router.get('/api/getmun/:mun', getMun);
+router.get('/api/getsic/:sic', getSic_AutoComplete);
+router.get('/api/getsic', getSic);
 
 router.get('/api/advancedSearch', advancedSearch);
 
 
 //EDIT ROUTES
 //TODO: check for auth and permission
-router.post('/:bus_id', editBusiness);
+// router.post('/:bus_id', editBusiness);
 // router.put('/:audit_id', approveBusiness);
 
 
