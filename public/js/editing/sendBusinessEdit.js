@@ -21,40 +21,40 @@ function sendBusinessEdit() {
 function getForm() {
     let obj = {};
     obj = {
-        PRMSICCD: parseInput($("#modal_PRMSICCD").val()),
-        PRMSICDS: parseInput($("#modal_PRMSICDS").val()),
-        NAICSCD: parseInput($("#modal_NAICSCD").val()),
-        NAICSDS: parseInput($("#modal_NAICSDS").val()),
-        SQFOOTCD: parseInput($("#modal_SQFOOTCD_button").text()),
-        SQFOOTDS: parseInput($("#modal_SQFOOTDS").val()),
-        LEMPSZCD: parseInput($("#modal_LEMPSZCD_button").text()),
-        LEMPSZSZ: parseInput($("#modal_LEMPSZDS").val()),
-        ALEMPSZ: parseInput($("#modal_ALEMPSZ").val()),
-        LSALVOLCD: parseInput($("#modal_LSALVOLCD_button").text()),
-        LSALVOLDS: parseInput($("#modal_LSALVOLDS").val()),
-        ALSLSVOL: parseInput($("#modal_ALSLSVOL").val()),
-        CSALVOLCD: parseInput($("#modal_CSALVOLCD_button").text()),
-        CSALVOLDS: parseInput($("#modal_CSALVOLDS").val()),
-        ACSLSVOL: parseInput($("#modal_ACSLSVOL").val()),
+        PRMSICCD: parseFormInput($("#modal_PRMSICCD").val()),
+        PRMSICDS: parseFormInput($("#modal_PRMSICDS").val()),
+        NAICSCD: parseFormInput($("#modal_NAICSCD").val()),
+        NAICSDS: parseFormInput($("#modal_NAICSDS").val()),
+        SQFOOTCD: parseFormInput($("#modal_SQFOOTCD_button").text()),
+        SQFOOTDS: parseFormInput($("#modal_SQFOOTDS").val()),
+        LEMPSZCD: parseFormInput($("#modal_LEMPSZCD_button").text()),
+        LEMPSZSZ: parseFormInput($("#modal_LEMPSZDS").val()),
+        ALEMPSZ: parseFormInput($("#modal_ALEMPSZ").val()),
+        LSALVOLCD: parseFormInput($("#modal_LSALVOLCD_button").text()),
+        LSALVOLDS: parseFormInput($("#modal_LSALVOLDS").val()),
+        ALSLSVOL: parseFormInput($("#modal_ALSLSVOL").val()),
+        CSALVOLCD: parseFormInput($("#modal_CSALVOLCD_button").text()),
+        CSALVOLDS: parseFormInput($("#modal_CSALVOLDS").val()),
+        ACSLSVOL: parseFormInput($("#modal_ACSLSVOL").val()),
         LATITUDEO: null,
         LONGITUDEO: null,
         geom: null,
-        desc: parseInput($("#modal_comment").val())
+        desc: parseFormInput($("#modal_comment").val())
     }
     return obj;
 }
-function parseInput(val){
-    if(isEmpty(val)) return null;
+function parseFormInput(val){
+    if(isFormInputEmpty(val)) return null;
     if(isNaN(val)){
         if (val === 'Corporate Sales Volume') return null;
         if (val === 'Sales Volume') return null;
-        if (val == 'SQF CODE') return null;
-        if (val == 'EMP SIZE') return null;
+        if (val == 'SQF Code') return null;
+        if (val == 'Emp Size') return null;
         return val.trim().toUpperCase();
     }
     return `'${val}'`;
 }
-function isEmpty(txt){
+function isFormInputEmpty(txt){
     if(!txt) return true;   //undefined
     if(txt === '') return true; //empty
     return false;

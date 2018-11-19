@@ -1,6 +1,6 @@
-// Global values for easier lookup and for modal.
-// var _obj_naics_arr = []; // Associative array containing the values for NAICS
-// var _obj_sic_arr = [];  // Associative array containing the values for Primary SIC
+// Infogroup.js contains general logistic and listeners of the site.
+// It will load the necessary dropdowns and autocomplete when document is ready.
+// Also, manages initial loading procedures.
 $(document).ready(function () {
     let query_input, query_type;
     $("#query-search").keydown((event) => {
@@ -150,10 +150,4 @@ function loadAdvancedSearchListener() {
         loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county);
         $(".advancedSearchContainer").toggleClass("open");
     });
-}
-
-function clearUI() {
-    $("div.Object-desc").empty();
-    $("#pieChart").empty();
-    if (usrMarkers.length !== 0) mymap.removeLayer(usrMarkers.pop()); //removes marker from user
 }

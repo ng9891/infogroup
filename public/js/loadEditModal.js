@@ -20,7 +20,7 @@ function loadEditModal(dt_row) {
             $("#modal_PRMSICCD").val(est.PRMSICCD);
             $("#modal_PRMSICDS").val(est.PRMSICDS);
 
-            $("#modal_SQFOOTCD_button").text((est.SQFOOTCD !== null) ? est.SQFOOTCD : 'SQFOOT Code');
+            $("#modal_SQFOOTCD_button").text((est.SQFOOTCD !== null) ? est.SQFOOTCD : 'SQF Code');
             $("#modal_SQFOOTDS").val(est.SQFOOTDS);
 
             $("#modal_LSALVOLCD_button").text((est.LSALVOLCD !== null) ? est.LSALVOLCD : 'Sales Volume');
@@ -125,14 +125,14 @@ function loadEditModal_eventListeners() {
     });
 
     $('#modal_ALEMPSZ').change(selectRange_ALEMPSZ);
-    $('#modal_ALSLSVOL').change(selectRange);
-    $('#modal_ACSLSVOL').change(selectRange);
+    $('#modal_ALSLSVOL').change(selectRange_SalesVolume);
+    $('#modal_ACSLSVOL').change(selectRange_SalesVolume);
 
-    $('#modal_NAICSCD').change(autoFillText);
-    $('#modal_NAICSDS').change(autoFillText);
+    $('#modal_NAICSCD').change(autoFillText_modal);
+    $('#modal_NAICSDS').change(autoFillText_modal);
 
-    $('#modal_PRMSICCD').change(autoFillText);
-    $('#modal_PRMSICDS').change(autoFillText);
+    $('#modal_PRMSICCD').change(autoFillText_modal);
+    $('#modal_PRMSICDS').change(autoFillText_modal);
 }
 
 function selectRange_ALEMPSZ() {
@@ -164,7 +164,7 @@ function selectRange_ALEMPSZ() {
     checkRangeEmply($('#modal_LEMPSZDS').val());
 }
 
-function selectRange(e) {
+function selectRange_SalesVolume(e) {
     let element = e.target.id;
     let queryType = element.slice(6); // Takes out 'modal_'
     let slsvolInput;
@@ -208,7 +208,7 @@ function selectRange(e) {
     }
 }
 
-function autoFillText(e) {
+function autoFillText_modal(e) {
     let element = e.target.id;
     let queryType = element.slice(6, -2); // Takes out 'modal_' and last 2 chars
     let type = element.substr(-2); // Gets CD or DS
