@@ -1,3 +1,6 @@
+// Global values for easier lookup and for modal.
+// var _obj_naics_arr = []; // Associative array containing the values for NAICS
+// var _obj_sic_arr = [];  // Associative array containing the values for Primary SIC
 $(document).ready(function () {
     let query_input, query_type;
     $("#query-search").keydown((event) => {

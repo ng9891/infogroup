@@ -1,3 +1,5 @@
+let _obj_naics_arr = [];
+let _obj_sic_arr = [];
 function loadAutoComplete(){
     //Declare the AC on ready. Main Page
     $("#query-search").autocomplete();
@@ -24,7 +26,6 @@ function loadAutoComplete(){
     autoComplete_url("#mpoId", 'mpo');
     autoComplete_url("#munId", 'mun');
 
-    let obj_naics_arr = [];
     d3.json(`/api/getindustries`).then(data => {
         let obj_naics_cd = {};
         let obj_naics_ds = {};
@@ -34,8 +35,8 @@ function loadAutoComplete(){
             obj_naics_ds[est.NAICSDS] = est.NAICSCD.toString();
             arr_data_cd.push(est.NAICSCD.toString());
         });
-        obj_naics_arr.push(obj_naics_cd);
-        obj_naics_arr.push(obj_naics_ds);
+        _obj_naics_arr.push(obj_naics_cd);
+        _obj_naics_arr.push(obj_naics_ds);
         autoComplete_text(arr_data_cd, '#modal_NAICSCD');
     }, function (err) {
         console.log(err);
@@ -52,7 +53,6 @@ function loadAutoComplete(){
         console.log(err);
     });
 
-    let obj_sic_arr = [];
     d3.json(`/api/getsic`).then(data => {
         let obj_sic_cd = {};
         let obj_sic_ds = {};
@@ -64,8 +64,8 @@ function loadAutoComplete(){
             arr_data_cd.push(est.PRMSICCD.toString());
             arr_data_ds.push(est.PRMSICDS);
         });
-        obj_sic_arr.push(obj_sic_cd);
-        obj_sic_arr.push(obj_sic_ds);
+        _obj_sic_arr.push(obj_sic_cd);
+        _obj_sic_arr.push(obj_sic_ds);
         autoComplete_text(arr_data_cd, '#modal_PRMSICCD');
         autoComplete_text(arr_data_ds, '#modal_PRMSICDS');
     }, function (err) {

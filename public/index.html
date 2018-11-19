@@ -76,17 +76,17 @@
 				<div class="modal-body">
 					<form id="modal-form" novalidate>
 						<div class="form-row">
-							<div class="col-sm-3 mb-3">
+							<div class="col-sm-3 mb-1">
 								<label for="modal_LEMPSZCD">EMP SIZE CODE</label>
 								<div class="dropdown">
 									<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_LEMPSZCD_button"
 									 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 										EMP SIZE
 									</button>
-									<ul class="dropdown-menu" id="modal_LEMPSZCD" aria-labelledby="dropdownMenuButton"></ul>
+									<ul class="dropdown-menu" id="modal_LEMPSZCD"></ul>
 								</div>
 							</div>
-							<div class="col-sm-9">
+							<div class="col-sm-9 mb-1">
 								<label for="modal_LEMPSZDS">EMP SIZE DESC </label>
 								<input type="text" class="form-control" id="modal_LEMPSZDS" disabled>
 							</div>
@@ -103,61 +103,61 @@
 							</div>
 						</div>
 						<div class="form-row">
-							<div class="col-sm-3 mb-3">
+							<div class="col-sm-3 mb-2">
 								<label for="modal_NAICSCD">NAICS CODE</label>
 								<input type="text" class="form-control" id="modal_NAICSCD" pattern="[0-9]*" required>
 								<div class="invalid-feedback">
-										Please provide a valid NAICS Code.
+										Invalid NAICS Code.
 								</div>
 							</div>
-							<div class="col-sm-9 mb-3">
+							<div class="col-sm-9 mb-2">
 								<label for="modal_NAICSDS">NAICS DESC</label>
-								<input type="text" class="form-control" id="modal_NAICSDS" aria-describedby="inputGroupPrepend" required>
+								<input type="text" class="form-control" id="modal_NAICSDS" required>
 								<div class="invalid-feedback">
 										Please provide a valid NAICS Description.
 								</div>
 							</div>
-							<div class="col-sm-3 mb-3">
+							<div class="col-sm-3 mb-2">
 								<label for="modal_PRMSICCD">PRIMARY SIC CODE</label>
 								<input type="text" class="form-control" id="modal_PRMSICCD" pattern="[0-9]*" required>
 								<div class="invalid-feedback">
-										Please provide a valid SIC Code.
+										Invalid SIC Code.
 								</div>
 							</div>
-							<div class="col-sm-9 mb-3">
+							<div class="col-sm-9 mb-2">
 								<label for="modal_PRMSICDS">PRIMARY SIC DESC</label>
-								<input type="text" class="form-control" id="modal_PRMSICDS" aria-describedby="inputGroupPrepend" required>
+								<input type="text" class="form-control" id="modal_PRMSICDS" required>
 								<div class="invalid-feedback">
 										Please provide a valid SIC Description.
 								</div>
 							</div>
-							<div class="col-sm-3 mb-3">
+							<div class="col-sm-3 mb-2">
 								<label for="modal_SQFOOTCD">SQF CODE</label>
 								<div class="dropdown">
 									<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_SQFOOTCD_button"
 									 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 										SQF CODE
 									</button>
-									<ul class="dropdown-menu" id="modal_SQFOOTCD" aria-labelledby="dropdownMenuButton"></ul>
+									<ul class="dropdown-menu" id="modal_SQFOOTCD"></ul>
 								</div>
 							</div>
-							<div class="col-sm-9 mb-3">
+							<div class="col-sm-9 mb-2">
 								<label for="modal_SQFOOTDS">SQF DESC</label>
-								<input type="text" class="form-control" id="modal_SQFOOTDS" aria-describedby="inputGroupPrepend" disabled>
+								<input type="text" class="form-control" id="modal_SQFOOTDS" disabled>
 							</div>
-							<div class="col-sm-3 mb-3">
+							<div class="col-sm-3 mb-1">
 								<label for="modal_LSALVOLCD">LSALVOLCD</label>
 								<div class="dropdown">
 									<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_LSALVOLCD_button"
 									 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 										Sales Volume
 									</button>
-									<ul class="dropdown-menu" id="modal_LSALVOLCD" aria-labelledby="dropdownMenuButton"></ul>
+									<ul class="dropdown-menu" id="modal_LSALVOLCD"></ul>
 								</div>
 							</div>
-							<div class="col-sm-9 mb-3">
+							<div class="col-sm-9 mb-1">
 								<label for="modal_LSALVOLDS">LSALVOLDS</label>
-								<input type="text" class="form-control" id="modal_LSALVOLDS" aria-describedby="inputGroupPrepend" disabled>
+								<input type="text" class="form-control" id="modal_LSALVOLDS" disabled>
 							</div>
 						</div>
 						<div class="form-group row">
@@ -166,25 +166,23 @@
 									<span class="input-group-text">Actual Sales Volume (in thousands)</span>
 								</div>
 								<input type="text" class="form-control" id="modal_ALSLSVOL" pattern="[0-9]*">
-								<div class="invalid-feedback">
-										Please provide a valid Sales Volume.
-								</div>
+								<div class="invalid-feedback"></div>
 							</div>
 						</div>
 						<div class="form-row">
-							<div class="col-sm-4 mb-3">
+							<div class="col-sm-4 mb-1">
 								<label for="modal_LSALVOLCD">CSALVOLCD</label>
 								<div class="dropdown">
 									<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_CSALVOLCD_button"
 										data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 										Corporate Sales Volume
 									</button>
-									<ul class="dropdown-menu" id="modal_CSALVOLCD" aria-labelledby="dropdownMenuButton"></ul>
+									<ul class="dropdown-menu" id="modal_CSALVOLCD"></ul>
 								</div>
 							</div>
-							<div class="col-sm-8 mb-3">
+							<div class="col-sm-8 mb-1">
 								<label for="modal_CSALVOLDS">CSALVOLDS</label>
-								<input type="text" class="form-control" id="modal_CSALVOLDS" aria-describedby="inputGroupPrepend" disabled>
+								<input type="text" class="form-control" id="modal_CSALVOLDS" disabled>
 							</div>
 						</div>
 						<div class="form-group row">
@@ -192,13 +190,14 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text">Actual Corporate Sales Volume (in thousands)</span>
 								</div>
-								<input type="text" class="form-control" id="modal_ACSLSVOL">
+								<input type="text" class="form-control" id="modal_ACSLSVOL" pattern="[0-9]*">
+								<div class="invalid-feedback"></div>
 							</div>
 						</div>
 						<div class="form-group row">
 							<div class="col-sm-12">
 								<label for="modal_comment">Comments</label>
-								<textarea class="form-control" rows="2" id="modal_comment"></textarea>
+								<textarea class="form-control" rows="1" id="modal_comment"></textarea>
 							</div>
 						</div>
 					</form>
@@ -323,7 +322,7 @@
 
 <script src="/js/checkScreenSize.js"></script>
 <script src="/js/MapEstablishments.js"></script>
-<script src="/js/convertMapToImage.js"></script>
+<script src="/js/convertDomToImage.js"></script>
 <script src="/js/infogroup.js"></script>
 <script src="/js/updateSearchInfo.js"></script>
 <!-- <script src="/js/autoComplete_url.js"></script> -->

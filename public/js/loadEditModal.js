@@ -1,11 +1,11 @@
 // Entity Edit Modal Form
-function loadEditModal(dt_row) { 
+function loadEditModal(dt_row) {
 
     if (!dt_row['id'] || dt_row['id'] === '') {
         console.log(dt_row);
         return;
     }
-    
+
     let business_id = dt_row["id"];
     let reqURL = '/api/byid/' + business_id;
     d3.json(reqURL)
@@ -38,42 +38,32 @@ function loadEditModal(dt_row) {
 
     loadEditModal_eventListeners();
 }
-function loadEditModal_eventListeners(){
+
+function loadEditModal_eventListeners() {
     var form = $('#modal-form');
-    form.on('submit',(e)=>{
-        console.log('submitted');
+    form.on('submit', (e) => {
+        form[0].classList.add('was-validated');
         if (form[0].checkValidity() === false) {
             e.preventDefault();
             e.stopPropagation();
-          }
-          form[0].classList.add('was-validated');
-        // sendBusinessEdit();
-        e.preventDefault();
+        }else if(form[0].checkValidity() === true){
+            sendBusinessEdit();
+            e.preventDefault();
+        }
     });
 
-    $('#submit_modal').click(()=>{
+    $('#submit_modal').click(() => {
         $('#modal-form').submit();
     });
 
     // Close modal listener. Turn form to novalidate
-    $('#editModal').on('hidden.bs.modal', function() {
+    $('#editModal').on('hidden.bs.modal', function () {
         var form = $('#modal-form');
+        // Reset Custom validity on close
+        $('#modal_ALEMPSZ')[0].setCustomValidity("");
+        $('#modal_ALSLSVOL')[0].setCustomValidity("");
+        $('#modal_ACSLSVOL')[0].setCustomValidity("");
         form[0].classList.remove('was-validated');
-    });
-
-
-    $("#modal_LSALVOLCD li").click(function () {
-        let str = $(this).text();
-        let chosen_LSALVOLCD, chosen_LSALVOLDS;
-        let indexOfDash = str.indexOf('-');
-        if (indexOfDash !== -1) {
-            chosen_LSALVOLCD = str.slice(0, indexOfDash - 1);
-            chosen_LSALVOLDS = str.slice(indexOfDash + 2);
-        }
-        $(this).parents(".dropdown").find('.btn').html(chosen_LSALVOLCD + ' <span class="caret"></span>');
-        $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
-        $('#modal_LSALVOLDS').val(chosen_LSALVOLDS);
-        // $("#modal_ALSLSVOL").val('');
     });
 
     $("#modal_LEMPSZCD li").click(function () {
@@ -87,7 +77,8 @@ function loadEditModal_eventListeners(){
         $(this).parents(".dropdown").find('.btn').html(chosen_LEMPSZCD + ' <span class="caret"></span>');
         $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
         $('#modal_LEMPSZDS').val(chosen_LEMPSZDS);
-        // $("#modal_ALEMPSZ").val('');
+        // Check the range for actual employment size
+        checkRangeEmply(chosen_LEMPSZDS);
     });
 
     $("#modal_SQFOOTCD li").click(function () {
@@ -103,6 +94,21 @@ function loadEditModal_eventListeners(){
         $('#modal_SQFOOTDS').val(chosen_SQFOOTDS);
     });
 
+    $("#modal_LSALVOLCD li").click(function () {
+        let str = $(this).text();
+        let chosen_LSALVOLCD, chosen_LSALVOLDS;
+        let indexOfDash = str.indexOf('-');
+        if (indexOfDash !== -1) {
+            chosen_LSALVOLCD = str.slice(0, indexOfDash - 1);
+            chosen_LSALVOLDS = str.slice(indexOfDash + 2);
+        }
+        $(this).parents(".dropdown").find('.btn').html(chosen_LSALVOLCD + ' <span class="caret"></span>');
+        $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+        $('#modal_LSALVOLDS').val(chosen_LSALVOLDS);
+        // Check the range for actual sales volume
+        checkRangeSales('#modal_LSALVOLCD', chosen_LSALVOLCD);
+    });
+
     $("#modal_CSALVOLCD li").click(function () {
         let str = $(this).text();
         let chosen_CSALVOLCD, chosen_CSALVOLDS;
@@ -114,93 +120,236 @@ function loadEditModal_eventListeners(){
         $(this).parents(".dropdown").find('.btn').html(chosen_CSALVOLCD + ' <span class="caret"></span>');
         $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
         $('#modal_CSALVOLDS').val(chosen_CSALVOLDS);
+        // Check the range for actual sales volume
+        checkRangeSales('#modal_CSALVOLCD', chosen_CSALVOLCD);
     });
 
     $('#modal_ALEMPSZ').change(selectRange_ALEMPSZ);
-    $('#modal_ALSLSVOL').change(selectRange_ALSLSVOL);
+    $('#modal_ALSLSVOL').change(selectRange);
+    $('#modal_ACSLSVOL').change(selectRange);
+
+    $('#modal_NAICSCD').change(autoFillText);
+    $('#modal_NAICSDS').change(autoFillText);
+
+    $('#modal_PRMSICCD').change(autoFillText);
+    $('#modal_PRMSICDS').change(autoFillText);
 }
 
-function selectRange_ALEMPSZ(){
-    //TODO: parse entry
+function selectRange_ALEMPSZ() {
     let empszInput = $('#modal_ALEMPSZ').val().trim();
     empszInput = parseInt(empszInput, 10);
-    if (isNaN(empszInput) ) {
-        console.log('nan')
-        return;
-    }
-    if(empszInput<1){
-        console.log('<1')
-        return;
-    }
-    if(isBetween(empszInput, 1, 4)){
+    if (isBetween(empszInput, 1, 4)) {
         $('#modal_LEMPSZCD li[value="A"]').click();
-    }else if(isBetween(empszInput, 5, 9)){
+    } else if (isBetween(empszInput, 5, 9)) {
         $('#modal_LEMPSZCD li[value="B"]').click();
-    }else if(isBetween(empszInput, 10, 19)){
+    } else if (isBetween(empszInput, 10, 19)) {
         $('#modal_LEMPSZCD li[value="C"]').click();
-    }else if(isBetween(empszInput, 20, 49)){
+    } else if (isBetween(empszInput, 20, 49)) {
         $('#modal_LEMPSZCD li[value="D"]').click();
-    }else if(isBetween(empszInput, 50, 99)){
+    } else if (isBetween(empszInput, 50, 99)) {
         $('#modal_LEMPSZCD li[value="E"]').click();
-    }else if(isBetween(empszInput, 100, 249)){
+    } else if (isBetween(empszInput, 100, 249)) {
         $('#modal_LEMPSZCD li[value="F"]').click();
-    }else if(isBetween(empszInput, 250, 499)){
+    } else if (isBetween(empszInput, 250, 499)) {
         $('#modal_LEMPSZCD li[value="G"]').click();
-    }else if(isBetween(empszInput, 500, 999)){
+    } else if (isBetween(empszInput, 500, 999)) {
         $('#modal_LEMPSZCD li[value="H"]').click();
-    }else if(isBetween(empszInput, 1000, 4999)){
+    } else if (isBetween(empszInput, 1000, 4999)) {
         $('#modal_LEMPSZCD li[value="I"]').click();
-    }else if(isBetween(empszInput, 5000, 9999)){
+    } else if (isBetween(empszInput, 5000, 9999)) {
         $('#modal_LEMPSZCD li[value="J"]').click();
-    }else {
+    } else if (isBetween(empszInput, 10000, Infinity)) {
         $('#modal_LEMPSZCD li[value="K"]').click();
     }
+    checkRangeEmply($('#modal_LEMPSZDS').val());
 }
-function selectRange_ALSLSVOL(){
-    //TODO: parse entry
-    let slsvolInput = $('#modal_ALSLSVOL').val().trim();
-    slsvolInput = parseInt(slsvolInput, 10);
-    if (isNaN(slsvolInput)) {
-        console.log('nan');
-        return;
+
+function selectRange(e) {
+    let element = e.target.id;
+    let queryType = element.slice(6); // Takes out 'modal_'
+    let slsvolInput;
+    let targetElement;
+    switch (queryType) {
+        case 'ALSLSVOL':
+            slsvolInput = $('#modal_ALSLSVOL').val().trim();
+            slsvolInput = parseInt(slsvolInput, 10);
+            targetElement = '#modal_LSALVOLCD';
+            break;
+        case 'ACSLSVOL':
+            slsvolInput = $('#modal_ACSLSVOL').val().trim();
+            slsvolInput = parseInt(slsvolInput, 10);
+            targetElement = '#modal_CSALVOLCD';
+            break;
     }
-    if(slsvolInput<1){
-        console.log('<1')
-        return;
-    }
-    console.log(slsvolInput);
-    if(isBetween(slsvolInput, 1, 499)){
-        $('#modal_LSALVOLCD li[value="A"]').click();
-    }else if(isBetween(slsvolInput, 500, 999)){
-        $('#modal_LSALVOLCD li[value="B"]').click();
-    }else if(isBetween(slsvolInput, 1000, 2499)){
-        $('#modal_LSALVOLCD li[value="C"]').click();
-    }else if(isBetween(slsvolInput, 2500, 4999)){
-        $('#modal_LSALVOLCD li[value="D"]').click();
-    }else if(isBetween(slsvolInput, 5000, 9999)){
-        $('#modal_LSALVOLCD li[value="E"]').click();
-    }else if(isBetween(slsvolInput, 10000, 19999)){
-        $('#modal_LSALVOLCD li[value="F"]').click();
-    }else if(isBetween(slsvolInput, 20000, 49999)){
-        $('#modal_LSALVOLCD li[value="G"]').click();
-    }else if(isBetween(slsvolInput, 50000, 99999)){
-        $('#modal_LSALVOLCD li[value="H"]').click();
-    }else if(isBetween(slsvolInput, 100000, 499999)){
-        $('#modal_LSALVOLCD li[value="I"]').click();
-    }else if(isBetween(slsvolInput, 500000, 999999)){
-        $('#modal_LSALVOLCD li[value="J"]').click();
-    }else {
-        $('#modal_LSALVOLCD li[value="K"]').click();
+    if (isBetween(slsvolInput, 1, 499)) {
+        $(targetElement + ' li[value="A"]').click();
+    } else if (isBetween(slsvolInput, 500, 999)) {
+        $(targetElement + ' li[value="B"]').click();
+    } else if (isBetween(slsvolInput, 1000, 2499)) {
+        $(targetElement + ' li[value="C"]').click();
+    } else if (isBetween(slsvolInput, 2500, 4999)) {
+        $(targetElement + ' li[value="D"]').click();
+    } else if (isBetween(slsvolInput, 5000, 9999)) {
+        $(targetElement + ' li[value="E"]').click();
+    } else if (isBetween(slsvolInput, 10000, 19999)) {
+        $(targetElement + ' li[value="F"]').click();
+    } else if (isBetween(slsvolInput, 20000, 49999)) {
+        $(targetElement + ' li[value="G"]').click();
+    } else if (isBetween(slsvolInput, 50000, 99999)) {
+        $(targetElement + ' li[value="H"]').click();
+    } else if (isBetween(slsvolInput, 100000, 499999)) {
+        $(targetElement + ' li[value="I"]').click();
+    } else if (isBetween(slsvolInput, 500000, 999999)) {
+        $(targetElement + ' li[value="J"]').click();
+    } else if (isBetween(slsvolInput, 1000000, Infinity)) {
+        $(targetElement + ' li[value="K"]').click();
+    } else {
+        checkRangeSales(targetElement, $(targetElement + '_button').text());
     }
 }
+
+function autoFillText(e) {
+    let element = e.target.id;
+    let queryType = element.slice(6, -2); // Takes out 'modal_' and last 2 chars
+    let type = element.substr(-2); // Gets CD or DS
+    let arr = [];
+    let change_element; // Element to autofill
+    let input;
+    switch (queryType) {
+        case 'NAICS':
+            input = $('#' + element).val();
+            if (type === 'CD') {
+                arr = _obj_naics_arr[0];
+                change_element = '#modal_NAICSDS';
+            }
+            if (type === 'DS') {
+                arr = _obj_naics_arr[1];
+                change_element = '#modal_NAICSCD';
+            }
+            if (arr[input]) $(change_element).val(arr[input]);
+            break;
+        case 'PRMSIC':
+            input = $('#' + element).val();
+            if (type === 'CD') {
+                arr = _obj_sic_arr[0];
+                change_element = '#modal_PRMSICDS';
+            }
+            if (type === 'DS') {
+                arr = _obj_sic_arr[1];
+                change_element = '#modal_PRMSICCD';
+            }
+            if (arr[input]) $(change_element).val(arr[input]);
+            break;
+    }
+}
+
+function checkRangeEmply(range) {
+    let indexOfDash = range.indexOf('-');
+    let min = range.slice(0, indexOfDash);
+    let max = range.slice(indexOfDash + 1);
+    let input = $(modal_ALEMPSZ).val();
+    let msg;
+
+    if (min === '10000') max = Infinity;
+    if ($('#modal_ALEMPSZ')[0].validity.patternMismatch) {
+        $('#modal_ALEMPSZ')[0].setCustomValidity("mismatch");
+        msg = 'Please provide a valid employment Size';
+        $('#modal_ALEMPSZ')[0].nextElementSibling.innerText = msg; // Next div with error message
+    } else if (!isBetween(+input, +min, +max) && input) {
+        $('#modal_ALEMPSZ')[0].setCustomValidity("not in range");
+        msg = 'Please provide an Actual Size within range';
+        $('#modal_ALEMPSZ')[0].nextElementSibling.innerText = msg; // Next div with error message
+    } else {
+        // Validation works or field is empty
+        $('#modal_ALEMPSZ')[0].setCustomValidity("");
+    }
+}
+
+function checkRangeSales(element, code) {
+    let input, checkElement;
+    let min, max, msg;
+    let queryType = element.slice(7, -2); // Takes out '#modal_' and last 2 chars
+    switch (queryType) {
+        case 'LSALVOL':
+            checkElement = '#modal_ALSLSVOL';
+            input = $(checkElement).val();
+            break;
+        case 'CSALVOL':
+            checkElement = '#modal_ACSLSVOL';
+            input = $(checkElement).val();
+            break;
+    }
+    switch (code) {
+        case 'A':
+            min = 1;
+            max = 499;
+            break;
+        case 'B':
+            min = 500;
+            max = 999;
+            break;
+        case 'C':
+            min = 1000;
+            max = 2499;
+            break;
+        case 'D':
+            min = 2500;
+            max = 4999;
+            break;
+        case 'E':
+            min = 5000;
+            max = 9999;
+            break;
+        case 'F':
+            min = 10000;
+            max = 19999;
+            break;
+        case 'G':
+            min = 20000;
+            max = 49999;
+            break;
+        case 'H':
+            min = 50000;
+            max = 99999;
+            break;
+        case 'I':
+            min = 100000;
+            max = 499999;
+            break;
+        case 'J':
+            min = 500000;
+            max = 999999;
+            break;
+        case 'K':
+            min = 1000000;
+            max = Infinity;
+            break;
+    }
+    if ($(checkElement)[0].validity.patternMismatch) {
+        $(checkElement)[0].setCustomValidity("mismatch");
+        msg = 'Please provide a valid Sales Volume';
+        $(checkElement)[0].nextElementSibling.innerText = msg; // Next div with error message
+    } else if (!isBetween(+input, min, max) && input) {
+        $(checkElement)[0].setCustomValidity("not in range");
+        msg = 'Please provide a Sales Volume within range. Input = ' + toCommas(input + '000');
+        $(checkElement)[0].nextElementSibling.innerText = msg; // Next div with error message
+    } else {
+        // Validation works or field is empty
+        $(checkElement)[0].setCustomValidity("");
+    }
+
+    function toCommas(value) {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+}
+
 function isBetween(x, min, max) {
     return x >= min && x <= max;
 }
-
 // Boiler plate to check. 
 // function check_boilerplate(){
 //     console.log('change');
-    
+
 //     // this.setCustomValidity(""); // sets it Valid
 //     // this.setCustomValidity("anything"); // sets it invalid
 //     let msg= 'Please provide a valid Employment Size.';
@@ -215,42 +364,3 @@ function isBetween(x, min, max) {
 //     }
 //     this.nextElementSibling.innerText= msg; // Next div with error message
 // }
-
-
-// END Entity Edit Modal Form
-/*
-database records: spatial (add, modify, delete) point feature geometry; 
-non-spatial (add, modify, delete) PRIMARY_SIC_CODE; PRIMARY_SIC_DESC; NAICS_CODE; NAICS_DESC; 
-ACTUAL_LOCATION_EMPLOYMENT_SIZE; ACTUAL_CORPORATE_EMPLOYMENT_SIZE; MODELED_EMPLOYMENT_SIZE; ACTUAL_LOCATION_SALES_VOLUME; 
-ACTUAL_CORPORATE_SALES_VOLUME; SQUARE_FOOTAGE_CODE; LATITUDE; LONGITUDE)
-
-//list
-id
-business_id
-by
-record_status
-status
-PRMSICCD //int
-PRMSICDS
-NAICSCD //int
-NAICSDS
-ALEMPSZ //int
-ACEMPSZ
-LEMPSZCD
-LEMPSZSZ
-SQFOOTCD
-SQFOOTDS
-LATITUDEO
-LONGITUDEO
-created_at
-started_at
-ended_at
-geom
-LSALVOLCD
-LSALVOLDS
-ALSLSVOL //int
-
-CSALVOLCD
-CSALVOLDS
-ACSLSVOL //int
-*/

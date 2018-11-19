@@ -1,7 +1,6 @@
 'use strict';
 let db_service = require('../../utils/db_service');
 
-//Takes an offset and limit to load the county with pagination.
 function editBusiness(id, form) {
     return new Promise(function (resolve, reject) {
         let sql = build_query(id, form);
@@ -20,6 +19,7 @@ const editBusinessRequest = function (request, response) {
                 responseText: 'No Business specified or is not correct'
             });
     }
+    // CHECKING FOR INJECTIONS
 
     editBusiness(request.params.bus_id, request.body)
         .then(data => {
