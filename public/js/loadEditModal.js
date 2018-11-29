@@ -25,34 +25,40 @@ function loadEditModal(dt_row) {
 
             $("#modal_LSALVOLCD_button").text((est.LSALVOLCD !== null) ? est.LSALVOLCD : 'Sales Volume');
             $("#modal_LSALVOLDS").val(est.LSALVOLDS);
-            $("#modal_ALSLSVOL").val(est.ALSLSVOL);
+            $("#modal_ALSLSVOL").val(convertToMillionFromThousand(est.ALSLSVOL));
 
             $("#modal_CSALVOLCD_button").text((est.CSALVOLCD !== null) ? est.CSALVOLCD : 'Corporate Sales Volume');
             $("#modal_CSALVOLDS").val(est.CSALVOLDS);
-            $("#modal_ACSLSVOL").val(est.ACSLSVOL);
+            $("#modal_ACSLSVOL").val(convertToMillionFromThousand(est.ACSLSVOL));
 
         }, function (err) {
             alert("Query Error on ID");
             console.log(err);
         });
-
+    function convertToMillionFromThousand(input){
+        if(!input) return null;
+        return (parseFloat(input))/1000;
+    }
     loadEditModal_eventListeners();
 }
 
 function loadEditModal_eventListeners() {
     var form = $('#modal-form');
-    form.on('submit', (e) => {
+    form.unbind( "submit" ).on('submit', (e) => {
+        console.log('submit');
+        e.preventDefault();
+        e.stopPropagation();    
         form[0].classList.add('was-validated');
-        if (form[0].checkValidity() === false) {
-            e.preventDefault();
-            e.stopPropagation();
-        }else if(form[0].checkValidity() === true){
+        if(form[0].checkValidity() === true){
             sendBusinessEdit();
-            e.preventDefault();
-        }
+        }    
+
     });
 
-    $('#submit_modal').click(() => {
+    $('#submit_modal').unbind( "click" ).click((e) => {
+        console.log('click');
+        e.preventDefault();
+        e.stopPropagation();
         $('#modal-form').submit();
     });
 
@@ -64,6 +70,8 @@ function loadEditModal_eventListeners() {
         $('#modal_ALSLSVOL')[0].setCustomValidity("");
         $('#modal_ACSLSVOL')[0].setCustomValidity("");
         form[0].classList.remove('was-validated');
+        form[0].reset();
+
     });
 
     $("#modal_LEMPSZCD li").click(function () {
@@ -181,6 +189,7 @@ function selectRange_SalesVolume(e) {
             targetElement = '#modal_CSALVOLCD';
             break;
     }
+    slsvolInput = convertToThousandFromMillion(slsvolInput);
     if (isBetween(slsvolInput, 1, 499)) {
         $(targetElement + ' li[value="A"]').click();
     } else if (isBetween(slsvolInput, 500, 999)) {
@@ -272,12 +281,13 @@ function checkRangeSales(element, code) {
     switch (queryType) {
         case 'LSALVOL':
             checkElement = '#modal_ALSLSVOL';
-            input = $(checkElement).val();
             break;
         case 'CSALVOL':
             checkElement = '#modal_ACSLSVOL';
-            input = $(checkElement).val();
             break;
+        default:
+            console.log('No query type');
+            return;
     }
     switch (code) {
         case 'A':
@@ -325,6 +335,8 @@ function checkRangeSales(element, code) {
             max = Infinity;
             break;
     }
+    input = $(checkElement).val();
+    input = convertToThousandFromMillion(input);
     if ($(checkElement)[0].validity.patternMismatch) {
         $(checkElement)[0].setCustomValidity("mismatch");
         msg = 'Please provide a valid Sales Volume';
@@ -345,6 +357,11 @@ function checkRangeSales(element, code) {
 
 function isBetween(x, min, max) {
     return x >= min && x <= max;
+}
+function convertToThousandFromMillion(input){
+    if(!input) return null;
+    if(isNaN(input)) return null;
+    return (parseFloat(input))*1000;
 }
 // Boiler plate to check. 
 // function check_boilerplate(){

@@ -2,6 +2,7 @@ function sendBusinessEdit() {
     let business_id = $("#business_id").text();
     let form = getForm();
     console.log(form);
+    
     // d3.json(`/${business_id}`, {
     //     method: "POST",
     //     body: JSON.stringify(form),
@@ -52,6 +53,7 @@ function parseFormInput(val){
         if (val == 'Emp Size') return null;
         return val.trim().toUpperCase();
     }
+    val = convertToThousandFromMillion(parseFloat(val));
     return `'${val}'`;
 }
 function isFormInputEmpty(txt){
