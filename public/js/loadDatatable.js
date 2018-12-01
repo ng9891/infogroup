@@ -28,7 +28,7 @@ function loadDatatable(establishments) {
 			"buttons": [{
 				extend: '',
 				text: 'Export',
-				action: exportData
+				action: exportDataAsync
 			}],
 			"data": obj.data,
 			"columns": [{
