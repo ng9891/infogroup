@@ -19,6 +19,12 @@ function loadEditModal(dt_row) {
             $("#modal_NAICSDS").val(est.NAICSDS);
             $("#modal_PRMSICCD").val(est.PRMSICCD);
             $("#modal_PRMSICDS").val(est.PRMSICDS);
+            $("#modal_PRMADDR").val(est.PRMADDR);
+            $("#modal_PRMCITY").val(est.PRMCITY);
+            $("#modal_PRMSTATE").val(est.PRMSTATE);
+            $("#modal_PRMZIP").val(est.PRMZIP);
+            $("#modal_LATITUDE").val(est.LATITUDEO);
+            $("#modal_LONGITUDE").val(est.LONGITUDEO);
 
             $("#modal_SQFOOTCD_button").text((est.SQFOOTCD !== null) ? est.SQFOOTCD : 'SQF Code');
             $("#modal_SQFOOTDS").val(est.SQFOOTDS);
@@ -66,6 +72,9 @@ function loadEditModal_eventListeners() {
     $('#editModal').on('hidden.bs.modal', function () {
         var form = $('#modal-form');
         // Reset Custom validity on close
+        modalExpand();
+        $("#modal_newaddress").html("");
+        $("#modal_newaddress_container").hide();
         $('#modal_ALEMPSZ')[0].setCustomValidity("");
         $('#modal_ALSLSVOL')[0].setCustomValidity("");
         $('#modal_ACSLSVOL')[0].setCustomValidity("");

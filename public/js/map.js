@@ -269,3 +269,118 @@ L.DomEvent.addListener(document, 'keydown', onKeyDown, mymap);
 //---
 // END MAP EVENT LISTENER
 //---
+
+function locateAddress() {
+    var street_addr = $("#modal_PRMADDR").val();
+    var city_addr = $("#modal_PRMCITY").val();
+    var state_addr = $("#modal_PRMSTATE").val();
+    var zip_addr = $("#modal_PRMZIP").val();
+    // latitude and longitude that comes from Database
+    var latitude = $("#modal_LATITUDE").val();
+    var longitude = $("#modal_LONGITUDE").val();
+    
+    // console.log(latitude + ' ' + longitude);
+    // CSS changes below makes map active under the edit modal window
+    $("#editModal").css({"position": "relative"});
+    $(".modal-body").slideUp();
+    $(".modal-footer").slideUp();
+
+    if (!($(".modal.in").length)) {
+        $(".modal-dialog").css({top: 0, left: 0});
+    }
+
+    $("#editModal").modal({
+        backdrop: 'static',
+        keyboard: false,
+        show: true
+    });
+    
+    $(".modal-dialog").draggable({
+        handle: ".modal-header"
+    });
+    
+    $("#modal_expand").show();
+
+    // Parsing Street Address for GeoSearch
+    if (street_addr.trim() && city_addr.trim() && state_addr.trim() && zip_addr.trim()) {
+        if (street_addr.match(/^\d/)) {
+            var street_number = parseInt(street_addr, 10);
+            street_addr = street_addr.replace(street_number, ''); // remove any numbers from the beginning
+            street_addr = street_addr.replace('#', ''); // remove symbol '#' from address
+            street_addr = street_addr.replace(/\d+$/, ''); // remove any numbers from the end
+            street_addr = street_addr.trim(); // remove spaces from beginning and end
+            street_addr = street_addr + ' ' + street_number;
+        }
+
+        // getting new coordinates 
+        $.get(location.protocol + 
+            '//nominatim.openstreetmap.org/search?format=json&accept-language=en' + 
+            '&limit=1' + 
+            '&q= ' + street_addr + ' ' + city_addr + ' ' + state_addr + ' ' + zip_addr, 
+            // We can also use this annotation below:
+            // '//nominatim.openstreetmap.org/search?format=json&accept-language=en' +
+            // '&street= ' + street_addr + 
+            // '&city= ' + city_addr + 
+            // '&state= ' + state_addr + 
+            // '&postalcode= ' + zip_addr, 
+        function(data) {
+            data.map(est => {
+                //console.log(est.display_name + ' | lat: ' + est.lat + ' lon: ' + est.lon);
+                // Locate using new latitude and longitude from GeoSearch library
+                locatePointByCoordinate(est.lat, est.lon);
+            });
+        });
+    }
+
+    /*
+    // Adding a new marker for pointing to the new address
+    var marker = new L.marker([latitude, longitude],{
+        draggable: true
+    }).addTo(mymap);
+
+    marker.on('dragend', function (e) {
+        var new_latitude = marker.getLatLng().lat;
+        var new_longitude = marker.getLatLng().lng;
+        console.log(new_latitude + ' ' + new_longitude);
+    });
+    */
+}
+
+function checkAddress() {
+    var street_addr = $("#modal_PRMADDR").val();
+    var city_addr = $("#modal_PRMCITY").val();
+    var state_addr = $("#modal_PRMSTATE").val();
+    var zip_addr = $("#modal_PRMZIP").val();
+
+    // Parsing Street Address for GeoSearch
+    if (street_addr.trim() && city_addr.trim() && state_addr.trim() && zip_addr.trim()) {
+        if (street_addr.match(/^\d/)) {
+            var street_number = parseInt(street_addr, 10);
+            street_addr = street_addr.replace(street_number, ''); // remove any numbers from the beginning
+            street_addr = street_addr.replace('#', ''); // remove symbol '#' from address
+            street_addr = street_addr.replace(/\d+$/, ''); // remove any numbers from the end
+            street_addr = street_addr.trim(); // remove spaces from beginning and end
+            street_addr = street_addr + ' ' + street_number;
+        }
+
+        $.get(location.protocol + 
+            '//nominatim.openstreetmap.org/search?format=json&accept-language=en' + 
+            '&limit=1' + 
+            '&q= ' + street_addr + ' ' + city_addr + ' ' + state_addr + ' ' + zip_addr,
+        function(data) {
+            data.map(est => {
+                $("#modal_newaddress").html('');
+                $("#modal_newaddress").html(est.display_name + ' | lat: ' + est.lat + ' | lon: ' + est.lon);
+            });
+        });
+    }
+
+    $("#modal_newaddress_container").show();
+}
+
+function modalExpand() {
+    $("#editModal").css({"position": ""});
+    $(".modal-body").slideDown();
+    $(".modal-footer").slideDown();
+    $("#modal_expand").hide();
+}

@@ -514,6 +514,31 @@ body{
 #editModal{
   z-index: 6000;
 }
+
+.modal-dialog {
+  position: fixed;
+  width: 100%;
+  margin: 0;
+  padding: 10px;
+}
+
+.modal-backdrop {
+  display: none !important;
+}
+
+#modal_expand {
+  display: none;
+}
+
+#modal_newaddress_container {
+  display: none;
+}
+
+#modal_newaddress {
+  font-size: 12px !important;
+  color: darkgreen;
+}
+
 #business_id{
   color: red;
 }
