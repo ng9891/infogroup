@@ -1,3 +1,16 @@
+/*
+* Loads the dropdown menu feature for the website.
+*
+* Makes a server request using d3 to load the desired dropdowns.
+* Targets the dropdown menu in the navigation bar, editmodal and advanced search
+* for sales volumes, employment sizes and square foot selections.
+*
+* Dependencies: d3.js, jquery.js
+*
+* Expected input: None.
+*
+* Output: Dropdown menus with expected lists.
+*/
 function loadDropdown() { 
     d3.json(`/api/getsalesvolume`).then(data => {
         loadDropdown_SalesVolume(data); //function in file

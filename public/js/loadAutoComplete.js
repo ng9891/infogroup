@@ -1,3 +1,16 @@
+/*
+* loadAutoComplete will load the autocomplete features of the website.
+*
+* It makes a d3.json request to the URL and loads it to the desired input text boxes.
+*
+* It also loads 2 global variables, _obj_naics_arr and _obj_sic_arr, to be used for form
+* input checking and autofill. (NAICS code and Primary SIC code)
+*
+* Targets the input boxes in the navigation bar, editmodal and advanced search
+* for area (county,mpo,...), naics and primary sic queries.
+*
+* Dependencies: d3.js, jquery-ui
+*/
 let _obj_naics_arr = [];
 let _obj_sic_arr = [];
 function loadAutoComplete(){
@@ -72,13 +85,14 @@ function loadAutoComplete(){
         console.log(err);
     });
 }
-
-// This function will take the parement 'type' and adds it to the URL for a GET request to get a list for the autocomplete feature.
-// Expected input: a string that creates a valid API URL with the param 'column'. eg. 'zip' -> getzip route, 'county'->getcounty route
-//                  inputId: string with id of the HTML element to Autocomplete. eg. '#query-search'
-//                  minlen: int with minimum length to query database
-//                  type: string variable to complete the URL. eg. /api/getsic/test?type='cd'
-// Output: An expected list of autocompletion displayed below 'inputId' input box
+/*
+This function will take the parement 'type' and adds it to the URL for a GET request to get a list for the autocomplete feature.
+Expected input: a string that creates a valid API URL with the param 'column'. eg. 'zip' -> getzip route, 'county'->getcounty route
+                 inputId: string with id of the HTML element to Autocomplete. eg. '#query-search'
+                 minlen: int with minimum length to query database
+                 type: string variable to complete the URL. eg. /api/getsic/test?type='cd'
+Output: An expected list of autocompletion displayed below 'inputId' input box
+*/
 function autoComplete_url(inputId, column, minlen=2,type='') {
     $(inputId).autocomplete({
         delay: 1000,

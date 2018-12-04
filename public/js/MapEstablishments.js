@@ -1,10 +1,12 @@
-// Function will create a marker in mymap for any points inside the parameter 'establishments'
-// Previous markers and overlay layers will be cleared.
-// The color of the markers will be decided by their repective NAICS code.
-// Dependencies: - naicsKeys.js that contains a look up color scheme depending on NAICS code.
-// 				 - variable 'layerControl' of type L.control.layers
-// Expected input: an object with an array of JSON object called 'data'
-// Output: Markers will be added into mymap and markerList array 
+/*
+* Function will create a marker in mymap for any points inside the parameter 'establishments'
+* Previous markers and overlay layers will be cleared.
+* The color of the markers will be decided by their repective NAICS code.
+* Dependencies:	- naicsKeys.js that contains a look up color scheme depending on NAICS code.
+*				- variable 'layerControl' of type L.control.layers
+* Expected input: an object with an array of JSON object called 'data'
+* Output: Markers will be added into mymap and markerList array 
+*/
 function mapEstablishments(establishments) {
 	// ---
 	// remove all previous markers from map

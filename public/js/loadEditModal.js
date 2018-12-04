@@ -1,4 +1,22 @@
-// Entity Edit Modal Form
+/*
+* loadEditModal.js contains general logistic and listeners of the editModal form to edit data.
+*
+* Takes a business ID and makes a server request to get the information about the business and 
+* loads it into the appropiate input boxes/ dropdowns. 
+* Converts sales volumes into millions for easier data checking and entrying.
+* 
+* Creates event listeners for the modal: 
+*   - Automatic dropdown selection based on user input.
+*   - Validates user for correct input type (expecting an int but got a letter string).
+*   - Checks if input falls within the range of the dropdown selection.
+*   - Form submition (calls sendBusinessEdit in editing/sendBusinessEdit.js).
+*
+* Dependencies: loadAutoComplete.js(two global var), jquery.js, d3.js
+*
+* Expected input: Valid Business ID.
+*
+* Output: A fully functional Modal Form with input validation and automatic selection.
+*/
 function loadEditModal(dt_row) {
 
     if (!dt_row['id'] || dt_row['id'] === '') {
@@ -41,35 +59,37 @@ function loadEditModal(dt_row) {
             alert("Query Error on ID");
             console.log(err);
         });
-    function convertToMillionFromThousand(input){
-        if(!input) return null;
-        return (parseFloat(input))/1000;
+
+    function convertToMillionFromThousand(input) {
+        if (!input) return null;
+        return (parseFloat(input)) / 1000;
     }
     loadEditModal_eventListeners();
 }
 
+// Load the event listeners for the editmodal.
+// Calls various helper function for range checking and automatic selection.
 function loadEditModal_eventListeners() {
     var form = $('#modal-form');
-    form.unbind( "submit" ).on('submit', (e) => {
+    form.unbind("submit").on('submit', (e) => {
         console.log('submit');
         e.preventDefault();
-        e.stopPropagation();    
+        e.stopPropagation();
         form[0].classList.add('was-validated');
-        if(form[0].checkValidity() === true){
-            sendBusinessEdit();
-        }    
+        if (form[0].checkValidity() === true) {
+            sendBusinessEdit(); // Submit
+        }
 
     });
 
-    $('#submit_modal').unbind( "click" ).click((e) => {
-        console.log('click');
+    $('#submit_modal').unbind("click").click((e) => {
         e.preventDefault();
         e.stopPropagation();
         $('#modal-form').submit();
     });
 
-    // Close modal listener. Turn form to novalidate
-    $('#editModal').on('hidden.bs.modal', function () {
+    // Closes the modal and resets the form
+    $('#editModal').unbind('hidden.bs.modal').on('hidden.bs.modal', function () {
         var form = $('#modal-form');
         // Reset Custom validity on close
         modalExpand();
@@ -80,10 +100,9 @@ function loadEditModal_eventListeners() {
         $('#modal_ACSLSVOL')[0].setCustomValidity("");
         form[0].classList.remove('was-validated');
         form[0].reset();
-
     });
 
-    $("#modal_LEMPSZCD li").click(function () {
+    $("#modal_LEMPSZCD li").unbind("click").click(function () {
         let str = $(this).text();
         let chosen_LEMPSZCD, chosen_LEMPSZDS;
         let indexOfDash = str.indexOf('-');
@@ -98,7 +117,7 @@ function loadEditModal_eventListeners() {
         checkRangeEmply(chosen_LEMPSZDS);
     });
 
-    $("#modal_SQFOOTCD li").click(function () {
+    $("#modal_SQFOOTCD li").unbind("click").click(function () {
         let str = $(this).text();
         let chosen_SQFOOTCD, chosen_SQFOOTDS;
         let indexOfDash = str.indexOf('-');
@@ -111,7 +130,7 @@ function loadEditModal_eventListeners() {
         $('#modal_SQFOOTDS').val(chosen_SQFOOTDS);
     });
 
-    $("#modal_LSALVOLCD li").click(function () {
+    $("#modal_LSALVOLCD li").unbind("click").click(function () {
         let str = $(this).text();
         let chosen_LSALVOLCD, chosen_LSALVOLDS;
         let indexOfDash = str.indexOf('-');
@@ -126,7 +145,7 @@ function loadEditModal_eventListeners() {
         checkRangeSales('#modal_LSALVOLCD', chosen_LSALVOLCD);
     });
 
-    $("#modal_CSALVOLCD li").click(function () {
+    $("#modal_CSALVOLCD li").unbind("click").click(function () {
         let str = $(this).text();
         let chosen_CSALVOLCD, chosen_CSALVOLDS;
         let indexOfDash = str.indexOf('-');
@@ -141,17 +160,24 @@ function loadEditModal_eventListeners() {
         checkRangeSales('#modal_CSALVOLCD', chosen_CSALVOLCD);
     });
 
-    $('#modal_ALEMPSZ').change(selectRange_ALEMPSZ);
-    $('#modal_ALSLSVOL').change(selectRange_SalesVolume);
-    $('#modal_ACSLSVOL').change(selectRange_SalesVolume);
+    // Bind listeners for automatic range selection and autofilling based on user input.
+    $('#modal_ALEMPSZ').unbind("change").change(selectRange_ALEMPSZ);
+    $('#modal_ALSLSVOL').unbind("change").change(selectRange_SalesVolume);
+    $('#modal_ACSLSVOL').unbind("change").change(selectRange_SalesVolume);
 
-    $('#modal_NAICSCD').change(autoFillText_modal);
-    $('#modal_NAICSDS').change(autoFillText_modal);
+    $('#modal_NAICSCD').unbind("change").change(autoFillText_modal);
+    $('#modal_NAICSDS').unbind("change").change(autoFillText_modal);
 
-    $('#modal_PRMSICCD').change(autoFillText_modal);
-    $('#modal_PRMSICDS').change(autoFillText_modal);
+    $('#modal_PRMSICCD').unbind("change").change(autoFillText_modal);
+    $('#modal_PRMSICDS').unbind("change").change(autoFillText_modal);
 }
 
+/*
+* Checks range for employment size and clicks the correct emply code.
+* The code selection triggers the click event which selects the correct
+* employment size description based on the code.
+* It then calls checkRangeEmply to validate input
+*/
 function selectRange_ALEMPSZ() {
     let empszInput = $('#modal_ALEMPSZ').val().trim();
     empszInput = parseInt(empszInput, 10);
@@ -181,6 +207,13 @@ function selectRange_ALEMPSZ() {
     checkRangeEmply($('#modal_LEMPSZDS').val());
 }
 
+/*
+* Checks range for sales volume and clicks the correct sales volume code.
+* The code selection triggers the click event which selects the correct
+* sales volume code description.
+* It then calls checkRangeSales to validate input
+* Can differentiate between 'ALSLVOL' and 'ACSLVOL'.
+*/
 function selectRange_SalesVolume(e) {
     let element = e.target.id;
     let queryType = element.slice(6); // Takes out 'modal_'
@@ -226,6 +259,14 @@ function selectRange_SalesVolume(e) {
     }
 }
 
+/*
+* Takes the global associative array in loadautoComplete.js.
+* Checks for the user input (with autocomplete) and fills up the
+* description or code based on the NAICS/SIC selected.
+* Can differentiate between 'NAICS' and 'PRMSIC'.
+*
+* Dependencies: loadAutoComplete.js (two global array)
+*/
 function autoFillText_modal(e) {
     let element = e.target.id;
     let queryType = element.slice(6, -2); // Takes out 'modal_' and last 2 chars
@@ -261,6 +302,12 @@ function autoFillText_modal(e) {
     }
 }
 
+/*
+* Checks for employment size input if it falls within the range of the selected dropdown code.
+* Invalidates form if the input does not fall within range and validates the form if it is.
+*
+* Expected input:   - range {string}: desired range to check employment size. eg. 'A - 1-4'
+*/
 function checkRangeEmply(range) {
     let indexOfDash = range.indexOf('-');
     let min = range.slice(0, indexOfDash);
@@ -270,10 +317,12 @@ function checkRangeEmply(range) {
 
     if (min === '10000') max = Infinity;
     if ($('#modal_ALEMPSZ')[0].validity.patternMismatch) {
+        // Invalid input not a number
         $('#modal_ALEMPSZ')[0].setCustomValidity("mismatch");
         msg = 'Please provide a valid employment Size';
         $('#modal_ALEMPSZ')[0].nextElementSibling.innerText = msg; // Next div with error message
     } else if (!isBetween(+input, +min, +max) && input) {
+        // Invalid input for selected range
         $('#modal_ALEMPSZ')[0].setCustomValidity("not in range");
         msg = 'Please provide an Actual Size within range';
         $('#modal_ALEMPSZ')[0].nextElementSibling.innerText = msg; // Next div with error message
@@ -283,6 +332,14 @@ function checkRangeEmply(range) {
     }
 }
 
+/*
+* Checks for sales volume input if it falls within the range of the selected dropdown code.
+* Invalidates form if the input does not fall within range and validates the form if it is.
+* Can differentiate between 'LSALVOL' and 'CSALVOL'.
+*
+* Expected input:   - element {string}: desired div element to check. eg. '#modal_LSALVOLCD'
+*                   - code {string}: the chosen code range of the element. eg. 'A'
+*/
 function checkRangeSales(element, code) {
     let input, checkElement;
     let min, max, msg;
@@ -347,10 +404,12 @@ function checkRangeSales(element, code) {
     input = $(checkElement).val();
     input = convertToThousandFromMillion(input);
     if ($(checkElement)[0].validity.patternMismatch) {
+        // Invalid input not a number
         $(checkElement)[0].setCustomValidity("mismatch");
         msg = 'Please provide a valid Sales Volume';
         $(checkElement)[0].nextElementSibling.innerText = msg; // Next div with error message
     } else if (!isBetween(+input, min, max) && input) {
+        // Invalid input for selected range
         $(checkElement)[0].setCustomValidity("not in range");
         msg = 'Please provide a Sales Volume within range. Input = ' + toCommas(input + '000');
         $(checkElement)[0].nextElementSibling.innerText = msg; // Next div with error message
@@ -359,18 +418,22 @@ function checkRangeSales(element, code) {
         $(checkElement)[0].setCustomValidity("");
     }
 
+    // Helper function that helps converting numbers to number with commas for error displaying purposes.
     function toCommas(value) {
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 }
 
+// Helper function to check range
 function isBetween(x, min, max) {
     return x >= min && x <= max;
 }
-function convertToThousandFromMillion(input){
-    if(!input) return null;
-    if(isNaN(input)) return null;
-    return (parseFloat(input))*1000;
+
+// Helper function that helps converting million into thousands for range checking
+function convertToThousandFromMillion(input) {
+    if (!input) return null;
+    if (isNaN(input)) return null;
+    return (parseFloat(input)) * 1000;
 }
 // Boiler plate to check. 
 // function check_boilerplate(){

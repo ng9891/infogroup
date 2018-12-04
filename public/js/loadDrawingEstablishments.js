@@ -1,3 +1,19 @@
+/*
+* This file makes a server query request based on the drawing made by the user
+* and display the data on the website
+*
+* Checks for the last layer of the user input and gets the coordinate for the layer.
+* Makes a request to the server with the required parameters and loads the map, histogram,
+* piechart and datatable with the information.
+*
+* Dependencies: leaflet.js, leaflet.editable.js, mymap.js, jquery.js, d3.js
+*
+* Expected input: layer {array} with correct drawing layer.
+*
+* Output: Information loaded into the webpage based on the desired query area.
+*/
+
+//Helper functions to check the type of drawing
 function drawingType(layer){
     if (layer instanceof L.Marker) return 'marker';
     if (layer instanceof L.Circle) return 'circle';
@@ -5,6 +21,7 @@ function drawingType(layer){
     if (layer instanceof L.Polygon) return 'polygon';
 }
 
+// Helper functions that creates the URL for marker query
 function markerQuery(layer){
     let lat,lon, reqURL;
     lat = layer.getLatLng().lat;
@@ -19,7 +36,7 @@ function markerQuery(layer){
     }
     return reqURL;
 }
-
+// Helper functions that creates the URL for circle query
 function circleQuery(layer){
     let lat, lon, dist, reqURL;
     lat = layer.getLatLng().lat;
@@ -38,7 +55,7 @@ function circleQuery(layer){
     }
     return reqURL;
 }
-
+// Helper functions that creates the URL for rectangle query
 function rectangleQuery(layer){
     var rectangle = layer.getLatLngs();
 

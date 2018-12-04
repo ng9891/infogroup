@@ -1,3 +1,19 @@
+/*
+* Function that parses the form in editmodal into an object and sends a POST request to the server 
+* with body containing the object of the form.
+*
+* Takes the values of all the input boxes and dropdowns and parses it.
+* It checks for empty, default and non-numeric values. 
+* Transforms sales volumes (in millions) to thousands to keep consistency
+* of the database as it was originally stored as thousands but it is displayed
+* as millions in our website. 
+*
+* Dependencies: loadEditModal.js(convertToThousandFromMillion), d3.js, jquery.js.
+*
+* Expected input: A valid business ID from the editModal div 'business_id'.
+*
+* Output: An alert box saying it if the changes was succesfully sent for approval.
+*/
 function sendBusinessEdit() {
     let business_id = $("#business_id").text();
     let form = getForm();

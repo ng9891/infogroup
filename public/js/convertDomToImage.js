@@ -1,36 +1,14 @@
-function convertMapToImage(containerID, callback) {
-    let map_element = document.getElementById(containerID);
-    domtoimage.toPng(map_element)
-        .then(function (dataUrl) {
-            let img = new Image();
-            img.src = encodeURI(dataUrl);
-            img.onload = function () { //Get image width and height and scale it to fit the PDF
-                callback(dataUrl, img.width, img.height);
-            };
-        })
-        .catch(function (error) {
-            console.error(`Error on printing ${containerID}`, error);
-            callback();
-            // throw error;
-        });
-}
-
-function convertMapToImage_html2canvas(containerID, callback) {
-    let map_element = document.getElementById(containerID);
-    html2canvas(map_element, {
-        allowTaint: false,
-        useCORS: true,
-        foreignObjectRendering: true,
-        letterRendering: true
-    }).then(canvas => {
-        var dataUrl = canvas.toDataURL('image/png');
-        var img = new Image();
-        img.src = dataUrl;
-        img.onload = function () { // Get image width and height and scale it to fit the PDF
-            callback(dataUrl, img.width, img.height);
-        };
-    });
-}
+/*
+* Async functions used for the exporting feature of the website.
+* Converts DOM elements into dataURLs to be exported on a PDF
+*
+* Dependencies: DOMtoImage.js and html2Canvas
+*
+* Expected input: A string with the id of the DOM element. eg 'infoContainer'
+                 for the charts on the site and the leaflet map.
+*
+* Output: Returns an object containning the dataURL of the image, width and height.
+*/
 async function convertDomToImageAsync(containerID) {
     let element = document.getElementById(containerID);
     try {
@@ -56,6 +34,7 @@ async function convertDomToImage_html2canvasAsync(containerID) {
         return Promise.reject(error);
     }
 }
+// Helper function to create an image with dataURL synchronously
 function createImage(dataUrl) {
     return new Promise((resolve, reject) => {
         let img = new Image()

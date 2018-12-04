@@ -1,6 +1,20 @@
-// Infogroup.js contains general logistic and listeners of the site.
-// It will load the necessary dropdowns and autocomplete when document is ready.
-// Also, manages initial loading procedures.
+/*
+* Infogroup.js contains general logistic and listeners of the site.
+*
+* It will load the necessary dropdowns and autocomplete when document is ready by
+* calling loadAutoComplete and loadDropdown
+* 
+* Creates event listeners of the main webpage. 
+*   - Navigation bar search button.
+*   - Hidding and showing side panels
+*   - Advanced search container listeners when opened
+*
+* Dependencies: loadAutoComplete.js, loadDropdown.js, jquery.js
+*
+* Expected input: None.
+*
+* Output: Initial page working properly with dropdowns and autocomplete features.
+*/
 $(document).ready(function () {
     let query_input, query_type;
     $("#query-search").keydown((event) => {
@@ -23,7 +37,7 @@ $(document).ready(function () {
         query_input = query_input.trim();
         switch (query_type) {
             case 'zip':
-                if (query_input.length !== 5 || isNaN(+query_input)) {
+                if (query_input.length < 4 || isNaN(+query_input)) {
                     alert("Invalid Input");
                 } else {
                     loadZipEstablishments(query_input);
