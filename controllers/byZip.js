@@ -1,7 +1,9 @@
 'use strict';
 let db_service = require('../utils/db_service')
 
-function geobyzip(zipcode) {
+function geobyzip(zipcode, version='current') {
+    let from_statement = 'businesses_2014';
+    if(version === 'original') from_statement = 'businesses_2014_o';
     return new Promise(function (resolve, reject) {
         let sql =
             `
@@ -21,7 +23,7 @@ function geobyzip(zipcode) {
         "BE_Payroll_Expense_Code",
         "BE_Payroll_Expense_Range",
         "BE_Payroll_Expense_Description"
-        from businesses_2014  
+        from ${from_statement}  
         where "PRMZIP" = ${zipcode};
         `
 
@@ -41,7 +43,7 @@ const geoByZipRequest = function (request, response) {
             });
     }
 
-    geobyzip(request.params.zipcode)
+    geobyzip(request.params.zipcode, request.query.v)
         .then(data => {
             return response.status(200)
                 .json({

@@ -1,6 +1,6 @@
 //Takes an offset and limit to load the county with pagination.
 //Limit is usually undefined and set to default value unless specified by api.
-function loadMpoEstablishments(mpo, offset, limit) {
+function loadMpoEstablishments(mpo, version, offset, limit) {
 	// --
 	// load data from api
 	// then add to map
@@ -10,13 +10,9 @@ function loadMpoEstablishments(mpo, offset, limit) {
 	if (usrMarkers.length !== 0) mymap.removeLayer(usrMarkers.pop()); //removes marker from user
 
 	// Creates a request URL for the API
-	var reqURL = '/api/bympo/' + mpo;
-	if (offset) {
-		reqURL += '?offset=' + offset;
-		if (limit) {
-			reqURL += '&limiter=' + limit;
-		}
-	}
+	var reqURL = '/api/bympo/' + mpo + '?v=' + version;
+	if (offset) reqURL += '&offset=' + offset;
+	if (limit) reqURL += '&limiter=' + limit;
 	// console.log(reqURL);
 
 	d3.json(reqURL)

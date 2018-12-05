@@ -58,6 +58,10 @@
 					<option value="mpo">MPO</option>
 					<option value="mun">Municipality</option>
 				</select>
+				<select id='version-dropdown' class="custom-select">
+					<option selected value="current">Current</option>
+					<option value="original">Original</option>
+				</select>
 				<button id="query-button" type="button" class="btn btn-secondary">Search</button>
 			</form>
 		</div>
@@ -80,8 +84,8 @@
 	<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="modal-dialog modal-lg" role="document">
 			<div class="modal-content">
-				<div class="modal-header">
-					<h3 class="modal-title" id="modalLabel">Edit</h3>
+				<div class="modal-header pt-reduced pb-reduced">
+					<div class="modal-title pt-reduced pb-reduced" id="modalLabel">Edit</div>
 					<a href="#" class="ml-3 mt-2" id="modal_expand" onclick="modalExpand()">Expand</a>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
@@ -89,47 +93,53 @@
 				</div>
 				<div class="modal-body">
 					<form id="modal-form" novalidate>
-						<div class="form-row">
-							<div class="col-sm-3 mb-1">
-								<label for="modal_PRMADDR">PRM ADDR</label>
-								<input type="text" class="form-control" id="modal_PRMADDR" required>
-								<div class="invalid-feedback">
-										Please provide a valid PRM ADDR.
+						<div class="modal_location_edit_container">
+								<div class="header">Address</div>
+								<div class="content">
+								<div class="form-row">
+										<div class="col-sm-3 mb-1">
+											<label for="modal_PRMADDR">PRM ADDR</label>
+											<input type="text" class="form-control" id="modal_PRMADDR" required>
+											<div class="invalid-feedback">
+													Please provide a valid PRM ADDR.
+											</div>
+										</div>
+										<div class="col-sm-3 mb-3">
+											<label for="modal_PRMCITY">PRM CITY</label>
+											<input type="text" class="form-control" id="modal_PRMCITY" required>
+											<div class="invalid-feedback">
+													Please provide a valid PRM CITY.
+											</div>
+										</div>
+										<div class="col-sm-1 mb-3">
+											<label for="modal_PRMSTATE">STATE</label>
+											<input type="text" class="form-control" id="modal_PRMSTATE" required>
+											<div class="invalid-feedback">
+													Please provide a valid STATE.
+											</div>
+										</div>
+										<div class="col-sm-2 mb-3">
+											<label for="modal_PRMZIP">ZIP</label>
+											<input type="text" class="form-control" id="modal_PRMZIP" required>
+											<div class="invalid-feedback">
+													Please provide a valid ZIP.
+											</div>
+										</div>
+										<div class="col-sm-3 mb-3 mt-5">
+											<span id="modal_LATITUDE" class="d-none"></span>
+											<span id="modal_LONGITUDE" class="d-none"></span>
+											<a href="#" id="check_addr" onclick="checkAddress()" >Check</a> | 
+											<a href="#" id="locate_addr" onclick="locateAddress()">Locate</a>
+										</div>
+									</div>
+									<div class="form-row" id="modal_newaddress_container">
+										<div class="col-sm-12">
+											<label id="modal_newaddress"></label>
+										</div>
+									</div>
 								</div>
-							</div>
-							<div class="col-sm-3 mb-3">
-								<label for="modal_PRMCITY">PRM CITY</label>
-								<input type="text" class="form-control" id="modal_PRMCITY" required>
-								<div class="invalid-feedback">
-										Please provide a valid PRM CITY.
-								</div>
-							</div>
-							<div class="col-sm-1 mb-3">
-								<label for="modal_PRMSTATE">STATE</label>
-								<input type="text" class="form-control" id="modal_PRMSTATE" required>
-								<div class="invalid-feedback">
-										Please provide a valid STATE.
-								</div>
-							</div>
-							<div class="col-sm-2 mb-3">
-								<label for="modal_PRMZIP">ZIP</label>
-								<input type="text" class="form-control" id="modal_PRMZIP" required>
-								<div class="invalid-feedback">
-										Please provide a valid ZIP.
-								</div>
-							</div>
-							<div class="col-sm-3 mb-3 mt-5">
-								<span id="modal_LATITUDE" class="d-none"></span>
-								<span id="modal_LONGITUDE" class="d-none"></span>
-								<a href="#" id="check_addr" onclick="checkAddress()" >Check</a> | 
-								<a href="#" id="locate_addr" onclick="locateAddress()">Locate</a>
-							</div>
 						</div>
-						<div class="form-row" id="modal_newaddress_container">
-							<div class="col-sm-12">
-								<label id="modal_newaddress"></label>
-							</div>
-						</div>
+						
 						<div class="form-row">
 							<div class="col-sm-3 mb-3">
 								<label for="modal_LEMPSZCD">EMP SIZE CODE</label>

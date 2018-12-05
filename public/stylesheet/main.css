@@ -542,3 +542,18 @@ body{
 #business_id{
   color: red;
 }
+
+.modal_location_edit_container {
+  width:100%;
+}
+.modal_location_edit_container div {
+  width:100%;
+}
+.modal_location_edit_container .header {
+  background-color:#d3d3d3;
+  font-weight: bold;
+}
+.modal_location_edit_container .content {
+  display: none;
+  /* padding : 5px; */
+}

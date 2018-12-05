@@ -2,7 +2,9 @@
 let db_service = require('../utils/db_service');
 
 //Takes an offset and limit to load the county with pagination.
-function geobycounty(county_name, offset, limit) {
+function geobycounty(county_name, version='current', offset, limit=0) {
+    let from_statement = 'businesses_2014';
+    if(version === 'original') from_statement = 'businesses_2014_o';
     return new Promise(function (resolve, reject) {
         let sql =
             `WITH county AS (
@@ -28,17 +30,13 @@ function geobycounty(county_name, offset, limit) {
             "BE_Payroll_Expense_Code",
             "BE_Payroll_Expense_Range",
             "BE_Payroll_Expense_Description"
-            FROM businesses_2014 as business, county
+            FROM ${from_statement} as business, county
             WHERE ST_Contains(county.geom, business.geom)
             ORDER BY COALESCE("ALEMPSZ", 0) DESC
             OFFSET ${offset}
         `;
-        if(limit){
-            sql += ' LIMIT ' + limit;
-        }else{
-
-        }
-
+        if(limit) sql += ' LIMIT ' + limit;
+        
         db_service.runQuery(sql, [], (err, data) => {
             if (err) return reject(err.stack);
             resolve(data.rows);
@@ -64,7 +62,7 @@ const geoByCountyRequest = function (request, response) {
     //     request.query.limiter = process.env.QUERY_LIMIT; //QUERY_LIMIT from env file.
     // }
 
-    geobycounty(request.params.county, request.query.offset, request.query.limiter)
+    geobycounty(request.params.county, request.query.v, request.query.offset, request.query.limiter)
         .then(data => {
             return response.status(200)
                 .json({

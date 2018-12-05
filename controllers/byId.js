@@ -1,7 +1,9 @@
 'use strict';
 let db_service = require('../utils/db_service')
 
-function geobyid(bp_id) {
+function geobyid(bp_id, version='current') {
+    let from_statement = 'businesses_2014';
+    if(version === 'original') from_statement = 'businesses_2014_o';
     return new Promise(function (resolve, reject) {
         let sql =
             `SELECT 
@@ -50,7 +52,7 @@ const requestGeoById = function (request, response) {
             })
     }
 
-    geobyid(request.params.id)
+    geobyid(request.params.id, request.query.v)
         .then(data => {
             return response.status(200)
                 .json({

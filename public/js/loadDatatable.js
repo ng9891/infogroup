@@ -115,7 +115,8 @@ function loadDatatable(establishments) {
 		$('#jq_datatable tbody').unbind("click").on('click', 'td button', function (){
 			var data_row = table.row( $(this).parents('tr') ).data();
 			// console.log(data_row);
-			loadEditModal(data_row);
+			query_version = d3.select('#version-dropdown').property("value");
+			loadEditModal(data_row, query_version);
 		});
 
 	});

@@ -1,23 +1,30 @@
 /*
-* loadEditModal.js contains general logistic and listeners of the editModal form to edit data.
-*
-* Takes a business ID and makes a server request to get the information about the business and 
-* loads it into the appropiate input boxes/ dropdowns. 
-* Converts sales volumes into millions for easier data checking and entrying.
-* 
-* Creates event listeners for the modal: 
-*   - Automatic dropdown selection based on user input.
-*   - Validates user for correct input type (expecting an int but got a letter string).
-*   - Checks if input falls within the range of the dropdown selection.
-*   - Form submition (calls sendBusinessEdit in editing/sendBusinessEdit.js).
-*
-* Dependencies: loadAutoComplete.js(two global var), jquery.js, d3.js
-*
-* Expected input: Valid Business ID.
-*
-* Output: A fully functional Modal Form with input validation and automatic selection.
-*/
-function loadEditModal(dt_row) {
+ * loadEditModal.js contains general logistic and listeners of the editModal form to edit data.
+ *
+ * Takes a business ID and makes a server request to get the information about the business and 
+ * loads it into the appropiate input boxes/ dropdowns. 
+ * Converts sales volumes into millions for easier data checking and entrying.
+ * 
+ * Creates event listeners for the modal: 
+ *  - Automatic dropdown selection based on user input.
+ *  - Validates user for correct input type (expecting an int but got a letter string).
+ *  - Checks if input falls within the range of the dropdown selection.
+ *  - Form submission (calls sendBusinessEdit in editing/sendBusinessEdit.js).
+ *  - Location editing handling (check, locate)
+ *
+ * Dependencies: 
+ *  - loadAutoComplete.js(two global var), 
+ *  - jquery.js, 
+ *  - d3.js, 
+ *  - Leaflet Geocoder
+ *  - Esri Leaflet
+ *  - Esri Leaflet Geocoder
+ *
+ * Expected input:   - Valid Business ID {int}.
+ *                   - version {string} as 'current' or 'original'
+ * Output: A fully functional Modal Form with input validation and automatic selection.
+ */
+function loadEditModal(dt_row, version = 'current') {
 
     if (!dt_row['id'] || dt_row['id'] === '') {
         console.log(dt_row);
@@ -25,11 +32,15 @@ function loadEditModal(dt_row) {
     }
 
     let business_id = dt_row["id"];
-    let reqURL = '/api/byid/' + business_id;
+    let reqURL = '/api/byid/' + business_id + '?v=' + version;
+
+    let title = '';
     d3.json(reqURL)
         .then(data => {
             let est = data.data[0];
-            $("#modalLabel").html(est.CONAME + ' - ID: <span id ="business_id">' + business_id + '</span>');
+            if (version === 'original') title = `<h4>${est.CONAME} - ID: <span id ="business_id">'${business_id}'</span> - ${version}</h4>`;
+            else title = `<h4>${est.CONAME} - ID: <span id ="business_id">'${business_id}'</span></h4>`;
+            $("#modalLabel").html(title);
             $("#modal_LEMPSZCD_button").text((est.LEMPSZCD !== null) ? est.LEMPSZCD : 'Emp Size');
             $("#modal_LEMPSZDS").val(est.LEMPSZDS);
             $("#modal_ALEMPSZ").val(est.ALEMPSZ);
@@ -55,6 +66,11 @@ function loadEditModal(dt_row) {
             $("#modal_CSALVOLDS").val(est.CSALVOLDS);
             $("#modal_ACSLSVOL").val(convertToMillionFromThousand(est.ACSLSVOL));
 
+            $('.modal_location_edit_container .header').html(`${est.PRMADDR},${est.PRMCITY},${est.PRMSTATE} ${est.PRMZIP} 
+                - <span class='expand_header'><a href='#'>Edit</a></span>`);
+
+
+            loadEditModal_eventListeners();
         }, function (err) {
             alert("Query Error on ID");
             console.log(err);
@@ -64,13 +80,20 @@ function loadEditModal(dt_row) {
         if (!input) return null;
         return (parseFloat(input)) / 1000;
     }
-    loadEditModal_eventListeners();
 }
 
 // Load the event listeners for the editmodal.
 // Calls various helper function for range checking and automatic selection.
 function loadEditModal_eventListeners() {
+    $(".modal_location_edit_container .header .expand_header").unbind("click").click(() => {
+        $content = $(".modal_location_edit_container .content")
+        console.log($content)
+        //open up the content needed - toggle the slide- if visible, slide up, if not slidedown.
+        $content.slideToggle(500);
+    });
+
     var form = $('#modal-form');
+
     form.unbind("submit").on('submit', (e) => {
         console.log('submit');
         e.preventDefault();
@@ -79,7 +102,6 @@ function loadEditModal_eventListeners() {
         if (form[0].checkValidity() === true) {
             sendBusinessEdit(); // Submit
         }
-
     });
 
     $('#submit_modal').unbind("click").click((e) => {
@@ -93,6 +115,7 @@ function loadEditModal_eventListeners() {
         var form = $('#modal-form');
         // Reset Custom validity on close
         modalExpand();
+        $('.modal_location_edit_container .content').hide();
         $("#modal_newaddress").html("");
         $("#modal_newaddress_container").hide();
         $('#modal_ALEMPSZ')[0].setCustomValidity("");
@@ -173,11 +196,11 @@ function loadEditModal_eventListeners() {
 }
 
 /*
-* Checks range for employment size and clicks the correct emply code.
-* The code selection triggers the click event which selects the correct
-* employment size description based on the code.
-* It then calls checkRangeEmply to validate input
-*/
+ * Checks range for employment size and clicks the correct emply code.
+ * The code selection triggers the click event which selects the correct
+ * employment size description based on the code.
+ * It then calls checkRangeEmply to validate input
+ */
 function selectRange_ALEMPSZ() {
     let empszInput = $('#modal_ALEMPSZ').val().trim();
     empszInput = parseInt(empszInput, 10);
@@ -208,12 +231,12 @@ function selectRange_ALEMPSZ() {
 }
 
 /*
-* Checks range for sales volume and clicks the correct sales volume code.
-* The code selection triggers the click event which selects the correct
-* sales volume code description.
-* It then calls checkRangeSales to validate input
-* Can differentiate between 'ALSLVOL' and 'ACSLVOL'.
-*/
+ * Checks range for sales volume and clicks the correct sales volume code.
+ * The code selection triggers the click event which selects the correct
+ * sales volume code description.
+ * It then calls checkRangeSales to validate input
+ * Can differentiate between 'ALSLVOL' and 'ACSLVOL'.
+ */
 function selectRange_SalesVolume(e) {
     let element = e.target.id;
     let queryType = element.slice(6); // Takes out 'modal_'
@@ -260,13 +283,13 @@ function selectRange_SalesVolume(e) {
 }
 
 /*
-* Takes the global associative array in loadautoComplete.js.
-* Checks for the user input (with autocomplete) and fills up the
-* description or code based on the NAICS/SIC selected.
-* Can differentiate between 'NAICS' and 'PRMSIC'.
-*
-* Dependencies: loadAutoComplete.js (two global array)
-*/
+ * Takes the global associative array in loadautoComplete.js.
+ * Checks for the user input (with autocomplete) and fills up the
+ * description or code based on the NAICS/SIC selected.
+ * Can differentiate between 'NAICS' and 'PRMSIC'.
+ *
+ * Dependencies: loadAutoComplete.js (two global array)
+ */
 function autoFillText_modal(e) {
     let element = e.target.id;
     let queryType = element.slice(6, -2); // Takes out 'modal_' and last 2 chars
@@ -303,11 +326,11 @@ function autoFillText_modal(e) {
 }
 
 /*
-* Checks for employment size input if it falls within the range of the selected dropdown code.
-* Invalidates form if the input does not fall within range and validates the form if it is.
-*
-* Expected input:   - range {string}: desired range to check employment size. eg. 'A - 1-4'
-*/
+ * Checks for employment size input if it falls within the range of the selected dropdown code.
+ * Invalidates form if the input does not fall within range and validates the form if it is.
+ *
+ * Expected input:   - range {string}: desired range to check employment size. eg. 'A - 1-4'
+ */
 function checkRangeEmply(range) {
     let indexOfDash = range.indexOf('-');
     let min = range.slice(0, indexOfDash);
@@ -333,13 +356,13 @@ function checkRangeEmply(range) {
 }
 
 /*
-* Checks for sales volume input if it falls within the range of the selected dropdown code.
-* Invalidates form if the input does not fall within range and validates the form if it is.
-* Can differentiate between 'LSALVOL' and 'CSALVOL'.
-*
-* Expected input:   - element {string}: desired div element to check. eg. '#modal_LSALVOLCD'
-*                   - code {string}: the chosen code range of the element. eg. 'A'
-*/
+ * Checks for sales volume input if it falls within the range of the selected dropdown code.
+ * Invalidates form if the input does not fall within range and validates the form if it is.
+ * Can differentiate between 'LSALVOL' and 'CSALVOL'.
+ *
+ * Expected input:   - element {string}: desired div element to check. eg. '#modal_LSALVOLCD'
+ *                   - code {string}: the chosen code range of the element. eg. 'A'
+ */
 function checkRangeSales(element, code) {
     let input, checkElement;
     let min, max, msg;
@@ -435,21 +458,125 @@ function convertToThousandFromMillion(input) {
     if (isNaN(input)) return null;
     return (parseFloat(input)) * 1000;
 }
-// Boiler plate to check. 
-// function check_boilerplate(){
-//     console.log('change');
 
-//     // this.setCustomValidity(""); // sets it Valid
-//     // this.setCustomValidity("anything"); // sets it invalid
-//     let msg= 'Please provide a valid Employment Size.';
-//     let reason = this.validity;
-//     if (reason.patternMismatch) {
-//         msg = 'pattern missmatch';
-//     }
-//     else if(isInvalid()){
-//         // check if it fall between code range
-//         this.setCustomValidity("wrong");
-//         msg = 'wrong';
-//     }
-//     this.nextElementSibling.innerText= msg; // Next div with error message
-// }
+function locateAddress() {
+    var street_addr = $("#modal_PRMADDR").val();
+    var city_addr = $("#modal_PRMCITY").val();
+    var state_addr = $("#modal_PRMSTATE").val();
+    var zip_addr = $("#modal_PRMZIP").val();
+    // latitude and longitude that comes from Database
+    var latitude = $("#modal_LATITUDE").val();
+    var longitude = $("#modal_LONGITUDE").val();
+
+    // console.log(latitude + ' ' + longitude);
+    // CSS changes below makes map active under the edit modal window
+    $("#editModal").css({
+        "position": "relative"
+    });
+    $(".modal-body").slideUp();
+    $(".modal-footer").slideUp();
+
+    if (!($(".modal.in").length)) {
+        $(".modal-dialog").css({
+            top: 0,
+            left: 0
+        });
+    }
+
+    $("#editModal").modal({
+        backdrop: 'static',
+        keyboard: false,
+        show: true
+    });
+
+    $(".modal-dialog").draggable({
+        handle: ".modal-header"
+    });
+
+    $("#modal_expand").show();
+
+    // Parsing Street Address for GeoSearch
+    if (street_addr.trim() && city_addr.trim() && state_addr.trim() && zip_addr.trim()) {
+        if (street_addr.match(/^\d/)) {
+            var street_number = parseInt(street_addr, 10);
+            street_addr = street_addr.replace(street_number, ''); // remove any numbers from the beginning
+            street_addr = street_addr.replace('#', ''); // remove symbol '#' from address
+            street_addr = street_addr.replace(/\d+$/, ''); // remove any numbers from the end
+            street_addr = street_addr.trim(); // remove spaces from beginning and end
+            street_addr = street_addr + ' ' + street_number;
+        }
+
+        // getting new coordinates 
+        $.get(location.protocol +
+            '//nominatim.openstreetmap.org/search?format=json&accept-language=en' +
+            '&limit=1' +
+            '&q= ' + street_addr + ' ' + city_addr + ' ' + state_addr + ' ' + zip_addr,
+            // We can also use this annotation below:
+            // '//nominatim.openstreetmap.org/search?format=json&accept-language=en' +
+            // '&street= ' + street_addr + 
+            // '&city= ' + city_addr + 
+            // '&state= ' + state_addr + 
+            // '&postalcode= ' + zip_addr, 
+            function (data) {
+                data.map(est => {
+                    //console.log(est.display_name + ' | lat: ' + est.lat + ' lon: ' + est.lon);
+                    // Locate using new latitude and longitude from GeoSearch library
+                    locatePointByCoordinate(est.lat, est.lon);
+                });
+            });
+    }
+
+    /*
+    // Adding a new marker for pointing to the new address
+    var marker = new L.marker([latitude, longitude],{
+        draggable: true
+    }).addTo(mymap);
+
+    marker.on('dragend', function (e) {
+        var new_latitude = marker.getLatLng().lat;
+        var new_longitude = marker.getLatLng().lng;
+        console.log(new_latitude + ' ' + new_longitude);
+    });
+    */
+}
+
+function checkAddress() {
+    var street_addr = $("#modal_PRMADDR").val();
+    var city_addr = $("#modal_PRMCITY").val();
+    var state_addr = $("#modal_PRMSTATE").val();
+    var zip_addr = $("#modal_PRMZIP").val();
+
+    // Parsing Street Address for GeoSearch
+    if (street_addr.trim() && city_addr.trim() && state_addr.trim() && zip_addr.trim()) {
+        if (street_addr.match(/^\d/)) {
+            var street_number = parseInt(street_addr, 10);
+            street_addr = street_addr.replace(street_number, ''); // remove any numbers from the beginning
+            street_addr = street_addr.replace('#', ''); // remove symbol '#' from address
+            street_addr = street_addr.replace(/\d+$/, ''); // remove any numbers from the end
+            street_addr = street_addr.trim(); // remove spaces from beginning and end
+            street_addr = street_addr + ' ' + street_number;
+        }
+
+        $.get(location.protocol +
+            '//nominatim.openstreetmap.org/search?format=json&accept-language=en' +
+            '&limit=1' +
+            '&q= ' + street_addr + ' ' + city_addr + ' ' + state_addr + ' ' + zip_addr,
+            function (data) {
+                data.map(est => {
+                    $("#modal_newaddress").html('');
+                    $("#modal_newaddress").html(est.display_name + ' | lat: ' + est.lat + ' | lon: ' + est.lon);
+                });
+            });
+    }
+
+    $("#modal_newaddress_container").show();
+}
+
+function modalExpand() {
+    $("#editModal").css({
+        "position": ""
+    });
+    $(".modal-body").slideDown();
+    $(".modal-footer").slideDown();
+    $("#modal_expand").hide();
+}

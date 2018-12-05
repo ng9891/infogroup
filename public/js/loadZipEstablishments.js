@@ -1,4 +1,4 @@
-function loadZipEstablishments(zip) {
+function loadZipEstablishments(zip, version) {
 	// --
 	// load data from api
 	// then add to map
@@ -8,7 +8,7 @@ function loadZipEstablishments(zip) {
 	$("#pieChart").empty();
 	if(usrMarkers.length !== 0) mymap.removeLayer(usrMarkers.pop()); //removes marker from user
 
-	d3.json(`/api/byzip/${zip}`)
+	d3.json(`/api/byzip/${zip}?v=${version}`)
 		.then(data => {
 			if (data.data.length === 0) {
 				console.log("Query not found.");

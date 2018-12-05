@@ -1,6 +1,5 @@
-//Takes an offset and limit to load the county with pagination.
 //Limit is usually undefined and set to default value unless specified by api.
-function loadMunEstablishments(mun, mun_type, county, offset, limit) {
+function loadMunEstablishments(mun, version, mun_type, county, offset, limit) {
 	// --
 	// load data from api
 	// then add to map
@@ -10,21 +9,16 @@ function loadMunEstablishments(mun, mun_type, county, offset, limit) {
 	if (usrMarkers.length !== 0) mymap.removeLayer(usrMarkers.pop()); //removes marker from user
 
 	// Creates a request URL for the API
-	var reqURL = '/api/bymun/' + mun;
-	let param = '';
+	var reqURL = '/api/bymun/' + mun + '?v=' + version;
+	let param = '';	// parameter for query overlay
 	if(mun_type && county){
 		param += '?mun_type=' + mun_type + '&county=' + county;
-		reqURL += param;
+		reqURL += '&mun_type=' + mun_type + '&county=' + county;
 	}else{
 		param += '?exact=1'
 	}
-	if (offset) {
-		reqURL += '&offset=' + offset;
-		if (limit) {
-			reqURL += '&limiter=' + limit;
-		}
-	}
-	// console.log(reqURL);
+	if (offset) reqURL += '&offset=' + offset;
+	if (limit) reqURL += '&limiter=' + limit;
 
 	d3.json(reqURL)
 		.then(data => {

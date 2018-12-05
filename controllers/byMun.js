@@ -2,8 +2,11 @@
 let db_service = require('../utils/db_service');
 
 //Takes an offset and limit to load the county with pagination.
-function geobymun(mun_name, mun_type, county, offset, limit) {
+function geobymun(mun_name, version='current', mun_type, county, offset, limit) {
+    let from_statement = 'businesses_2014';
+    if(version === 'original') from_statement = 'businesses_2014_o';
     return new Promise(function (resolve, reject) {
+        // Get all municipality
         let sql_setup = 
             `
             WITH mun AS (
@@ -17,7 +20,7 @@ function geobymun(mun_name, mun_type, county, offset, limit) {
                     FROM villages v
                 ) l
                 WHERE UPPER(name) = UPPER('${mun_name}')`;
-
+        // Specific municipality query
         if(mun_type && county)
             sql_setup += 
             `
@@ -42,7 +45,7 @@ function geobymun(mun_name, mun_type, county, offset, limit) {
             "BE_Payroll_Expense_Code",
             "BE_Payroll_Expense_Range",
             "BE_Payroll_Expense_Description"
-            FROM businesses_2014 as business, mun
+            FROM ${from_statement} as business, mun
             WHERE ST_Contains(mun.geom, business.geom)
             ORDER BY COALESCE("ALEMPSZ", 0) DESC
             OFFSET ${offset}
@@ -76,7 +79,7 @@ const geoByMunRequest = function (request, response) {
     //     request.query.limiter = process.env.QUERY_LIMIT; //QUERY_LIMIT from env file.
     // }
 
-    geobymun(request.params.mun, request.query.mun_type, request.query.county, request.query.offset, request.query.limiter)
+    geobymun(request.params.mun, request.query.v, request.query.mun_type, request.query.county, request.query.offset, request.query.limiter)
         .then(data => {
             return response.status(200)
                 .json({

@@ -2,7 +2,9 @@
 let db_service = require('../utils/db_service');
 
 //Takes an offset and limit to load the county with pagination.
-function geobympo(mpo_name, offset, limit) {
+function geobympo(mpo_name, version='current', offset, limit=0) {
+    let from_statement = 'businesses_2014';
+    if(version === 'original') from_statement = 'businesses_2014_o';
     return new Promise(function (resolve, reject) {
         let sql =
             `WITH mpo AS (
@@ -28,16 +30,12 @@ function geobympo(mpo_name, offset, limit) {
             "BE_Payroll_Expense_Code",
             "BE_Payroll_Expense_Range",
             "BE_Payroll_Expense_Description"
-            FROM businesses_2014 as business, mpo
+            FROM ${from_statement} as business, mpo
             WHERE ST_Contains(mpo.geom, business.geom)
             ORDER BY COALESCE("ALEMPSZ", 0) DESC
             OFFSET ${offset}
         `;
-        if(limit){
-            sql += ' LIMIT ' + limit;
-        }else{
-
-        }
+        if(limit) sql += ' LIMIT ' + limit;
 
         db_service.runQuery(sql, [], (err, data) => {
             if (err) return reject(err.stack);
@@ -64,7 +62,7 @@ const geoByMpoRequest = function (request, response) {
     //     request.query.limiter = process.env.QUERY_LIMIT; //QUERY_LIMIT from env file.
     // }
 
-    geobympo(request.params.mpo, request.query.offset, request.query.limiter)
+    geobympo(request.params.mpo, request.query.v, request.query.offset, request.query.limiter)
         .then(data => {
             return response.status(200)
                 .json({

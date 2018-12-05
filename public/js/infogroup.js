@@ -9,6 +9,8 @@
 *   - Hidding and showing side panels
 *   - Advanced search container listeners when opened
 *
+* Call appropiate query handler depending on nav dropdown query type selection
+*
 * Dependencies: loadAutoComplete.js, loadDropdown.js, jquery.js
 *
 * Expected input: None.
@@ -34,27 +36,28 @@ $(document).ready(function () {
         clearUsrMarker(); // function in map.js to clear user drawings
         query_input = d3.select('#query-search').property("value");
         query_type = d3.select('#query-dropdown').property("value");
+        query_version = d3.select('#version-dropdown').property("value");
         query_input = query_input.trim();
         switch (query_type) {
             case 'zip':
                 if (query_input.length < 4 || isNaN(+query_input)) {
                     alert("Invalid Input");
                 } else {
-                    loadZipEstablishments(query_input);
+                    loadZipEstablishments(query_input, query_version);
                 }
                 break;
             case 'county':
                 if (query_input.length <= 3) {
                     alert("Invalid Input");
                 } else {
-                    loadCountyEstablishments(query_input);
+                    loadCountyEstablishments(query_input, query_version);
                 }
                 break;
             case 'mpo':
                 if (query_input.length <= 3) {
                     alert("Invalid Input");
                 } else {
-                    loadMpoEstablishments(query_input);
+                    loadMpoEstablishments(query_input, query_version);
                 }
                 break;
             case 'mun':
@@ -69,7 +72,7 @@ $(document).ready(function () {
                         county = type.slice(type.indexOf('/') + 1);
                         query_input = query_input.slice(0, indexOfDash - 1);
                     }
-                    loadMunEstablishments(query_input, mun, county);
+                    loadMunEstablishments(query_input, query_version, mun, county);
                 }
                 break;
         }
