@@ -20,27 +20,30 @@
  *  - Esri Leaflet
  *  - Esri Leaflet Geocoder
  *
- * Expected input:   - Valid Business ID {int}.
+ * Expected input:   - business_id {int}.
  *                   - version {string} as 'current' or 'original'
  * Output: A fully functional Modal Form with input validation and automatic selection.
  */
-function loadEditModal(dt_row, version = 'current') {
+function loadEditModal(business_id, version = 'current') {
 
-    if (!dt_row['id'] || dt_row['id'] === '') {
-        console.log(dt_row);
+    if (!business_id || business_id === '') {
+        console.log(business_id);
         return;
     }
 
-    let business_id = dt_row["id"];
     let reqURL = '/api/byid/' + business_id + '?v=' + version;
-
-    let title = '';
     d3.json(reqURL)
         .then(data => {
+            if (data.data.length === 0) {
+                $("#modal_title").text('Error - Business Not Found');
+                return;
+            }
+
             let est = data.data[0];
+            let title = '';
             if (version === 'original') title = `<h4>${est.CONAME} - ID: <span id ="business_id">'${business_id}'</span> - ${version}</h4>`;
             else title = `<h4>${est.CONAME} - ID: <span id ="business_id">'${business_id}'</span></h4>`;
-            $("#modalLabel").html(title);
+            $("#modal_title").html(title);
             $("#modal_LEMPSZCD_button").text((est.LEMPSZCD !== null) ? est.LEMPSZCD : 'Emp Size');
             $("#modal_LEMPSZDS").val(est.LEMPSZDS);
             $("#modal_ALEMPSZ").val(est.ALEMPSZ);
@@ -69,7 +72,6 @@ function loadEditModal(dt_row, version = 'current') {
             $('.modal_location_edit_container .header').html(`${est.PRMADDR},${est.PRMCITY},${est.PRMSTATE} ${est.PRMZIP} 
                 - <span class='expand_header'><a href='#'>Edit</a></span>`);
 
-
             loadEditModal_eventListeners();
         }, function (err) {
             alert("Query Error on ID");
@@ -85,17 +87,14 @@ function loadEditModal(dt_row, version = 'current') {
 // Load the event listeners for the editmodal.
 // Calls various helper function for range checking and automatic selection.
 function loadEditModal_eventListeners() {
+    // Listener to expand the content inside location edit container
     $(".modal_location_edit_container .header .expand_header").unbind("click").click(() => {
-        $content = $(".modal_location_edit_container .content")
-        console.log($content)
-        //open up the content needed - toggle the slide- if visible, slide up, if not slidedown.
+        $content = $(".modal_location_edit_container .content");
         $content.slideToggle(500);
     });
 
     var form = $('#modal-form');
-
     form.unbind("submit").on('submit', (e) => {
-        console.log('submit');
         e.preventDefault();
         e.stopPropagation();
         form[0].classList.add('was-validated');

@@ -116,7 +116,7 @@ function loadDatatable(establishments) {
 			var data_row = table.row( $(this).parents('tr') ).data();
 			// console.log(data_row);
 			query_version = d3.select('#version-dropdown').property("value");
-			loadEditModal(data_row, query_version);
+			loadEditModal(data_row['id'], query_version);
 		});
 
 	});
