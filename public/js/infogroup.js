@@ -138,33 +138,34 @@ function loadAdvancedSearchListener() {
     });
 
     d3.select('#advsearch-button').on('click', (e) => {
-        var industry = $("#industriesId").val();
-        var minempl = $("#min-emplsize").val();
-        var maxempl = $("#max-emplsize").val();
-        var county_name = $("#countyId").val();
-        var mpo_name = $("#mpoId").val();
-        var mun_name = $("#munId").val(),
+        let industry = $("#industriesId").val();
+        let minempl = $("#min-emplsize").val();
+        let maxempl = $("#max-emplsize").val();
+        let county_name = $("#countyId").val();
+        let mpo_name = $("#mpoId").val();
+        let mun_name = $("#munId").val(),
             mun_type, mun_county;
 
-        var indexOfDash = mun_name.indexOf('-');
+        let indexOfDash = mun_name.indexOf('-');
         if (indexOfDash !== -1) {
-            var type = mun_name.slice(indexOfDash + 2);
+            let type = mun_name.slice(indexOfDash + 2);
             mun_type = type.slice(0, type.indexOf('/'));
             mun_county = type.slice(type.indexOf('/') + 1);
             mun_name = mun_name.slice(0, indexOfDash - 1);
         }
 
-        var salvol;
+        let salvol;
         let salvoltext = $('#dropdownSalesVolume').text().trim();
         if (salvoltext !== 'Sales Volume') salvol = salvoltext;
 
+        let query_version = d3.select('#adv-search-version-dropdown').property("value");
         // console.log("County: " + county);
         // console.log("MPO: " + mpo);
         // console.log("Mun: " + mun);
         // console.log("Mun Type: " + mun_type);
         // console.log("Mun County: " + mun_county);
 
-        loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county);
+        loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county, query_version);
         $(".advancedSearchContainer").toggleClass("open");
     });
 }

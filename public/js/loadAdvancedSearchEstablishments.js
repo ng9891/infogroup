@@ -1,4 +1,4 @@
-function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county) {
+function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county, version='current') {
 
 	$("div.Object-desc").empty();
 	$("#pieChart").empty();
