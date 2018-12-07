@@ -17,22 +17,21 @@
 function sendBusinessEdit() {
     let business_id = $("#business_id").text();
     let form = getForm();
-    console.log(form);
-    
-    // d3.json(`/${business_id}`, {
-    //     method: "POST",
-    //     body: JSON.stringify(form),
-    //     headers: {
-    //         "Content-type": "application/json; charset=UTF-8"
-    //     }
-    // }).then(() =>{
-    //     alert('Sent for approval');
-    //     $("#byemodal").click();
+    // console.log(form);
+    d3.json(`/edit/${business_id}`, {
+        method: "POST",
+        body: JSON.stringify(form),
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    }).then(() =>{
+        alert('Sent for approval');
+        $("#byemodal").click();
         
-    // }, function (err) {
-    //     alert("Error in submission");
-    //     console.log(err);
-    // });
+    }, function (err) {
+        alert("Error in submission");
+        console.log(err);
+    });
 }
 
 function getForm() {
@@ -45,18 +44,21 @@ function getForm() {
         SQFOOTCD: parseFormInput($("#modal_SQFOOTCD_button").text()),
         SQFOOTDS: parseFormInput($("#modal_SQFOOTDS").val()),
         LEMPSZCD: parseFormInput($("#modal_LEMPSZCD_button").text()),
-        LEMPSZSZ: parseFormInput($("#modal_LEMPSZDS").val()),
+        LEMPSZDS: parseFormInput($("#modal_LEMPSZDS").val()),
         ALEMPSZ: parseFormInput($("#modal_ALEMPSZ").val()),
         LSALVOLCD: parseFormInput($("#modal_LSALVOLCD_button").text()),
         LSALVOLDS: parseFormInput($("#modal_LSALVOLDS").val()),
-        ALSLSVOL: parseFormInput($("#modal_ALSLSVOL").val()),
+        ALSLSVOL: parseFormInput_salesVol($("#modal_ALSLSVOL").val()),
         CSALVOLCD: parseFormInput($("#modal_CSALVOLCD_button").text()),
         CSALVOLDS: parseFormInput($("#modal_CSALVOLDS").val()),
-        ACSLSVOL: parseFormInput($("#modal_ACSLSVOL").val()),
+        ACSLSVOL: parseFormInput_salesVol($("#modal_ACSLSVOL").val()),
+        PRMCITY: parseFormInput($("#modal_PRMCITY").val()),
+        PRMSTATE: parseFormInput($("#modal_PRMSTATE").val()),
+        PRMZIP: parseFormInput($("#modal_PRMZIP").val()),
         LATITUDEO: null,
         LONGITUDEO: null,
         geom: null,
-        desc: parseFormInput($("#modal_comment").val())
+        desc: $("#modal_comment").val()
     }
     return obj;
 }
@@ -67,8 +69,13 @@ function parseFormInput(val){
         if (val === 'Sales Volume') return null;
         if (val == 'SQF Code') return null;
         if (val == 'Emp Size') return null;
-        return val.trim().toUpperCase();
+        return `'${val.trim().toUpperCase()}'`
     }
+    return `'${val}'`;
+}
+function parseFormInput_salesVol(val){
+    if(isFormInputEmpty(val)) return null;
+    if(isNaN(val)) return null;
     val = convertToThousandFromMillion(parseFloat(val));
     return `'${val}'`;
 }
