@@ -2,20 +2,18 @@
 //Setup Leaflet Map
 
 //markers will contain the markers for the plugin markerClusterGroup
-var markers = L.markerClusterGroup({
+const markers = L.markerClusterGroup({
     spiderfyOnMaxZoom: false,
     disableClusteringAtZoom: 19,
-    chunkedLoading: true,
     chunkProgress: updateProgressBar
 });
 var markerList = []; //contains all the points from query
 var queryLayer = []; //contains the query layer or bounding box of query
 var usrMarkers = []; //contains all the marker drawn by user
-// var table;
-var lat, lon;
+
 // var redoBuffer = [];
 
-var mapBox = L.tileLayer(
+const mapBox = L.tileLayer(
     'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
         maxZoom: 19,
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
@@ -24,26 +22,26 @@ var mapBox = L.tileLayer(
         id: 'mapbox.streets'
     });
 
-var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+const OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 });
 
-var OpenMapSurfer_Roads = L.tileLayer('https://korona.geog.uni-heidelberg.de/tiles/roads/x={x}&y={y}&z={z}', {
+const OpenMapSurfer_Roads = L.tileLayer('https://korona.geog.uni-heidelberg.de/tiles/roads/x={x}&y={y}&z={z}', {
     maxZoom: 19,
     attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 });
 
-var OpenStreetMap_BlackAndWhite = L.tileLayer('http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
+const OpenStreetMap_BlackAndWhite = L.tileLayer('http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
 	maxZoom: 18,
 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 });
 
-var Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+const Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
 	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
 });
 
-var mymap = L.map('mapid', {
+const mymap = L.map('mapid', {
         preferCanvas: true,
         editable: true,
         maxZoom: 19,
@@ -168,19 +166,10 @@ mymap.addControl(new L.NewQueryControl());
 //---
 // MAP EVENT LISTENERS
 //---
-//Helper function to get drawing type.
-function drawingType(layer) {
-    if (layer instanceof L.Marker) return 'marker';
-    if (layer instanceof L.Circle) return 'circle';
-    if (layer instanceof L.Rectangle) return 'rectangle';
-    if (layer instanceof L.Polygon) return 'polygon';
-}
-
 var tooltip = L.DomUtil.get('draw-tooltip'); // Tooltip providing info of radius for circle drawing
 
 // Loads the establishments around the drawing area
 function queryDrawing() {
-    console.log(0);
     loadDrawingEstablishments();
     // Clear tooltip but we don't want to get rid of the listeners for drawing edits.
     tooltip.style.display = 'none';
@@ -260,7 +249,7 @@ var onKeyDown = function (e) {
             }
             return;
         }
-        latlng = this.editTools._drawingEditor.pop();
+        let latlng = this.editTools._drawingEditor.pop();
         if (!latlng) this.editTools.stopDrawing();
     }
 };

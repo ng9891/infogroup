@@ -122,6 +122,14 @@ function loadDrawingEstablishments() {
                 loadDatatable(data);
                 updateSearchInfo(searchType, searchValue);
                 loadHistogram(data);
+
+                if(searchType === 'Marker Query'){
+                    // Draw marker default radius of 1 mile.
+                    let circle = L.circle([layer.getLatLng().lat, layer.getLatLng().lng], {radius: 1609}); // 1609.34m = 1 mile
+                    queryLayer.push(circle);
+                    mymap.addLayer(circle);
+                    layerControl.addOverlay(circle, "Overlay Layer");
+                }
 			}
 		}, function (err) {
 			alert("Query Error");
