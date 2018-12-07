@@ -55,8 +55,7 @@ function loadEditModal(business_id, version = 'current') {
             $("#modal_PRMCITY").val(est.PRMCITY);
             $("#modal_PRMSTATE").val(est.PRMSTATE);
             $("#modal_PRMZIP").val(est.PRMZIP);
-            $("#modal_LATITUDE").val(est.LATITUDEO);
-            $("#modal_LONGITUDE").val(est.LONGITUDEO);
+            
 
             $("#modal_SQFOOTCD_button").text((est.SQFOOTCD !== null) ? est.SQFOOTCD : 'SQF Code');
             $("#modal_SQFOOTDS").val(est.SQFOOTDS);
@@ -463,9 +462,6 @@ function locateAddress() {
     var city_addr = $("#modal_PRMCITY").val();
     var state_addr = $("#modal_PRMSTATE").val();
     var zip_addr = $("#modal_PRMZIP").val();
-    // latitude and longitude that comes from Database
-    var latitude = $("#modal_LATITUDE").val();
-    var longitude = $("#modal_LONGITUDE").val();
 
     // console.log(latitude + ' ' + longitude);
     // CSS changes below makes map active under the edit modal window
@@ -494,7 +490,7 @@ function locateAddress() {
 
     $("#modal_expand").show();
 
-    // Parsing Street Address for GeoSearch
+    // Parsing Street Address that comes from our DB for GeoSearch
     if (street_addr.trim() && city_addr.trim() && state_addr.trim() && zip_addr.trim()) {
         if (street_addr.match(/^\d/)) {
             var street_number = parseInt(street_addr, 10);
@@ -562,12 +558,20 @@ function checkAddress() {
             '&q= ' + street_addr + ' ' + city_addr + ' ' + state_addr + ' ' + zip_addr,
             function (data) {
                 data.map(est => {
+                    //Adding a new address under the old one
                     $("#modal_newaddress").html('');
-                    $("#modal_newaddress").html(est.display_name + ' | lat: ' + est.lat + ' | lon: ' + est.lon);
+                    $("#modal_newaddress").html(
+                        '<label><input id="modal_newaddress_checkbox" type="checkbox" value=""> '+ 
+                        est.display_name + ' | lat: ' + est.lat + ' | lon: ' + est.lon +
+                        '</label>');
+                    // Set value for hidden latutude and longitude inputs
+                    $("#modal_LATITUDE").val(est.lat);
+                    $("#modal_LONGITUDE").val(est.lon);
                 });
             });
     }
 
+    
     $("#modal_newaddress_container").show();
 }
 

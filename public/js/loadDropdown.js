@@ -41,7 +41,8 @@ function loadDropdown_SalesVolume(input) {
         if (est.LSALVOLCD !== null) return `<li value=${est.LSALVOLCD}><a class='dropdown-item' href='#'>${est.LSALVOLCD} - ${est.LSALVOLDS}</a></li>`;
     }).join("");
 
-    adv_salesVol_dropdown[0].innerHTML = input.data.map(est => `<a class='dropdown-item' href='#'>${est.LSALVOLDS}</a>`).join("");
+    adv_salesVol_dropdown[0].innerHTML = input.data.map(est => 
+        `<a class='dropdown-item' href='#'>${(est.LSALVOLDS==null) ? 'Sales Volume' : est.LSALVOLDS}</a>`).join("");
 }
 
 function loadDropdown_EmpSize(input) {

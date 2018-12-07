@@ -123,15 +123,18 @@
 										</div>
 									</div>
 									<div class="col-sm-3 mb-3 mt-5">
-										<span id="modal_LATITUDE" class="d-none"></span>
-										<span id="modal_LONGITUDE" class="d-none"></span>
+										<!--hidden fields for latitude and longitude-->
+										<input type="text" id="modal_LATITUDE" class="d-none" required>
+										<input type="text" id="modal_LONGITUDE" class="d-none" required>
+
 										<a href="#" id="check_addr" onclick="checkAddress()">Check</a> |
 										<a href="#" id="locate_addr" onclick="locateAddress()">Locate</a>
 									</div>
 								</div>
 								<div class="form-row" id="modal_newaddress_container">
-									<div class="col-sm-12">
-										<label id="modal_newaddress"></label>
+									<div class="col-sm-12 checkbox" id="modal_newaddress">
+										<!-- Here will appear a checkbox with new address after pressing "Check" 
+											Just for showing to user and checking that it is correct -->
 									</div>
 								</div>
 							</div>

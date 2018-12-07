@@ -1,101 +1,20 @@
+/**
+ * Advanced Search Controller which performs SQL query
+ * using "Knex Query Builder" (installed from npm). 
+ * Depending on parameters structure of SQL query changes.
+ * This controller is being called from public/loadAdvancedSearchEstablishments.js
+ * 
+ */
+
 'use strict';
 let db_service = require('../utils/db_service');
 let knex       = require('../utils/knex/knex');
 
-function advancedSearch(industry,  minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county) {
+function advancedSearch(industry,  minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county, qversion) {
     return new Promise(function (resolve, reject) {
 
-    //TODO: BETTER TO USE Squel.Js or simial packages for sql query generation
-    //Trying to install and use Knex.Js - query builder/helper
-
-    /*
-
-        let sql, where_clause;
-
-        if (industry == 'null' && maxempl != 'null' && salvol != 'null') { // industry not specified
-            where_clause = `WHERE "ALEMPSZ" BETWEEN ${minempl} AND ${maxempl} 
-                            AND "LSALVOLDS" = '${salvol}' `;
-        }
-        else if (maxempl == 'null' && industry != 'null' && salvol != 'null') { // employee size not specified
-            where_clause = `WHERE upper("NAICSDS") LIKE upper('%${industry}%') 
-                            AND "LSALVOLDS" = '${salvol}' `;
-        }
-        else if (salvol == 'null' && industry != 'null' && maxempl != 'null') { // sales volume not specified
-            where_clause = `WHERE upper("NAICSDS") LIKE upper('%${industry}%') 
-                            AND "ALEMPSZ" BETWEEN ${minempl} AND ${maxempl} `;
-        }
-        else if (industry == 'null' && maxempl == 'null' && salvol != 'null') { // industry and employee size not specified
-            where_clause = `WHERE "LSALVOLDS" = '${salvol}' `;
-        }
-        else if (industry == 'null' && salvol == 'null' && maxempl != 'null') { // industry and sales volume not specified
-            where_clause = `WHERE "ALEMPSZ" BETWEEN ${minempl} AND ${maxempl} `;
-        }
-        else if (industry == 'null' && salvol == 'null' && maxempl == 'null') { // nothing specified 
-            where_clause = ` `;
-        }
-        else if (industry != 'null' && salvol != 'null' && maxempl != 'null') { // everything specified 
-            where_clause = `WHERE upper("NAICSDS") LIKE upper('%${industry}%') 
-                            AND "ALEMPSZ" BETWEEN ${minempl} AND ${maxempl} 
-                            AND "LSALVOLDS" = '${salvol}' `;
-        }
-
-
-        if (county_name == 'null') { // county_name not specified 
-
-            sql = `SELECT 
-                    id, 
-                    ST_ASGeoJSON(ST_Transform(business.geom, 4326)) AS geoPoint, 
-                    "CONAME", 
-                    "NAICSCD", 
-                    "NAICSDS", 
-                    "LEMPSZCD", 
-                    "LEMPSZDS", 
-                    "ALEMPSZ", 
-                    "PRMSICDS", 
-                    "LSALVOLDS", 
-                    "ALSLSVOL", 
-                    "SQFOOTCD", 
-                    "BE_Payroll_Expense_Code", 
-                    "BE_Payroll_Expense_Range", 
-                    "BE_Payroll_Expense_Description" 
-                    FROM businesses_2014 as business 
-                    `+where_clause+`
-                 `;
-        } 
-        else { // county_name (previously was in nymtc table) specified
-            sql = `WITH county AS ( 
-                        SELECT 
-                        ST_Transform(geom, 4326) AS geom 
-                        FROM counties as county 
-                        WHERE county.name LIKE '%${county_name}%' 
-                        LIMIT 1 
-                    ) 
-                    SELECT 
-                    id, 
-                    ST_ASGeoJSON(ST_Transform(business.geom, 4326)) AS geoPoint, 
-                    "CONAME", 
-                    "NAICSCD", 
-                    "NAICSDS", 
-                    "LEMPSZCD", 
-                    "LEMPSZDS", 
-                    "ALEMPSZ", 
-                    "PRMSICDS", 
-                    "LSALVOLDS", 
-                    "ALSLSVOL", 
-                    "SQFOOTCD", 
-                    "BE_Payroll_Expense_Code", 
-                    "BE_Payroll_Expense_Range", 
-                    "BE_Payroll_Expense_Description" 
-                    FROM businesses_2014 as business, county  
-                    `+where_clause+`
-                    AND ST_Contains(county.geom, ST_Transform(business.geom, 4326)) 
-                `;
-        }
-
-        */
-
         var with_clause = knex;
-        var from_clause = {business: 'businesses_2014'};
+        var from_clause = (qversion != 'original') ? {business: 'businesses_2014'} : {business: 'businesses_2014_o'};
         var where_county = '', where_mpo = '', where_mun='';
         var where_industry = (industry != 'null') ? {NAICSDS: industry} : {};
         var where_salvol = (salvol != 'null') ? {LSALVOLDS: salvol} : {};
@@ -212,7 +131,8 @@ const advancedSearchRequest = function (request, response) {
     }
 
     advancedSearch(request.query.industry, request.query.minempl, request.query.maxempl, request.query.salvol, 
-                    request.query.county_name, request.query.mpo_name, request.query.mun_name, request.query.mun_type, request.query.mun_county)
+                    request.query.county_name, request.query.mpo_name, request.query.mun_name, request.query.mun_type, 
+                    request.query.mun_county, request.query.qversion)
         .then(data => {
             return response.status(200)
                 .json({
