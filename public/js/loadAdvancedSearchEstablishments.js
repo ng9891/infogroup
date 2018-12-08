@@ -1,4 +1,11 @@
-function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county, version='current') {
+/* 
+This function called in public/infogroup.js file. 
+Purpose: Gets values from Advanced Search Form, 
+		checks the values, builds necessary get link 
+		and pass parameters to the controllers/advancedSearch.js
+		Latter returns data in accordance with the SQL query.
+*/
+function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county, query_version='current') {
 
 	$("div.Object-desc").empty();
 	$("#pieChart").empty();
@@ -28,7 +35,8 @@ function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, co
 		'mpo_name': mpo_name,
 		'mun_name': mun_name,
 		'mun_type': mun_type,
-		'mun_county': mun_county
+		'mun_county': mun_county,
+		'qversion': query_version
 	};
 
 	var query = $.param(params);
@@ -51,7 +59,7 @@ function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, co
 	let arr_obj = [firstRow, secondRow];
 	searchValue = buildSearchValString(arr_obj);
 
-	//console.log(reqURL);
+	console.log(reqURL);
 
 	d3.json(reqURL)
 		.then(data => {
