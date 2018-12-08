@@ -43,6 +43,7 @@ const Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/
 
 const mymap = L.map('mapid', {
         preferCanvas: true,
+        keyboard: false,
         editable: true,
         maxZoom: 19,
         layers: [mapBox]
