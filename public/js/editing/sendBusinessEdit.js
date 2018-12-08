@@ -54,8 +54,8 @@ function getForm() {
         PRMCITY: parseFormInput($("#modal_PRMCITY").val()),
         PRMSTATE: parseFormInput($("#modal_PRMSTATE").val()),
         PRMZIP: parseFormInput($("#modal_PRMZIP").val()),
-        LATITUDEO: null,
-        LONGITUDEO: null,
+        LATITUDEO: $("#modal_LATITUDE").val(),
+        LONGITUDEO: $("#modal_LONGITUDE").val(),
         geom: null,
         desc: $("#modal_comment").val(),
         by: null
