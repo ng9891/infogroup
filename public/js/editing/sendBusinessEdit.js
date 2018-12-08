@@ -17,7 +17,6 @@
 function sendBusinessEdit() {
     let business_id = $("#business_id").text();
     let form = getForm();
-    // console.log(form);
     d3.json(`/edit/${business_id}`, {
         method: "POST",
         body: JSON.stringify(form),
@@ -55,10 +54,11 @@ function getForm() {
         PRMCITY: parseFormInput($("#modal_PRMCITY").val()),
         PRMSTATE: parseFormInput($("#modal_PRMSTATE").val()),
         PRMZIP: parseFormInput($("#modal_PRMZIP").val()),
-        LATITUDEO: null,
-        LONGITUDEO: null,
+        LATITUDEO: $("#modal_LATITUDE").val(),
+        LONGITUDEO: $("#modal_LONGITUDE").val(),
         geom: null,
-        desc: $("#modal_comment").val()
+        desc: $("#modal_comment").val(),
+        by: null
     }
     return obj;
 }
@@ -69,15 +69,15 @@ function parseFormInput(val){
         if (val === 'Sales Volume') return null;
         if (val == 'SQF Code') return null;
         if (val == 'Emp Size') return null;
-        return `'${val.trim().toUpperCase()}'`
+        return val.trim().toUpperCase()
     }
-    return `'${val}'`;
+    return val;
 }
 function parseFormInput_salesVol(val){
     if(isFormInputEmpty(val)) return null;
     if(isNaN(val)) return null;
     val = convertToThousandFromMillion(parseFloat(val));
-    return `'${val}'`;
+    return val;
 }
 function isFormInputEmpty(txt){
     if(!txt) return true;   //undefined

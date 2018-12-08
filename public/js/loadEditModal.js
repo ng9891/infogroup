@@ -40,9 +40,8 @@ function loadEditModal(business_id, version = 'current') {
             }
 
             let est = data.data[0];
-            let title = '';
-            if (version === 'original') title = `<h4>${est.CONAME} - ID: <span id ="business_id">'${business_id}'</span> - ${version}</h4>`;
-            else title = `<h4>${est.CONAME} - ID: <span id ="business_id">'${business_id}'</span></h4>`;
+            if (version === 'original') var title = `<h4>${est.CONAME} - ID: <span id ="business_id">${business_id}</span> - ${version}</h4>`;
+            else var title = `<h4>${est.CONAME} - ID: <span id ="business_id">${business_id}</span></h4>`;
             $("#modal_title").html(title);
             $("#modal_LEMPSZCD_button").text((est.LEMPSZCD !== null) ? est.LEMPSZCD : 'Emp Size');
             $("#modal_LEMPSZDS").val(est.LEMPSZDS);
@@ -68,6 +67,7 @@ function loadEditModal(business_id, version = 'current') {
             $("#modal_CSALVOLDS").val(est.CSALVOLDS);
             $("#modal_ACSLSVOL").val(convertToMillionFromThousand(est.ACSLSVOL));
 
+            // Sets the location container text to the address
             $('.modal_location_edit_container .header').html(`${est.PRMADDR},${est.PRMCITY},${est.PRMSTATE} ${est.PRMZIP} 
                 - <span class='expand_header'><a href='#'>Edit</a></span>`);
 
