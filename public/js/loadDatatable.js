@@ -2,7 +2,7 @@
 function loadDatatable(establishments) {
 
 	var wh = $(window).height();
-	var calcDataTableHeight = (LessThan17inch) ? wh * 0.23 : wh * 0.32;
+	var calcDataTableHeight = (LessThan17inch) ? wh * 0.23 : wh * 0.30;
 
 	var obj = {
 		data: []
