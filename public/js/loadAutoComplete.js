@@ -143,12 +143,12 @@ function autoComplete_text(data, inputId) {
     });
 };
  // Overrides the default autocomplete filter function to search only from the beginning of the string
- $.ui.autocomplete.filter = function (array, term) {
-    var matcher = new RegExp("^" + $.ui.autocomplete.escapeRegex(term), "i");
-    return $.grep(array, function (value) {
-            return matcher.test(value.label || value.value || value);
-    });
-};
+//  $.ui.autocomplete.filter = function (array, term) {
+//     var matcher = new RegExp("^" + $.ui.autocomplete.escapeRegex(term), "i");
+//     return $.grep(array, function (value) {
+//             return matcher.test(value.label || value.value || value);
+//     });
+// };
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }

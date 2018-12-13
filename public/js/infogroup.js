@@ -158,7 +158,8 @@ function loadAdvancedSearchListener() {
         let salvoltext = $('#dropdownSalesVolume').text().trim();
         if (salvoltext !== 'Sales Volume') salvol = salvoltext;
 
-        let query_version = d3.select('#adv-search-version-dropdown').property("value");
+        //let query_version = d3.select('#adv-search-version-dropdown').property("value");
+        let query_version = d3.select('#version-dropdown').property("value");
         // console.log("County: " + county);
         // console.log("MPO: " + mpo);
         // console.log("Mun: " + mun);
