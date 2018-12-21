@@ -16,9 +16,7 @@ function loadDatatable(establishments) {
 			name: est.CONAME,
 			employee: est.ALEMPSZ,
 			industry: est.NAICSDS,
-			prmsic: est.PRMSICDS,
-			sales_volume: est.LSALVOLDS,
-			square_foot: est.SQFOOTCD
+			prmsic: est.PRMSICDS
 		});
 	});
 
@@ -58,12 +56,15 @@ function loadDatatable(establishments) {
 					data: "prmsic"
 				},
 				{
-					title: "Sales Vol.",
-					data: "sales_volume"
-				},
-				{
-					title: "SQF",
-					data: "square_foot"
+					title: "PRM",
+					data: null,
+					render: function (data, type, row, meta) {
+						if (type === 'display') {
+							data = "<div class='onoffswitch'><input type='checkbox' name='onoffswitch' onclick='updatePrimaryField("+row['id']+")' class='onoffswitch-checkbox' id='prmswitch"+row['id']+"' checked><label class='onoffswitch-label' for='prmswitch"+row['id']+"'><span class='onoffswitch-inner'></span><span class='onoffswitch-switch'></span></label></div>";
+						}
+						// function updatePrimaryField() located in public/infogroup.js
+						return data;
+					}
 				},
 				{
 					title: "ED",
@@ -81,27 +82,27 @@ function loadDatatable(establishments) {
 			],
 			"columnDefs": [{
 					"visible": false,
-					"targets": 0
+					"targets": 0 //Invisible, id column
 				},
 				{
 					"width": 34,
-					"targets": 2
+					"targets": 2 //Empl column
+				},
+				{
+					"width": 50,
+					"targets": 5 //PRM column
 				},
 				{
 					"width": 34,
-					"targets": 6
-				},
-				{
-					"width": 34,
-					"targets": 7
+					"targets": 6 //ED column
 				},
 				{
 					"visible": false,
-					"targets": 8
+					"targets": 7 //Invisible Latitude column
 				},
 				{
 					"visible": false,
-					"targets": 9
+					"targets": 8 //Invisible Longitude column
 				}
 			],
 			"fixedColumns": true,
