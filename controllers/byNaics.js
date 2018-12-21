@@ -1,7 +1,7 @@
 'use strict';
 let db_service = require('../utils/db_service')
 
-function geobyid(bp_id, version='current') {
+function geobyNaics(naics, version='current') {
     let from_statement = 'businesses_2014';
     if(version === 'original') from_statement = 'businesses_2014_o';
     return new Promise(function (resolve, reject) {
@@ -10,7 +10,6 @@ function geobyid(bp_id, version='current') {
             id, 
             ST_ASGeoJSON(ST_transform(geom,4326)) as geoPoint, 
             "CONAME",
-            alias,
             "NAICSCD",
             "NAICSDS", 
             "LEMPSZCD", 
@@ -34,7 +33,7 @@ function geobyid(bp_id, version='current') {
             "CSALVOLDS",
             "ACSLSVOL"
             FROM ${from_statement}
-            WHERE id = ${bp_id};
+            WHERE "NAICSCD"::text LIKE '${naics}%';
         `;
 
         db_service.runQuery(sql, [], (err, data) => {
@@ -44,16 +43,30 @@ function geobyid(bp_id, version='current') {
     });
 }
 
-const requestGeoById = function (request, response) {
-    if (!request.params.id) {
-        response.status(400)
+const requestGeoByNaics = function (request, response) {
+    if (!request.params.naics) {
+        return response.status(400)
             .json({
                 status: 'Error',
-                responseText: 'No id'
+                responseText: 'No Naics'
+            })
+    }
+    if (!request.params.naics.match("^[0-9]+$")) {
+        return response.status(400)
+            .json({
+                status: 'Error',
+                responseText: 'Invalid Naics'
+            })
+    }
+    if(request.params.naics.length < 4){
+        return response.status(400)
+            .json({
+                status: 'Error',
+                responseText: 'Invalid length Naics'
             })
     }
 
-    geobyid(request.params.id, request.query.v)
+    geobyNaics(request.params.naics, request.query.v)
         .then(data => {
             return response.status(200)
                 .json({
@@ -69,4 +82,4 @@ const requestGeoById = function (request, response) {
         });
 }
 
-module.exports = requestGeoById;
+module.exports = requestGeoByNaics;

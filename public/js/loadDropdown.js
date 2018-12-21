@@ -32,14 +32,15 @@ function loadDropdown() {
 }
 function loadDropdown_SalesVolume(input) {
     // Edit Modal
-    let modal_salesVol_dropdown = $("#modal_LSALVOLCD");
-    let modal_corpSalesVol_dropdown = $("#modal_CSALVOLCD");
-    let adv_salesVol_dropdown = $("#salesvolume-dropdown");
-    modal_salesVol_dropdown.empty();
+    // let modal_salesVol_dropdown = $("#modal_LSALVOLCD");
+    // let modal_corpSalesVol_dropdown = $("#modal_CSALVOLCD");
+    // modal_salesVol_dropdown.empty();
 
-    modal_corpSalesVol_dropdown[0].innerHTML = modal_salesVol_dropdown[0].innerHTML = input.data.map(est => {
-        if (est.LSALVOLCD !== null) return `<li value=${est.LSALVOLCD}><a class='dropdown-item' href='#'>${est.LSALVOLCD} - ${est.LSALVOLDS}</a></li>`;
-    }).join("");
+    let adv_salesVol_dropdown = $("#salesvolume-dropdown");
+
+    // modal_corpSalesVol_dropdown[0].innerHTML = modal_salesVol_dropdown[0].innerHTML = input.data.map(est => {
+    //     if (est.LSALVOLCD !== null) return `<li value=${est.LSALVOLCD}><a class='dropdown-item' href='#'>${est.LSALVOLCD} - ${est.LSALVOLDS}</a></li>`;
+    // }).join("");
 
     adv_salesVol_dropdown[0].innerHTML = input.data.map(est => 
         `<a class='dropdown-item' href='#'>${(est.LSALVOLDS==null) ? 'Sales Volume' : est.LSALVOLDS}</a>`).join("");

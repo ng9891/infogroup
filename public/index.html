@@ -55,6 +55,7 @@
 					<option value="county">County</option>
 					<option value="mpo">MPO</option>
 					<option value="mun">Municipality</option>
+					<!-- <option value="naics">NAICS</option> -->
 				</select>
 				<select id='version-dropdown' class="custom-select">
 					<option selected value="current">Current</option>
@@ -142,6 +143,20 @@
 						</div>
 
 						<div class="form-row">
+							<div class="col-sm-6 mb-2">
+								<label for="modal_alias">ALIAS</label>
+								<input type="text" class="form-control" id="modal_alias" required>
+								<div class="invalid-feedback">
+									Invalid Alias
+								</div>
+							</div>
+							<div class="col-sm-6 mb-2">
+								<label for="modal_CONAME">Company name</label>
+								<input type="text" class="form-control" id="modal_CONAME" disabled>
+								<div class="invalid-feedback">
+									Invalid Company name Code.
+								</div>
+							</div>
 							<div class="col-sm-3 mb-3">
 								<label for="modal_LEMPSZCD">EMP SIZE CODE</label>
 								<div class="dropdown">
@@ -211,7 +226,7 @@
 								<label for="modal_SQFOOTDS">SQF DESC</label>
 								<input type="text" class="form-control" id="modal_SQFOOTDS" disabled>
 							</div>
-							<div class="col-sm-3 mb-1">
+							<!-- <div class="col-sm-3 mb-1">
 								<label for="modal_LSALVOLCD">LSALVOLCD</label>
 								<div class="dropdown">
 									<button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_LSALVOLCD_button"
@@ -220,13 +235,13 @@
 									</button>
 									<ul class="dropdown-menu" id="modal_LSALVOLCD"></ul>
 								</div>
-							</div>
-							<div class="col-sm-9 mb-1">
+							</div> -->
+							<!-- <div class="col-sm-9 mb-1">
 								<label for="modal_LSALVOLDS">LSALVOLDS</label>
 								<input type="text" class="form-control" id="modal_LSALVOLDS" disabled>
-							</div>
+							</div> -->
 						</div>
-						<div class="form-group row">
+						<!-- <div class="form-group row">
 							<div class="input-group col-sm-12">
 								<div class="input-group-prepend">
 									<span class="input-group-text">Actual Sales Volume (in Millions)</span>
@@ -259,7 +274,7 @@
 								<input type="text" class="form-control" id="modal_ACSLSVOL" pattern="[0-9]+([,.][0-9]+)?">
 								<div class="invalid-feedback"></div>
 							</div>
-						</div>
+						</div> -->
 						<div class="form-group row">
 							<div class="col-sm-12">
 								<label for="modal_comment">Comments</label>
@@ -289,11 +304,23 @@
 	<div class='advancedSearchContainer'>
 		<button class='advancedSearchContainerButton'>SEARCH</button>
 		<div class="container mt-3">
-			<div class="input-group col-md-12 mb-3">
+			<!-- <div class="input-group col-md-12 mb-3">
 				<div class="input-group-prepend">
 					<span class="input-group-text">Industry</span>
 				</div>
 				<input type="text" id="industriesId" class="form-control" placeholder="e.g. Financial">
+			</div> -->
+			<div class="input-group col-md-12 mb-3">
+				<div class="input-group-prepend">
+					<span class="input-group-text">Industry</span>
+				</div>
+				<input type="text" id="adv_NAICSDS" class="form-control" placeholder="e.g. Financial">
+				<div class="input-group col-md-4">
+					<div class="input-group-prepend">
+						<span class="input-group-text">Code</span>
+					</div>
+					<input type="text" id="adv_NAICSCD" class="form-control" placeholder="OPTIONAL">
+				</div>
 			</div>
 			<div class="input-group col-md-12 mb-3 ui-content">
 				<div class="input-group-prepend">

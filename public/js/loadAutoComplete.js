@@ -35,8 +35,8 @@ function loadAutoComplete(){
     });
 
     // Advance search autocomplete
-    autoComplete_url("#countyId", 'county');
-    autoComplete_url("#mpoId", 'mpo');
+    autoComplete_url("#countyId", 'county',1);
+    autoComplete_url("#mpoId", 'mpo',1);
     autoComplete_url("#munId", 'mun');
 
     d3.json(`/api/getindustries`).then(data => {
@@ -51,6 +51,7 @@ function loadAutoComplete(){
         _obj_naics_arr.push(obj_naics_cd);
         _obj_naics_arr.push(obj_naics_ds);
         autoComplete_text(arr_data_cd, '#modal_NAICSCD');
+        autoComplete_text(arr_data_cd, '#adv_NAICSCD');
     }, function (err) {
         console.log(err);
     });
@@ -61,7 +62,8 @@ function loadAutoComplete(){
             arr_data_ds.push(est.NAICSDS);
         });
         autoComplete_text(arr_data_ds, '#modal_NAICSDS');
-        autoComplete_text(arr_data_ds, '#industriesId');    //adv search
+        autoComplete_text(arr_data_ds, '#adv_NAICSDS');    //adv search
+        // autoComplete_text(arr_data_ds, '#adv_NAICSDS');
     }, function (err) {
         console.log(err);
     });
@@ -93,7 +95,7 @@ Expected input: a string that creates a valid API URL with the param 'column'. e
                  type: string variable to complete the URL. eg. /api/getsic/test?type='cd'
 Output: An expected list of autocompletion displayed below 'inputId' input box
 */
-function autoComplete_url(inputId, column, minlen=2,type='') {
+function autoComplete_url(inputId, column, minlen=2) {
     $(inputId).autocomplete({
         delay: 1000,
         minLength: minlen,
@@ -103,7 +105,7 @@ function autoComplete_url(inputId, column, minlen=2,type='') {
             $.ajax({
                 type: "GET",
                 dataType: 'json',
-                url: `/api/get${column}/${encodeURIComponent(input)}?type='${type}'`,
+                url: `/api/get${column}/${encodeURIComponent(input)}`,
                 success: function (data) {
                     if (data) {
                         let arr_data = [];
@@ -114,8 +116,11 @@ function autoComplete_url(inputId, column, minlen=2,type='') {
                             arr_data.push(`${d.name}`);
                             if(d.abbrv) arr_data.push(d.abbrv); // Abbreviation and name query AC for MPO
                         });
-                        var results = $.ui.autocomplete.filter(arr_data, input);
-                        response(results.slice(0, 15));
+                        setTimeout( () => {
+                            var results = $.ui.autocomplete.filter(arr_data, input);
+                            $(inputId).removeClass(".ui-autocomplete-loading ");
+                            response(results.slice(0, 15));
+                        }, 500);
                     }
                 }
             });
@@ -133,8 +138,10 @@ function autoComplete_text(data, inputId) {
         minLength: 2,
         sortResults: false,
         source: function (request, response) {
-            var results = $.ui.autocomplete.filter(data, request.term);
-            response(results.slice(0, 15));
+            setTimeout( () => {
+                var results = $.ui.autocomplete.filter(data, request.term);
+                response(results.slice(0, 15));
+            }, 500);
         },
         messages: {
             noResults: '',
@@ -149,6 +156,7 @@ function autoComplete_text(data, inputId) {
 //             return matcher.test(value.label || value.value || value);
 //     });
 // };
+
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }

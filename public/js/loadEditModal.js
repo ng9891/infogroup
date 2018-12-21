@@ -43,6 +43,8 @@ function loadEditModal(business_id, version = 'current') {
             if (version === 'original') var title = `<h4>${est.CONAME} - ID: <span id ="business_id">${business_id}</span> - ${version}</h4>`;
             else var title = `<h4>${est.CONAME} - ID: <span id ="business_id">${business_id}</span></h4>`;
             $("#modal_title").html(title);
+            $("#modal_CONAME").val(est.CONAME);
+            $("#modal_alias").val((!est.alias) ? "" : est.alias);
             $("#modal_LEMPSZCD_button").text((est.LEMPSZCD !== null) ? est.LEMPSZCD : 'Emp Size');
             $("#modal_LEMPSZDS").val(est.LEMPSZDS);
             $("#modal_ALEMPSZ").val(est.ALEMPSZ);
@@ -59,13 +61,13 @@ function loadEditModal(business_id, version = 'current') {
             $("#modal_SQFOOTCD_button").text((est.SQFOOTCD !== null) ? est.SQFOOTCD : 'SQF Code');
             $("#modal_SQFOOTDS").val(est.SQFOOTDS);
 
-            $("#modal_LSALVOLCD_button").text((est.LSALVOLCD !== null) ? est.LSALVOLCD : 'Sales Volume');
-            $("#modal_LSALVOLDS").val(est.LSALVOLDS);
-            $("#modal_ALSLSVOL").val(convertToMillionFromThousand(est.ALSLSVOL));
+            // $("#modal_LSALVOLCD_button").text((est.LSALVOLCD !== null) ? est.LSALVOLCD : 'Sales Volume');
+            // $("#modal_LSALVOLDS").val(est.LSALVOLDS);
+            // $("#modal_ALSLSVOL").val(convertToMillionFromThousand(est.ALSLSVOL));
 
-            $("#modal_CSALVOLCD_button").text((est.CSALVOLCD !== null) ? est.CSALVOLCD : 'Corporate Sales Volume');
-            $("#modal_CSALVOLDS").val(est.CSALVOLDS);
-            $("#modal_ACSLSVOL").val(convertToMillionFromThousand(est.ACSLSVOL));
+            // $("#modal_CSALVOLCD_button").text((est.CSALVOLCD !== null) ? est.CSALVOLCD : 'Corporate Sales Volume');
+            // $("#modal_CSALVOLDS").val(est.CSALVOLDS);
+            // $("#modal_ACSLSVOL").val(convertToMillionFromThousand(est.ACSLSVOL));
 
             // Sets the location container text to the address
             $('.modal_location_edit_container .header').html(`${est.PRMADDR},${est.PRMCITY},${est.PRMSTATE} ${est.PRMZIP} 
@@ -117,8 +119,8 @@ function loadEditModal_eventListeners() {
         $("#modal_newaddress").html("");
         $("#modal_newaddress_container").hide();
         $('#modal_ALEMPSZ')[0].setCustomValidity("");
-        $('#modal_ALSLSVOL')[0].setCustomValidity("");
-        $('#modal_ACSLSVOL')[0].setCustomValidity("");
+        // $('#modal_ALSLSVOL')[0].setCustomValidity("");
+        // $('#modal_ACSLSVOL')[0].setCustomValidity("");
         form[0].classList.remove('was-validated');
         form[0].reset();
     });
@@ -151,43 +153,43 @@ function loadEditModal_eventListeners() {
         $('#modal_SQFOOTDS').val(chosen_SQFOOTDS);
     });
 
-    $("#modal_LSALVOLCD li").unbind("click").click(function () {
-        let str = $(this).text();
-        let chosen_LSALVOLCD, chosen_LSALVOLDS;
-        let indexOfDash = str.indexOf('-');
-        if (indexOfDash !== -1) {
-            chosen_LSALVOLCD = str.slice(0, indexOfDash - 1);
-            chosen_LSALVOLDS = str.slice(indexOfDash + 2);
-        }
-        $(this).parents(".dropdown").find('.btn').html(chosen_LSALVOLCD + ' <span class="caret"></span>');
-        $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
-        $('#modal_LSALVOLDS').val(chosen_LSALVOLDS);
-        // Check the range for actual sales volume
-        checkRangeSales('#modal_LSALVOLCD', chosen_LSALVOLCD);
-    });
+    // $("#modal_LSALVOLCD li").unbind("click").click(function () {
+    //     let str = $(this).text();
+    //     let chosen_LSALVOLCD, chosen_LSALVOLDS;
+    //     let indexOfDash = str.indexOf('-');
+    //     if (indexOfDash !== -1) {
+    //         chosen_LSALVOLCD = str.slice(0, indexOfDash - 1);
+    //         chosen_LSALVOLDS = str.slice(indexOfDash + 2);
+    //     }
+    //     $(this).parents(".dropdown").find('.btn').html(chosen_LSALVOLCD + ' <span class="caret"></span>');
+    //     $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+    //     $('#modal_LSALVOLDS').val(chosen_LSALVOLDS);
+    //     // Check the range for actual sales volume
+    //     checkRangeSales('#modal_LSALVOLCD', chosen_LSALVOLCD);
+    // });
 
-    $("#modal_CSALVOLCD li").unbind("click").click(function () {
-        let str = $(this).text();
-        let chosen_CSALVOLCD, chosen_CSALVOLDS;
-        let indexOfDash = str.indexOf('-');
-        if (indexOfDash !== -1) {
-            chosen_CSALVOLCD = str.slice(0, indexOfDash - 1);
-            chosen_CSALVOLDS = str.slice(indexOfDash + 2);
-        }
-        $(this).parents(".dropdown").find('.btn').html(chosen_CSALVOLCD + ' <span class="caret"></span>');
-        $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
-        $('#modal_CSALVOLDS').val(chosen_CSALVOLDS);
-        // Check the range for actual sales volume
-        checkRangeSales('#modal_CSALVOLCD', chosen_CSALVOLCD);
-    });
+    // $("#modal_CSALVOLCD li").unbind("click").click(function () {
+    //     let str = $(this).text();
+    //     let chosen_CSALVOLCD, chosen_CSALVOLDS;
+    //     let indexOfDash = str.indexOf('-');
+    //     if (indexOfDash !== -1) {
+    //         chosen_CSALVOLCD = str.slice(0, indexOfDash - 1);
+    //         chosen_CSALVOLDS = str.slice(indexOfDash + 2);
+    //     }
+    //     $(this).parents(".dropdown").find('.btn').html(chosen_CSALVOLCD + ' <span class="caret"></span>');
+    //     $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
+    //     $('#modal_CSALVOLDS').val(chosen_CSALVOLDS);
+    //     // Check the range for actual sales volume
+    //     checkRangeSales('#modal_CSALVOLCD', chosen_CSALVOLCD);
+    // });
 
-    // Bind listeners for automatic range selection and autofilling based on user input.
-    $('#modal_ALEMPSZ').unbind("change").change(selectRange_ALEMPSZ);
-    $('#modal_ALSLSVOL').unbind("change").change(selectRange_SalesVolume);
-    $('#modal_ACSLSVOL').unbind("change").change(selectRange_SalesVolume);
+    // // Bind listeners for automatic range selection and autofilling based on user input.
+    // $('#modal_ALEMPSZ').unbind("change").change(selectRange_ALEMPSZ);
+    // $('#modal_ALSLSVOL').unbind("change").change(selectRange_SalesVolume);
+    // $('#modal_ACSLSVOL').unbind("change").change(selectRange_SalesVolume);
 
-    $('#modal_NAICSCD').unbind("change").change(autoFillText_modal);
-    $('#modal_NAICSDS').unbind("change").change(autoFillText_modal);
+    $('#adv_naicscd').unbind("change").change(autoFillText_modal);
+    $('#adv_naicsds').unbind("change").change(autoFillText_modal);
 
     $('#modal_PRMSICCD').unbind("change").change(autoFillText_modal);
     $('#modal_PRMSICDS').unbind("change").change(autoFillText_modal);

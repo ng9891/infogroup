@@ -36,6 +36,7 @@ function sendBusinessEdit() {
 function getForm() {
     let obj = {};
     obj = {
+        alias: parseFormInput($("#modal_alias").val()),
         PRMSICCD: parseFormInput($("#modal_PRMSICCD").val()),
         PRMSICDS: parseFormInput($("#modal_PRMSICDS").val()),
         NAICSCD: parseFormInput($("#modal_NAICSCD").val()),

@@ -75,6 +75,13 @@ $(document).ready(function () {
                     loadMunEstablishments(query_input, query_version, mun, county);
                 }
                 break;
+            case 'naics':
+                if (query_input.length < 2) {
+                    alert("Invalid Input");
+                } else {
+                    
+                }
+                break;
         }
     });
 
@@ -137,8 +144,12 @@ function loadAdvancedSearchListener() {
         $(this).parents(".dropdown").find('.btn').val($(this).data('value'));
     });
 
+    $('#adv_NAICSCD').unbind("change").change(autoFillText_avdSearch);
+    // $('#adv_NAICSDS').unbind("change").change(autoFillText_avdSearch);
+
     d3.select('#advsearch-button').on('click', (e) => {
-        let industry = $("#industriesId").val();
+        let industry = $("#adv_NAICSDS").val();
+        let naicscode = $("#adv_NAICSCD").val();
         let minempl = $("#min-emplsize").val();
         let maxempl = $("#max-emplsize").val();
         let county_name = $("#countyId").val();
@@ -166,7 +177,7 @@ function loadAdvancedSearchListener() {
         // console.log("Mun Type: " + mun_type);
         // console.log("Mun County: " + mun_county);
 
-        loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county, query_version);
+        loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county, naicscode, query_version);
         $(".advancedSearchContainer").toggleClass("open");
     });
 }
@@ -181,5 +192,27 @@ function updatePrimaryField(entityId) {
     }
     else {
         alert("update business_audit for id = " + entityId + " (make this field not primary)");
+    }
+}
+function autoFillText_avdSearch(e) {
+    let element = e.target.id;
+    let queryType = element.slice(4, -2); // Takes out 'modal_' and last 2 chars
+    let type = element.substr(-2); // Gets CD or DS
+    let arr = [];
+    let change_element; // Element to autofill
+    let input;
+    switch (queryType) {
+        case 'NAICS':
+            input = $('#' + element).val();
+            if (type === 'CD') {
+                arr = _obj_naics_arr[0];
+                change_element = '#adv_NAICSDS';
+            }
+            if (type === 'DS') {
+                arr = _obj_naics_arr[1];
+                change_element = '#adv_NAICSCD';
+            }
+            if (arr[input]) $(change_element).val(arr[input]);
+            break;
     }
 }

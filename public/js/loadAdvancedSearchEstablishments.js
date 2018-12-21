@@ -5,7 +5,7 @@ Purpose: Gets values from Advanced Search Form,
 		and pass parameters to the controllers/advancedSearch.js
 		Latter returns data in accordance with the SQL query.
 */
-function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county, query_version='current') {
+function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county, naicscode, query_version='current') {
 
 	$("div.Object-desc").empty();
 	$("#pieChart").empty();
@@ -15,6 +15,7 @@ function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, co
 	var searchValue = "";
 
 	industry = ($.trim(industry) !== '') ? industry : 'null';
+	naicscode = ($.trim(naicscode) !== '') ? naicscode : 'null';
 	minempl = ($.trim(minempl) !== '') ? minempl : 0;
 	maxempl = ($.trim(maxempl) !== '') ? maxempl : 'null';
 	salvol = ($.trim(salvol) !== '') ? salvol : 'null';
@@ -28,6 +29,7 @@ function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, co
 	var reqURL = '/api/advancedSearch?';
 	var params = {
 		'industry': industry,
+		'naicscode': naicscode,
 		'minempl': minempl,
 		'maxempl': maxempl,
 		'salvol': salvol,
@@ -47,19 +49,18 @@ function loadAdvancedSearchEstablishments(industry, minempl, maxempl, salvol, co
 		'MPO': mpo_name,
 		'County': county_name,
 		'Mun': mun_name,
-		'Mun Type': mun_type,
-		'Mun County': mun_county,
-
+		'Mun County': mun_county
 	}
 	let secondRow = {
 		'Industry': industry,
+		'Code': naicscode,
 		'EmpMin': minempl,
-		'EmpMax': maxempl
+		'EmpMax': maxempl,
 	}
 	let arr_obj = [firstRow, secondRow];
 	searchValue = buildSearchValString(arr_obj);
 
-	console.log(reqURL);
+	// console.log(reqURL);
 
 	d3.json(reqURL)
 		.then(data => {

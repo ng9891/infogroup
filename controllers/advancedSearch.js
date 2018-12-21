@@ -10,15 +10,15 @@
 let db_service = require('../utils/db_service');
 let knex       = require('../utils/knex/knex');
 
-function advancedSearch(industry,  minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county, qversion) {
+function advancedSearch(industry,  minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county, naicscode, qversion) {
     return new Promise(function (resolve, reject) {
-
         var with_clause = knex;
         var from_clause = (qversion != 'original') ? {business: 'businesses_2014'} : {business: 'businesses_2014_o'};
         var where_county = '', where_mpo = '', where_mun='';
         var where_industry = (industry != 'null') ? {NAICSDS: industry} : {};
         var where_salvol = (salvol != 'null') ? {LSALVOLDS: salvol} : {};
         var where_emplsize = (maxempl != 'null') ? '"ALEMPSZ" BETWEEN '+minempl+' AND '+maxempl+' ' : '';
+        var where_naicscode = (naicscode != 'null') ? {NAICSCD: parseInt(naicscode)} : {};
         if (county_name != 'null') {
             with_clause = with_clause.with('county', 
                             knex.raw('SELECT ST_Transform(geom, 4326) AS geom FROM counties as county WHERE county.name LIKE \'%'+county_name+'%\' LIMIT 1' ));
@@ -62,6 +62,7 @@ function advancedSearch(industry,  minempl, maxempl, salvol, county_name, mpo_na
                             'BE_Payroll_Expense_Description',
                             'BE_Payroll_Expense_Description').select().from(from_clause).
                             where(where_industry).
+                            where(where_naicscode).
                             where(where_salvol).
                             whereRaw(where_emplsize).
                             whereRaw(where_county).
@@ -70,7 +71,7 @@ function advancedSearch(industry,  minempl, maxempl, salvol, county_name, mpo_na
         
         sql = sql.toString();
 
-        //console.log(sql);
+        // console.log(sql);
 
         db_service.runQuery(sql, [], (err, data) => {
             if (err) return reject(err.stack);
@@ -132,7 +133,7 @@ const advancedSearchRequest = function (request, response) {
 
     advancedSearch(request.query.industry, request.query.minempl, request.query.maxempl, request.query.salvol, 
                     request.query.county_name, request.query.mpo_name, request.query.mun_name, request.query.mun_type, 
-                    request.query.mun_county, request.query.qversion)
+                    request.query.mun_county, request.query.naicscode,request.query.qversion)
         .then(data => {
             return response.status(200)
                 .json({
