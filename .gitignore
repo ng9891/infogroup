@@ -2,3 +2,4 @@ node_modules/
 work.code-workspace
 .vscode
 *.env
+*.log
