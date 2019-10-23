@@ -1,12 +1,11 @@
 'use strict';
-let db_service = require('../utils/db_service')
+let db_service = require('../utils/db_service');
 
-function geobyid(bp_id, version='current') {
-    let from_statement = 'businesses_2014';
-    if(version === 'original') from_statement = 'businesses_2014_o';
-    return new Promise(function (resolve, reject) {
-        let sql =
-            `SELECT 
+function geobyid(business_id, version = 'current') {
+  let from_statement = 'businesses_2014';
+  if (version === 'original') from_statement = 'businesses_2014_o';
+  return new Promise(function(resolve, reject) {
+    let sql = `SELECT 
             id, 
             ST_ASGeoJSON(ST_transform(geom,4326)) as geoPoint, 
             "CONAME",
@@ -32,41 +31,45 @@ function geobyid(bp_id, version='current') {
             "ALSLSVOL",
             "CSALVOLCD",
             "CSALVOLDS",
-            "ACSLSVOL"
+            "ACSLSVOL",
+            "MATCHCD",
+            "TRANSTYPE",
+            "TRANSTYPE",
+			      "INDFIRMCD",
+			      "INDFIRMDS"
             FROM ${from_statement}
-            WHERE id = ${bp_id};
+            WHERE id = $1;
         `;
 
-        db_service.runQuery(sql, [], (err, data) => {
-            if (err) return reject(err.stack)
-            resolve(data.rows)
-        });
+    db_service.runQuery(sql, [business_id], (err, data) => {
+      if (err) return reject(err.stack);
+      resolve(data.rows);
     });
+  });
 }
 
-const requestGeoById = function (request, response) {
-    if (!request.params.id) {
-        response.status(400)
-            .json({
-                status: 'Error',
-                responseText: 'No id'
-            })
+const requestGeoById = function(request, response) {
+  if (!request.params.id) {
+    response.status(400).json({
+      status: 'Error',
+      responseText: 'No id',
+    });
+  }
+
+  geobyid(request.params.id, request.query.v).then(
+    (data) => {
+      return response.status(200).json({
+        data: data,
+      });
+    },
+    function(err) {
+      console.error(err);
+      return response.status(500).json({
+        status: 'Error',
+        responseText: 'Error in query ' + err,
+      });
     }
-
-    geobyid(request.params.id, request.query.v)
-        .then(data => {
-            return response.status(200)
-                .json({
-                    data: data,
-                });
-        }, function (err) {
-            console.error(err);
-            return response.status(500)
-                .json({
-                    status: 'Error',
-                    responseText: 'Error in query ' + err
-                });
-        });
-}
+  );
+};
 
 module.exports = requestGeoById;
