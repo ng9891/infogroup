@@ -50,7 +50,7 @@ body{
 /* BEGIN NAV BAR (Change later to bootstrap?) */
 /* Add a black background color to the top navigation */
 .topnav {
-  z-index: 900;
+  z-index: 700;
   position: fixed;
   width: 100%;
   top: 0;
@@ -108,6 +108,7 @@ body{
   right: 0; 
   left: 0; 
   width:100%;
+  z-index: 700;
 }
 
 .advancedSearchContainer {
@@ -116,13 +117,13 @@ body{
   right: 0px;
   height: 300px;
   background-color:#cfcccc;
-  z-index: 4000;
+  z-index: 850;
   border-radius: 5px;
   padding: 10px;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
   width: 40%;
   transition: transform 0.2s linear;
-  transform: translate3d(99.50%,0,0);
+  transform: translate3d(99.80%,0,0);
 }
 .advancedSearchContainer.open{
   transform: translate3d(0,0,0);
@@ -130,43 +131,48 @@ body{
 
 .statisticsContainer {
   position: fixed;
-  top: 34%;
+  top: 5%;
   right: 0%;
-  height: 64%;
-  background-color:#cfcccc;
-  z-index: 5000;
+  height: 90%;
+  background-color:#E8E8E8;
+  z-index: 800;
   border-radius: 5px;
   padding: 10px;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-  width: 66%;
+  width: 60%;
+  transform: translate3d(99.80%,0,0);
   transition: transform 0.2s linear;
-  transform: translate3d(99.50%,0,0);
 }
 .statisticsContainer.open{
   transform: translate3d(0,0,0);
 }
-.statisticsContainer.open2{
-  transform: translate3d(0,0,0);
-  position: fixed;
-  width: 92.5%;
-  height: 92%;
-  top: 8%;
-  padding: 10px;
-  right: 0px;
-  z-index: 5000;
-  background-color:#cfcccc;
-  border-radius: 5px;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s linear;
-}
 
+.legendContainer{
+  position: fixed;
+  top: 30%;
+  left: 0%;
+  height: 45%;
+  background-color:#E8E8E8;
+  z-index: 800;
+  border-radius: 5px;
+  padding: 10px;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+  width: 16%;
+  transform: translate3d(-100%,0,0);
+  transition: transform 0.2s linear;
+  font-size: 11px;
+  overflow: auto;
+}
+.legendContainer.open{
+  transform: translate3d(0,0,0);
+}
 .infoContainer {
 	position:fixed; 
   /* top: 25px;  */
   top: 8%;
 	right:0px; 
 	height:90%;
-	z-index: 3000;
+	z-index: 800;
 	border-radius: 5px;
 	padding: 10px;
   background-color:#E8E8E8;
@@ -176,15 +182,14 @@ body{
   transition: transform 0.2s linear;
 }
 
-.infoContainer.closed{
+.infoContainer.open{
   /* maybe a bit hardcoded hiding the container*/
   /* right: -1000px; */
-  transform: translate3d(99.50%,0,0);
+  transform: translate3d(99.80%,0,0);
 }
 
 .infoContainerButton, 
-.advancedSearchContainerButton, 
-.statisticsContainerButton{
+.advancedSearchContainerButton{
   position: absolute;
   /* Safari */
   -webkit-transform: rotate(-90deg);
@@ -215,7 +220,7 @@ body{
 
 .advancedSearchContainerButton {
   left: -58px;
-  top: 20px;
+  top: 100px;
   width: 80px;
   height: 30px;
   background-color: #1149b3;
@@ -228,9 +233,9 @@ body{
   margin: 5px; 
 }
 
-.statisticsContainerButton {
+/* .statisticsContainerButton {
   left: -71px;
-  top: 36px;
+  top: 450px;
   width: 110px;
   height: 30px;
   background-color: #cc2a02;
@@ -241,7 +246,7 @@ body{
   transition: all 0.5s;
   cursor: pointer;
   margin: 5px; 
-}
+} */
 
 #advsearch-button {
   border-radius: .25rem !important;
@@ -350,17 +355,23 @@ body{
   font-size: 9px !important;
 }
 
+.datatable-wrapper{
+  height: 45vh;
+}
 .datatable {
-  margin: 0 auto;
-  widows: 100%;
-  clear: both;
-  border-collapse: collapse;
+  /* margin: 0 auto; */
+  /* widows: 100%; */
+  /* clear: both; */
+  /* border-collapse: collapse; */
   table-layout: fixed;
-  word-wrap: break-word;
+  /* word-wrap: break-word; */
+  font-size: 12px;
+} 
+.dataTables_paginate, .dataTables_filter {
   font-size: 12px;
 }
-.dataTables_info, .dataTables_paginate, .dataTables_filter {
-  font-size: 12px;
+.dataTables_info{
+  font-size: 11px;
 }
 
 /* #progress {
@@ -398,7 +409,7 @@ body{
   font-size: 12px;
   height: 30px;
   line-height: 20px;
-  z-index: 1000;
+  z-index: 650;
 }
 
 .ui-autocomplete {
@@ -512,7 +523,7 @@ body{
 }
 
 #editModal{
-  z-index: 6000;
+  z-index: 2000;
 }
 
 #editModal h4{

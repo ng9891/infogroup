@@ -2,87 +2,95 @@
 <html>
 
 <head>
-	<title>INFO USA NYC BUSINESS POINTS</title>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INFO USA NYC BUSINESS POINTS</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<link rel="stylesheet" type="text/css" href="/stylesheet/main.css" />
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
-	 crossorigin="" />
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-	 crossorigin="" />
-	<link rel="stylesheet" type="text/css" href="/stylesheet/histogram.css" />
-	<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
-	 crossorigin=""></script>
-	<!-- Leaflet Geocoder for OpenStreetMap -->
-	<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-	<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+  <link rel="stylesheet" type="text/css" href="/stylesheet/main.css" />
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+    integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+    crossorigin="" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+    integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+    crossorigin="" />
+  <link rel="stylesheet" type="text/css" href="/stylesheet/histogram.css" />
+  <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+    integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+    crossorigin=""></script>
+  <!-- Leaflet Geocoder for OpenStreetMap -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 
-	<!-- Load Esri Leaflet from CDN (Reverse Geocoding Plugin) -->
-	<!-- Source: https://esri.github.io/esri-leaflet/examples/reverse-geocoding.html -->
-	<script src="https://unpkg.com/esri-leaflet@2.2.3/dist/esri-leaflet.js" integrity="sha512-YZ6b5bXRVwipfqul5krehD9qlbJzc6KOGXYsDjU9HHXW2gK57xmWl2gU6nAegiErAqFXhygKIsWPKbjLPXVb2g=="
-	 crossorigin=""></script>
-	<!-- Load Esri Leaflet Geocoder from CDN -->
-	<link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.13/dist/esri-leaflet-geocoder.css" integrity="sha512-v5YmWLm8KqAAmg5808pETiccEohtt8rPVMGQ1jA6jqkWVydV5Cuz3nJ9fQ7ittSxvuqsvI9RSGfVoKPaAJZ/AQ=="
-	 crossorigin="">
-	<script src="https://unpkg.com/esri-leaflet-geocoder@2.2.13/dist/esri-leaflet-geocoder.js" integrity="sha512-zdT4Pc2tIrc6uoYly2Wp8jh6EPEWaveqqD3sT0lf5yei19BC1WulGuh5CesB0ldBKZieKGD7Qyf/G0jdSe016A=="
-	 crossorigin=""></script>
+  <!-- Load Esri Leaflet from CDN (Reverse Geocoding Plugin) -->
+  <!-- Source: https://esri.github.io/esri-leaflet/examples/reverse-geocoding.html -->
+  <script src="https://unpkg.com/esri-leaflet@2.2.3/dist/esri-leaflet.js"
+    integrity="sha512-YZ6b5bXRVwipfqul5krehD9qlbJzc6KOGXYsDjU9HHXW2gK57xmWl2gU6nAegiErAqFXhygKIsWPKbjLPXVb2g=="
+    crossorigin=""></script>
+  <!-- Load Esri Leaflet Geocoder from CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.13/dist/esri-leaflet-geocoder.css"
+    integrity="sha512-v5YmWLm8KqAAmg5808pETiccEohtt8rPVMGQ1jA6jqkWVydV5Cuz3nJ9fQ7ittSxvuqsvI9RSGfVoKPaAJZ/AQ=="
+    crossorigin="">
+  <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.13/dist/esri-leaflet-geocoder.js"
+    integrity="sha512-zdT4Pc2tIrc6uoYly2Wp8jh6EPEWaveqqD3sT0lf5yei19BC1WulGuh5CesB0ldBKZieKGD7Qyf/G0jdSe016A=="
+    crossorigin=""></script>
 
-	<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" /> -->
-	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/b-1.5.4/b-html5-1.5.4/datatables.min.css" />
-	<link rel="stylesheet" type="text/css" href="/stylesheet/src/MarkerCluster.css" />
-	<link rel="stylesheet" type="text/css" href="/stylesheet/src/MarkerCluster.Default.css" />
-	<link rel="stylesheet" type="text/css" href="/stylesheet/src/SwitcherDatatable.css" />
-	<link rel="stylesheet" type="text/css" href="/js/src/jquery-ui.min.css" />
+  <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" /> -->
+  <link rel="stylesheet" type="text/css"
+    href="https://cdn.datatables.net/v/dt/dt-1.10.18/b-1.5.4/b-html5-1.5.4/datatables.min.css" />
+  <link rel="stylesheet" type="text/css" href="/stylesheet/src/MarkerCluster.css" />
+  <link rel="stylesheet" type="text/css" href="/stylesheet/src/MarkerCluster.Default.css" />
+  <link rel="stylesheet" type="text/css" href="/stylesheet/src/SwitcherDatatable.css" />
+  <link rel="stylesheet" type="text/css" href="/js/src/jquery-ui.min.css" />
 </head>
 
 <body>
-	<div class="loader"></div>
-	<nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark py-1">
-		<div class="col-sm-4">
-			<ul class="navbar-nav">
-				<li class="nav-item active">
-					<a class="nav-link active" href="/">Home</a>
-				</li>
-			</ul>
-		</div>
-		<div class="col-sm-6">
-			<form class="form-inline mx-auto" role="search">
-				<input type="text" class="search form-control input-sm" placeholder="Search" id="query-search">
-				<select id='query-dropdown' class="custom-select">
-					<option selected value="zip">Zip</option>
-					<option value="county">County</option>
-					<option value="mpo">MPO</option>
-					<option value="mun">Municipality</option>
-					<!-- <option value="naics">NAICS</option> -->
-				</select>
-				<select id='version-dropdown' class="custom-select">
-					<option selected value="current">Current</option>
-					<option value="original">Original</option>
-				</select>
-				<button id="query-button" type="button" class="btn btn-secondary">Search</button>
-			</form>
-		</div>
-		<div class="col-sm-2">
-			<div id="login" class="nav navbar-nav navbar-right">
-				<ul class="navbar-nav ml-auto">
-					<li class="nav-item">
-						<a class="nav-link" href="#">Login</a>
-					</li>
-				</ul>
-			</div>
-		</div>
-	</nav>
+  <div class="loader"></div>
+  <nav class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark py-1">
+    <div class="col-sm-4">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link active" href="/">Home</a>
+        </li>
+      </ul>
+    </div>
+    <div class="col-sm-6">
+      <form class="form-inline mx-auto" role="search">
+        <input type="text" class="search form-control input-sm" placeholder="Search" id="query-search">
+        <select id='query-dropdown' class="custom-select">
+          <option selected value="zip">Zip</option>
+          <option value="county">County</option>
+          <option value="mpo">MPO</option>
+          <option value="mun">Municipality</option>
+          <!-- <option value="naics">NAICS</option> -->
+        </select>
+        <select id='version-dropdown' class="custom-select">
+          <option selected value="current">Current</option>
+          <option value="original">Original</option>
+        </select>
+        <button id="query-button" type="button" class="btn btn-secondary">Search</button>
+      </form>
+    </div>
+    <div class="col-sm-2">
+      <div id="login" class="nav navbar-nav navbar-right">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Login</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-	<div id="progress">
-		<div id="progress-bar" style="width: 100%"></div>
-	</div>
-	<div id="mapid"></div>
-	<div id="draw-tooltip"></div>
-	<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
-		<div class="modal-dialog modal-lg" role="document">
-			<div class="modal-content">
+  <div id="progress">
+    <div id="progress-bar" style="width: 100%"></div>
+  </div>
+  <div id="mapid"></div>
+  <div id="draw-tooltip"></div>
+  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
         <div class="modal-header pt-reduced pb-reduced">
           <div class="modal-title pt-reduced pb-reduced" id="modal_title">Edit</div>
           <a href="#" class="ml-3 mt-2" id="modal_expand" onclick="modalExpand()">Expand</a>
@@ -142,7 +150,7 @@
                     <!--hidden fields for latitude and longitude-->
                     <!-- <input type="text" id="modal_LATITUDE"  required> -->
                     <!-- <input type="text" id="modal_LONGITUDE" required> -->
-        
+
                     <a href="#" id="check_addr" onclick="checkAddress()">Check</a> |
                     <a href="#" id="locate_addr" onclick="locateAddress()">Locate</a>
                   </div>
@@ -155,7 +163,7 @@
                 </div>
               </div>
             </div>
-        
+
             <div class="form-row">
               <div class="col-sm-6 mb-2">
                 <label for="modal_alias">ALIAS</label>
@@ -175,7 +183,7 @@
                 <label for="modal_LEMPSZCD">EMP SIZE CODE</label>
                 <div class="dropdown">
                   <button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_LEMPSZCD_button"
-                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     EMP SIZE
                   </button>
                   <ul class="dropdown-menu" id="modal_LEMPSZCD"></ul>
@@ -230,7 +238,7 @@
                 <label for="modal_SQFOOTCD">SQF CODE</label>
                 <div class="dropdown">
                   <button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_SQFOOTCD_button"
-                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     SQF CODE
                   </button>
                   <ul class="dropdown-menu" id="modal_SQFOOTCD"></ul>
@@ -244,7 +252,7 @@
                 <label for="modal_LSALVOLCD">LSALVOLCD</label>
                 <div class="dropdown">
                   <button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_LSALVOLCD_button"
-                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Sales Volume
                   </button>
                   <ul class="dropdown-menu" id="modal_LSALVOLCD"></ul>
@@ -269,7 +277,7 @@
                 <label for="modal_LSALVOLCD">CSALVOLCD</label>
                 <div class="dropdown">
                   <button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_CSALVOLCD_button"
-                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Corporate Sales Volume
                   </button>
                   <ul class="dropdown-menu" id="modal_CSALVOLCD"></ul>
@@ -302,117 +310,162 @@
           <button id="submit_modal" class="btn btn-primary">Submit changes</button>
           <button id="byemodal" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
-			</div>
-			<!--end of modal-content-->
-		</div>
-	</div>
-	<div class='infoContainer'>
-		<button class='infoContainerButton'>MAIN</button>
-		<div id="search-description" class="page-header">Default</div>
-		<div class="Object-desc"></div>
-		<div class="pieChart-loader"></div>
-		<div id="pieChart"></div>
-		<table id="jq_datatable" class="datatable stripe compact"></table>
-	</div>
+      </div>
+      <!--end of modal-content-->
+    </div>
+  </div>
+  <div class='infoContainer'>
+    <button class='infoContainerButton'>MAIN</button>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-12 col-md-12">
+          <div class="search-description">Default</div>
+          <div class="Object-desc"></div>
+        </div>
+        <div class="col-sm-12 col-md-12">
+          <div class="pieChart-loader"></div>
+          <div id="pieChart"></div>
+        </div>
+        <div class="col-sm-6 col-md-6">
+            <div class="text-sm-left">
+                <a href="javascript:void(0)" class="legendButton">Legend</a>
+            </div>
+          </div>
+        <div class="col-sm-6 col-md-6">
+          <div class="text-sm-right">
+            <a href="javascript:void(0)" class="btn btn-link statisticsContainerButton">More statistics...</a>
+          </div>
+        </div>
 
-	<div class='advancedSearchContainer'>
-		<button class='advancedSearchContainerButton'>SEARCH</button>
-		<div class="container mt-3">
-			<!-- <div class="input-group col-md-12 mb-3">
-				<div class="input-group-prepend">
-					<span class="input-group-text">Industry</span>
-				</div>
-				<input type="text" id="industriesId" class="form-control" placeholder="e.g. Financial">
-			</div> -->
-			<div class="input-group col-md-12 mb-3">
-				<div class="input-group-prepend">
-					<span class="input-group-text">Industry</span>
-				</div>
-				<input type="text" id="adv_NAICSDS" class="form-control" placeholder="e.g. Financial">
-				<div class="input-group col-md-4">
-					<div class="input-group-prepend">
-						<span class="input-group-text">Code</span>
-					</div>
-					<input type="text" id="adv_NAICSCD" class="form-control" placeholder="OPTIONAL">
-				</div>
-			</div>
-			<div class="input-group col-md-12 mb-3 ui-content">
-				<div class="input-group-prepend">
-					<span class="input-group-text">Employees</span>
-				</div>
-				<input type="text" class="form-control" id="min-emplsize" placeholder="Min">&nbsp;
-				<input type="text" class="form-control" id="max-emplsize" placeholder="Max">
-			</div>
-			<div class="col-md-14 input-group mb-3">
-				<div class="input-group col-md-6">
-					<div class="input-group-prepend">
-						<span class="input-group-text">County</span>
-					</div>
-					<input type="text" id="countyId" class="form-control" placeholder="e.g. Montgomery">
-				</div>
-				<div class="input-group col-md-6">
-					<div class="input-group-prepend">
-						<span class="input-group-text">MPO</span>
-					</div>
-					<input type="text" id="mpoId" class="form-control" placeholder="e.g. CDTC">
-				</div>
-			</div>
-			<div class="col-md-14 input-group mb-3">
-				<div class="col-md-6 input-group">
-					<div class="input-group-prepend">
-						<span class="input-group-text">Municipality</span>
-					</div>
-					<input type="text" id="munId" class="form-control" placeholder="e.g. Hudson">
-				</div>
-				<div class="col-md-3 input-group">
-					<div class="dropdown dropdown-btn">
-						<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownSalesVolume" data-toggle="dropdown"
-						 aria-haspopup="true" aria-expanded="false">
-							Sales Volume
-						</button>
-						<ul class="dropdown-menu" id="salesvolume-dropdown" aria-labelledby="dropdownSalesVolume">
-						</ul>
-					</div>
-				</div>
-				<!-- <div class="col-md-3 input-group">
-					<select id='adv-search-version-dropdown' class="custom-select">
-						<option selected value="current">Current version</option>
-						<option value="original">Original version</option>
-					</select>
-				</div> -->
-			</div>
-			<div class="col-md-12">
-				<button class="btn btn-primary btn-md ml-auto" id="advsearch-button" type="submit">Search</button>&nbsp;<label id="search-message">*No
-					match found</label>
-			</div>
-			<!-- </fieldset> -->
-		</div>
-	</div>
+        <div class="col-sm-12 col-md-12">
+          <div class="datatable-wrapper">
+            <table id="jq_datatable" class="datatable stripe compact"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-	<div class='statisticsContainer'>
-		<button class='statisticsContainerButton'>STATISTICS</button>
-		<div id='histogram-container'>
-			<svg></svg>
-		</div>
-	</div>
+  <div class='advancedSearchContainer'>
+    <button class='advancedSearchContainerButton'>SEARCH</button>
+    <div class="container mt-3">
+      <div class="input-group col-md-12 mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Industry</span>
+        </div>
+        <input type="text" id="adv_NAICSDS" class="form-control" placeholder="e.g. Financial">
+        <div class="input-group col-md-4">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Code</span>
+          </div>
+          <input type="text" id="adv_NAICSCD" class="form-control" placeholder="OPTIONAL">
+        </div>
+      </div>
+      <div class="input-group col-md-12 mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Employees</span>
+        </div>
+        <input type="text" class="form-control" id="min-emplsize" placeholder="Min">&nbsp;
+        <input type="text" class="form-control" id="max-emplsize" placeholder="Max">
+      </div>
+      <div class="col-md-14 input-group mb-3">
+        <div class="input-group col-md-6">
+          <div class="input-group-prepend">
+            <span class="input-group-text">County</span>
+          </div>
+          <input type="text" id="countyId" class="form-control" placeholder="e.g. Montgomery">
+        </div>
+        <div class="input-group col-md-6">
+          <div class="input-group-prepend">
+            <span class="input-group-text">MPO</span>
+          </div>
+          <input type="text" id="mpoId" class="form-control" placeholder="e.g. CDTC">
+        </div>
+      </div>
+      <div class="col-md-14 input-group mb-3">
+        <div class="col-md-6 input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Municipality</span>
+          </div>
+          <input type="text" id="munId" class="form-control" placeholder="e.g. Hudson">
+        </div>
+        <div class="col-md-3 input-group">
+          <div class="dropdown dropdown-btn">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownSalesVolume"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Sales Volume
+            </button>
+            <ul class="dropdown-menu" id="salesvolume-dropdown" aria-labelledby="dropdownSalesVolume">
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <button class="btn btn-primary btn-md ml-auto" id="advsearch-button" type="submit">Search</button>&nbsp;<label
+          id="search-message">*No
+          match found</label>
+      </div>
+    </div>
+  </div>
+
+  <div class='statisticsContainer'>
+    <div class="container-fluid overflow-y-auto">
+      <div class="text-sm-left">
+        <a href="javascript:void(0)" class="btn btn-link statisticsContainerButton">Back to map</a>
+      </div>
+      <div class="search-description">
+        <h4>Default</h4>
+        <p>test</p>
+      </div>
+      <div class="card-container pb-2">
+          <div class="row">
+          </div>
+      </div>
+      <div class="row pb-2">
+        <div class="col-sm-12 col-lg-6">
+          <button class="btn btn-outline-info hist_btn1">Company distribution</button>
+          <button class="btn btn-outline-info hist_btn2">Employee Distribution</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12 col-lg-6">
+          <div id="hist">
+            <svg></svg>
+          </div>
+        </div>
+        <div class="col-sm-12 col-lg-6">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legendContainer">
+  </div>
 </body>
 <!-- SOURCES -->
 <script src="/js/src/jquery-3.3.1.min.js"></script>
 <script src="/js/src/jquery-ui-1.12.1/jquery-ui.min.js "></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
- crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+  integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+  integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <!-- <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script> -->
-<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.18/b-1.5.4/b-html5-1.5.4/datatables.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js" integrity="sha384-THVO/sM0mFD9h7dfSndI6TS0PgAGavwKvB5hAxRRvc0o9cPLohB0wb/PTA7LdUHs"
- crossorigin="anonymous"></script>
+<script type="text/javascript"
+  src="https://cdn.datatables.net/v/dt/dt-1.10.18/b-1.5.4/b-html5-1.5.4/datatables.min.js"></script>
+<script type="text/javascript"
+  src="https://cdn.datatables.net/plug-ins/1.10.20/features/pageResize/dataTables.pageResize.min.js"></script>
+<script type="text/javascript"
+  src="https://cdn.datatables.net/plug-ins/1.10.20/features/scrollResize/dataTables.scrollResize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js"
+  integrity="sha384-THVO/sM0mFD9h7dfSndI6TS0PgAGavwKvB5hAxRRvc0o9cPLohB0wb/PTA7LdUHs" crossorigin="anonymous"></script>
 <script src="https://d3js.org/d3.v5.js"></script>
 <script src="/js/src/d3pie.js"></script>
 <script src="/js/src/leaflet.markercluster.js"></script>
 <script src="/js/src/leaflet.editable.min.js"></script>
 <script src="/js/src/jszip.min.js"></script>
 <script src="/js/src/FileSaver.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+<script type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
 <script src="/js/src/html2canvas.min.js"></script>
 
 <!-- SCRIPTS -->
@@ -435,6 +488,7 @@
 <script src="/js/checkScreenSize.js"></script>
 <script src="/js/MapEstablishments.js"></script>
 <script src="/js/convertDomToImage.js"></script>
+<script src="/js/loadLegend.js"></script>
 <script src="/js/infogroup.js"></script>
 <script src="/js/updateSearchInfo.js"></script>
 <script src="/js/map.js"></script>
