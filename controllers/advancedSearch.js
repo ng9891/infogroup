@@ -1,152 +1,168 @@
 /**
  * Advanced Search Controller which performs SQL query
- * using "Knex Query Builder" (installed from npm). 
- * Depending on parameters structure of SQL query changes.
  * This controller is being called from public/loadAdvancedSearchEstablishments.js
  * 
  */
-
 'use strict';
 let db_service = require('../utils/db_service');
-let knex       = require('../utils/knex/knex');
 
-function advancedSearch(industry,  minempl, maxempl, salvol, county_name, mpo_name, mun_name, mun_type, mun_county, naicscode, qversion) {
-    return new Promise(function (resolve, reject) {
-        var with_clause = knex;
-        var from_clause = (qversion != 'original') ? {business: 'businesses_2014'} : {business: 'businesses_2014_o'};
-        var where_county = '', where_mpo = '', where_mun='';
-        var where_industry = (industry != 'null') ? {NAICSDS: industry} : {};
-        var where_salvol = (salvol != 'null') ? {LSALVOLDS: salvol} : {};
-        var where_emplsize = (maxempl != 'null') ? '"ALEMPSZ" BETWEEN '+minempl+' AND '+maxempl+' ' : '';
-        var where_naicscode = (naicscode != 'null') ? {NAICSCD: parseInt(naicscode)} : {};
-        if (county_name != 'null') {
-            with_clause = with_clause.with('county', 
-                            knex.raw('SELECT ST_Transform(geom, 4326) AS geom FROM counties as county WHERE county.name LIKE \'%'+county_name+'%\' LIMIT 1' ));
-            from_clause["county"] = 'county';
-            where_county = 'ST_Contains(county.geom, ST_Transform(business.geom, 4326))';
-        }
-        if (mpo_name != 'null') {
-            with_clause = with_clause.with('mpo', 
-                            knex.raw('SELECT geom FROM mpo WHERE UPPER(mpo.mpo) = UPPER(\''+mpo_name+'\') OR UPPER(mpo.mpo_name) = UPPER(\''+mpo_name+'\') LIMIT 1'));
-            from_clause["mpo"] = 'mpo';
-            where_mpo = 'ST_Contains(mpo.geom, business.geom)';
-        }
-        if (mun_name != 'null') {
-            var village = 'village', with_where='';
-            if (mun_type != 'null' && mun_county != 'null') {
-                with_where += ' AND UPPER(muni_type) = UPPER(\''+mun_type+'\') AND UPPER(county) = UPPER(\''+mun_county+'\')';
-            }
-            with_clause = with_clause.with('mun', 
-                            knex.raw('SELECT geom FROM (SELECT c.name, c.muni_type, c.county, c.geom FROM cities_towns c '+
-                                'UNION ALL SELECT v.name, \''+village+'\'::CHARACTER VARYING(10) as muni_type, v.county, v.geom FROM villages v) t '+
-                                'WHERE UPPER(name) = UPPER(\''+mun_name+'\')'+with_where));
-            from_clause["mun"] = 'mun';
-            where_mun = 'ST_Contains(mun.geom, business.geom)';
-        }
-        
-        var sql = with_clause.
-                            column('id', 
-                            knex.raw('ST_ASGeoJSON(ST_Transform(business.geom, 4326)) AS geoPoint'),
-                            'CONAME',
-                            'NAICSCD',
-                            'NAICSDS',
-                            'LEMPSZCD',
-                            'LEMPSZDS',
-                            'ALEMPSZ',
-                            'PRMSICDS',
-                            'LSALVOLDS',
-                            'ALSLSVOL',
-                            'SQFOOTCD',
-                            'BE_Payroll_Expense_Code',
-                            'BE_Payroll_Expense_Range',
-                            'BE_Payroll_Expense_Description',
-                            'BE_Payroll_Expense_Description').select().from(from_clause).
-                            where(where_industry).
-                            where(where_naicscode).
-                            where(where_salvol).
-                            whereRaw(where_emplsize).
-                            whereRaw(where_county).
-                            whereRaw(where_mpo).
-                            whereRaw(where_mun);
-        
-        sql = sql.toString();
-
-        // console.log(sql);
-
-        db_service.runQuery(sql, [], (err, data) => {
-            if (err) return reject(err.stack);
-            resolve(data.rows);
-        });
+function advancedSearch(formBody) {
+  return new Promise(function(resolve, reject) {
+    let [sql, params] = build_query(formBody);
+    db_service.runQuery(sql, params, (err, data) => {
+      if (err) return reject(err.stack);
+      resolve(data.rows);
     });
+  });
 }
 
-const advancedSearchRequest = function (request, response) {
-    if (!request.query.industry) {
-        return response.status(400)
-            .json({
-                status: 'Error',
-                responseText: 'No industry specified'
-            });
+const advancedSearchRequest = function(request, response) {
+  if (!request.query) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No query',
+    });
+  }
+  advancedSearch(request.query).then(
+    (data) => {
+      return response.status(200).json({
+        data: data,
+      });
+    },
+    function(err) {
+      console.error(err);
+      return response.status(500).json({
+        status: 'Error',
+        responseText: 'Error in query ' + err,
+      });
     }
-    if (!request.query.minempl) {
-        return response.status(400)
-            .json({
-                status: 'Error',
-                responseText: 'No min employee specified'
-            });
-    }
-    if (!request.query.maxempl) {
-        return response.status(400)
-            .json({
-                status: 'Error',
-                responseText: 'No max employee specified'
-            });
-    }
-    if (!request.query.salvol) {
-        return response.status(400)
-            .json({
-                status: 'Error',
-                responseText: 'No sales volume specified'
-            });
-    }
-    if (!request.query.county_name) {
-        return response.status(400)
-            .json({
-                status: 'Error',
-                responseText: 'No county_name specified'
-            });
-    }
-    if (!request.query.mpo_name) {
-        return response.status(400)
-            .json({
-                status: 'Error',
-                responseText: 'No mpo_name specified'
-            });
-    }
-    if (!request.query.mun_name) {
-        return response.status(400)
-            .json({
-                status: 'Error',
-                responseText: 'No mun_name specified'
-            });
-    }
+  );
+};
 
-    advancedSearch(request.query.industry, request.query.minempl, request.query.maxempl, request.query.salvol, 
-                    request.query.county_name, request.query.mpo_name, request.query.mun_name, request.query.mun_type, 
-                    request.query.mun_county, request.query.naicscode,request.query.qversion)
-        .then(data => {
-            return response.status(200)
-                .json({
-                    data: data,
-                });
-        }, function (err) {
-            console.error(err);
-            return response.status(500)
-                .json({
-                    status: 'Error',
-                    responseText: 'Error in query ' + err
-                });
-        });
+// Helper function to parameterized query string.
+function build_query(form) {
+  let from_statement = 'businesses_2014';
+  if (form.query_version === 'original') from_statement = 'businesses_2014_o';
+  let select = `
+    SELECT
+    id, 
+    ST_ASGeoJSON(ST_transform(b.geom,4326)) as geoPoint, 
+    "CONAME",
+    alias,
+    "NAICSCD",
+    "NAICSDS", 
+    "LEMPSZCD", 
+    "LEMPSZDS",
+    "ALEMPSZ", 
+    "ACEMPSZ",
+    "SQFOOTCD",
+    "SQFOOTDS",
+    "PRMSICCD",
+    "PRMSICDS",
+    "PRMADDR",
+    "PRMCITY",
+    "PRMSTATE",
+    "PRMZIP",
+    "LATITUDEO",
+    "LONGITUDEO",
+    "LSALVOLCD",
+    "LSALVOLDS",
+    "ALSLSVOL",
+    "CSALVOLCD",
+    "CSALVOLDS",
+    "ACSLSVOL",
+    "MATCHCD",
+    "TRANSTYPE",
+    "TRANSTYPE",
+    "INDFIRMCD",
+    "INDFIRMDS"
+    `;
+  let from = `FROM ${from_statement} as b\n`;
+  let where = `WHERE `;
+  // Helper function to build string in the where clause
+  function addANDStatement(statement) {
+    if (where.length <= 6) {
+      return statement + '\n';
+    }
+    return 'AND ' + statement + '\n';
+  }
+
+  let params = [];
+  if (form.industry !== '') {
+    where += addANDStatement(`"NAICSDS" = $${params.length + 1}`);
+    params.push(form.industry);
+  }
+  if (form.naicscd !== '') {
+    where += addANDStatement(`"NAICSCD" = $${params.length + 1}`);
+    params.push(+form.naicscd);
+  }
+  if (form.minEmp !== '' || form.maxEmp !== '') {
+    // TODO: INCLUDE NULL statement to search null ALEMPSZ
+    if (form.minEmp !== '') {
+      where += addANDStatement(`"ALEMPSZ" >= $${params.length + 1}`);
+      params.push(+form.minEmp);
+    }
+    if (form.maxEmp !== '') {
+      where += addANDStatement(`"ALEMPSZ" <= $${params.length + 1}`);
+      params.push(+form.maxEmp);
+    }
+  }
+  if (form.lsalvol !== '') {
+    where += addANDStatement(`"LSALVOLDS" = $${params.length + 1}`);
+    params.push(form.lsalvol);
+  }
+  if (form.mun !== '') {
+    from += `,(
+            SELECT geom
+            FROM(
+                SELECT c.name, c.muni_type, c.county, c.geom
+                FROM cities_towns c
+                UNION ALL
+                SELECT v.name, 'village' as muni_type, v.county, v.geom
+                FROM villages v
+            ) l
+            WHERE UPPER(name) = UPPER($${params.length + 1})\n`;
+    params.push(form.mun);
+    from += `AND UPPER(muni_type) = UPPER($${params.length + 1})\n`;
+    params.push(form.mun_type);
+    from += `AND UPPER(county) = UPPER($${params.length + 1})
+            ) as mun\n`;
+    params.push(form.mun_county);
+    where += addANDStatement(`ST_Contains(mun.geom, b.geom)`);
+  } else if (form.county !== '') {
+    from += `,( 
+            SELECT county.geom
+            FROM counties_shoreline as county
+            WHERE UPPER(county.name) = UPPER($${params.length + 1})
+            LIMIT 1) as county\n`;
+    where += addANDStatement(`ST_Contains(county.geom, b.geom)`);
+    params.push(form.county);
+  } else if (form.mpo !== '') {
+    from += `,(
+            SELECT mpo.geom
+            FROM mpo
+            WHERE UPPER(mpo.mpo) = UPPER($${params.length + 1})
+            OR UPPER(mpo.mpo_name) = UPPER($${params.length + 1})
+            LIMIT 1) as mpo\n`;
+    params.push(form.mpo);
+    where += addANDStatement(`ST_Contains(mpo.geom, b.geom)`);
+  }
+
+  where += 'ORDER BY COALESCE("ALEMPSZ", 0) DESC\n';
+
+  // If its only Employee size query, limit result
+  if (params.length <= 2) {
+    // If only range query.
+    if (form.minEmp !== '' && form.maxEmp !== '') {
+      where += 'LIMIT 5000';
+    } else if (params.length === 1) {
+      // if only min or max is input.
+      if (form.minEmp !== '' || form.maxEmp !== '') {
+        where += 'LIMIT 5000';
+      }
+    }
+  }
+  let sql = select + from + where;
+  return [sql, params];
 }
-
 module.exports = advancedSearchRequest;

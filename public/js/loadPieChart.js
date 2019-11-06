@@ -19,7 +19,7 @@ function loadPieChart(establishments) {
   });
   // console.log(obj);
   // Formatting
-  obj[56].label = 'ADM & SUP & Waste MGT & Remediation Services'.toUpperCase();
+  if(obj[56]) obj[56].label = 'ADM & SUP & Waste MGT & Remediation Services'.toUpperCase();
 
   let pie_content = [];
 
@@ -70,7 +70,7 @@ function loadPieChart(establishments) {
   // console.log(pie_content);
   */
 
-  pie_h = LessThan17inch ? 260 : 330;
+  pie_h = LessThan17inch ? 260 : 300;
   pie_w = LessThan17inch ? 560 : 750;
   let industries = [];
   let lastChosenSegment;

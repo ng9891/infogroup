@@ -7,7 +7,7 @@
 * Expected input:   searchType {string}as the title of the search
 *                   searchValue {string or array(if searchType='Search:')} as the small description of the search
 *
-* Output: Div element 'search-description' with the desired description
+* Output: Div element '.search-description' with the desired description
 */
 
 function updateSearchInfo(searchType, searchValue) {
@@ -15,8 +15,8 @@ function updateSearchInfo(searchType, searchValue) {
     if (!searchValue) searchValue = '';
     if (searchType == 'Search:') {
         // Different description loading for advances search as it sends an array
-        $('#search-description').html('<h4>' + searchType + ' ' + searchValue[0] + '</h4> <p>' + searchValue[1] + '</p>');
+        $('.search-description').html('<h4>' + searchType + ' ' + searchValue[0] + '</h4> <p>' + searchValue[1] + '</p>');
     } else {
-        $('#search-description').html('<h4>' + searchType + ' ' + searchValue + '</h4>');
+        $('.search-description').html('<h4>' + searchType + ' ' + searchValue + '</h4><p></p>');
     }
 }

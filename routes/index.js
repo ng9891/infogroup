@@ -8,7 +8,7 @@ let byCounty = require('../controllers/byCounty');
 let byMpo = require('../controllers/byMpo');
 let byMun = require('../controllers/byMun');
 let byDistance = require('../controllers/byDistance');
-let byRectangle= require('../controllers/byRectangle');
+let byRectangle = require('../controllers/byRectangle');
 
 let getIndustries = require('../controllers/getIndustries');
 let getSalesVolume = require('../controllers/getSalesVolume');
@@ -21,11 +21,10 @@ let getMun = require('../controllers/getMun');
 let getSic_AutoComplete = require('../controllers/getSic');
 let getSic = require('../controllers/getSic');
 
-let advancedSearch = require('../controllers/advancedSearch')
+let advancedSearch = require('../controllers/advancedSearch');
 
 let editBusiness = require('../controllers/editing/editBusiness');
 let approveBusiness = require('../controllers/editing/approveBusiness');
-
 
 //API ROUTES
 router.get('/api/byzip/:zipcode', byZip);
@@ -47,14 +46,12 @@ router.get('/api/getmun/:mun', getMun);
 router.get('/api/getsic/:sic', getSic_AutoComplete);
 router.get('/api/getsic', getSic);
 
-router.get('/api/advancedSearch', advancedSearch);
-
+router.get('/api/search', advancedSearch);
 
 //EDIT ROUTES
 //TODO: check for auth and permission
 // router.post('/edit/:bus_id', editBusiness);
 // router.put('/:audit_id', approveBusiness);
-
 
 /* GET home page. */
 router.get('*', function(req, res, next) {
