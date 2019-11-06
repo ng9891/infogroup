@@ -1,13 +1,17 @@
 //Creates a Datatable with the information in data
 function loadDatatable(establishments) {
-  var wh = $(window).height();
-  var calcDataTableHeight = LessThan17inch ? wh * 0.23 : wh * 0.3;
+  // var wh = $(window).height();
+  // var calcDataTableHeight = LessThan17inch ? wh * 0.23 : wh * 0.3;
 
   var obj = {
     data: [],
   };
 
   establishments = establishments.data.map((est) => {
+
+    if(!est.NAICSCD){
+      est.NAICSCD = 99;
+    }
     obj.data.push({
       id: est.id,
       lat: est.geopoint.coordinates[1] && est.geopoint.coordinates[0] ? est.geopoint.coordinates[1] : null,
@@ -16,6 +20,7 @@ function loadDatatable(establishments) {
       employee: est.ALEMPSZ,
       industry: est.NAICSDS,
       prmsic: est.PRMSICDS,
+      naicsTwoDigit: est.NAICSCD.toString().slice(0, 2),
     });
   });
 
@@ -53,15 +58,15 @@ function loadDatatable(establishments) {
           },
         },
         {
-          title: 'Emp',
+          title: 'EmpSZ',
           data: 'employee',
         },
         {
-          title: 'Industry',
+          title: 'NAICS',
           data: 'industry',
         },
         {
-          title: 'PR.SIC',
+          title: 'Primary SIC',
           data: 'prmsic',
         },
         {
@@ -83,7 +88,7 @@ function loadDatatable(establishments) {
           },
         },
         {
-          title: 'ED',
+          title: '',
           data: null,
           defaultContent:
             "<a id='btn_edit' href='' class='btn btn-primary btn-xs' data-toggle='modal' data-target='#editModal'>Edit</a>",
@@ -96,11 +101,15 @@ function loadDatatable(establishments) {
           title: 'lon',
           data: 'lon',
         },
+        {
+          title: '2Digit',
+          data: 'naicsTwoDigit',
+        },
       ],
       columnDefs: [
         {
           visible: false,
-          targets: 0, //Invisible, id column
+          targets: [0,7,8,9], //Invisible. id, Latitude, Longitude, two digit
         },
         {
           width: 34,
@@ -114,21 +123,14 @@ function loadDatatable(establishments) {
           width: 34,
           targets: 6, //ED column
         },
-        {
-          visible: false,
-          targets: 7, //Invisible Latitude column
-        },
-        {
-          visible: false,
-          targets: 8, //Invisible Longitude column
-        },
       ],
       fixedColumns: true,
       bLengthChange: false,
-      scrollY: calcDataTableHeight,
-      scrollCollapse: true,
       pageResize: true,
       destroy: true,
+      scrollY: '0px',
+      scrollCollapse: true,
+      scrollResize: true
     });
 
     // Edit button event listener
