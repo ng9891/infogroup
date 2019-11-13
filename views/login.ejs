@@ -1,86 +1,71 @@
-<html>
-
-<head>
-  <link href="./stylesheet/login.css" rel="stylesheet">
-</head>
-
-<body class="menu-position-top full-screen">
-  <div class="all-wrapper solid-bg-all" id="root" style="min-height:100vh">
-    <div class="all-wrapper solid-bg-all">
-      <div class="layout-w" style="min-height: 100vh;">
-        <div class="content-w">
-          <div class="content-i">
-            <div class="auth-box-w">
-              <!-- <div class="logo-w">
-
-                        </div>-->
-              <h4 class="auth-header">Login</h4>
-              <div class="alert-danger alert-dismissible fade show" id="message" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close" id="close_button">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <form id='myForm'>
-                <div class="form-group">
-                  <label for="">Email</label>
-                  <input id="email" type="email" class="login-form-control" placeholder="Enter your email">
-                  <div class="pre-icon os-icon os-icon-user-male-circle"></div>
-                </div>
-                <div class="form-group">
-                  <label for="">Password</label>
-                  <input id="password" type="password" class="login-form-control" placeholder="Enter your password">
-                  <div class="pre-icon os-icon os-icon-fingerprint"></div>
-                </div>
-                <div class="buttons-w">
-                  <button class="btn btn-primary btn-lg btn-block" value="Login" id="submit_button">Log me in</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
+<%include ./partials/header.ejs %>
+<div class='container'>
+  <div class="row justify-content-center">
+    <div class="col-md-12 text-center">
+      <h3>Log in</h3>
+      <div class="alert-danger alert-dismissible fade show" id="message" role="alert">
       </div>
     </div>
+    <div class="col-xs-12 col-md-6 col-lg-4">
+      <form>
+        <div class="form-group">
+          <label for="">Email</label>
+          <input id="email" type="email" class="form-control" placeholder="Enter your email">
+          <div class="pre-icon os-icon os-icon-user-male-circle"></div>
+        </div>
+        <div class="form-group">
+          <label for="">Password</label>
+          <input id="password" type="password" class="form-control" placeholder="Enter your password">
+          <div class="pre-icon os-icon os-icon-fingerprint"></div>
+        </div>
+        <div class="buttons-w">
+          <button class="btn btn-primary btn-lg btn-block" value="Login" id="submit_button">Log me in</button>
+        </div>
+      </form>
+    </div>
   </div>
-  <script type="application/javascript">
-    document.getElementById('submit_button').addEventListener('click', validate);
-    function validate(e) {
-      e.preventDefault();
-      var obj = { email: document.getElementById("email").value, password: document.getElementById("password").value };
-      var postData = JSON.stringify(obj);
-      console.log('posting...', postData);
-      document.getElementById("message").innerHTML = '';
-      if (document.getElementById('email').value === "" || document.getElementById('password').value === "") {
-        error = "All fields must be entered.";
-        document.getElementById("message").innerHTML = error;
-        return false
+</div>
+
+<script type="application/javascript">
+  document.getElementById('submit_button').addEventListener('click', validate);
+  function validate(e) {
+    e.preventDefault();
+    var obj = { email: document.getElementById("email").value, password: document.getElementById("password").value };
+    var postData = JSON.stringify(obj);
+    console.log('posting...', postData);
+    document.getElementById("message").innerHTML = '';
+    if (document.getElementById('email').value === "" || document.getElementById('password').value === "") {
+      error = "All fields must be entered.";
+      document.getElementById("message").innerHTML = error;
+      return false
+    }
+    fetch('/login', {
+      method: 'POST',
+      body: postData,
+      headers: {
+        "Content-Type": "application/json"
       }
-      fetch('/login', {
-        method: 'POST',
-        body: postData,
-        headers: {
-          "Content-Type": "application/json"
+    }).then(response => response.json())
+      .then(response => {
+        console.log('response', response);
+        if (response === "Incorrect email or password.") {
+          error = 'Incorrect email or password.';
+          document.getElementById("message").innerHTML = error;
+          return false
         }
-      }).then(response => response.json())
-        .then(response => {
-          console.log('response', response);
-          if (response === "Incorrect email or password.") {
-            error = 'Incorrect email or password.';
-            document.getElementById("message").innerHTML = error;
-            return false
-          }
-          if (response) { //here!
-            redirect: window.location.replace("/")
-          }
+        if (response) { //here!
+          redirect: window.location.replace("/")
+        }
 
-        })
-    }
-    document.getElementById("close_button").addEventListener('click', dismiss);
-    function dismiss(e) {
-      e.preventDefault();
-      $(".alert-danger").alert('close')
-    }
+      })
+  }
+  // document.getElementById("close_button").addEventListener('click', dismiss);
+  // function dismiss(e) {
+  //   e.preventDefault();
+  //   $(".alert-danger").alert('close')
+  // }
 
-  </script>
+</script>
 </body>
 
 </html>

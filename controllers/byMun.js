@@ -41,6 +41,7 @@ function geobymun(mun_name, version='current', mun_type, county, offset, limit) 
             "ALEMPSZ", 
             "PRMSICDS", 
             "LSALVOLDS", 
+            "ALSLSVOL", 
             "SQFOOTCD", 
             "BE_Payroll_Expense_Code",
             "BE_Payroll_Expense_Range",

@@ -1,9 +1,9 @@
 <%include ./partials/header.ejs %>
-  <div id="progress">
-    <div id="progress-bar" style="width: 100%"></div>
+  <div class="loader"></div>
+  <div class='mapContainer'>
+      <div id="mapid"></div>
+      <div id="map-draw-tooltip"></div>
   </div>
-  <div id="mapid"></div>
-  <div id="draw-tooltip"></div>
   <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
@@ -236,7 +236,7 @@
       <div class="row">
         <div class="col-sm-12 col-md-12">
           <div class="search-description">Default</div>
-          <div class="Object-desc"></div>
+          <!-- <div class="Object-desc"></div> -->
         </div>
         <div class="col-sm-12 col-md-12">
           <div class="pieChart-loader"></div>
@@ -261,7 +261,6 @@
       </div>
     </div>
   </div>
-
   <div class='advancedSearchContainer'>
     <button class='advancedSearchContainerButton'>SEARCH</button>
     <div class="container mt-3">
@@ -323,7 +322,6 @@
       </div>
     </div>
   </div>
-
   <div class='statisticsContainer'>
     <div class="container-fluid overflow-y-auto">
       <div class="text-sm-left">
@@ -354,8 +352,55 @@
       </div>
     </div>
   </div>
-
   <div class="legendContainer">
   </div>
+</body>
+<!-- SOURCES -->
+<script src="/js/src/jquery-3.3.1.min.js"></script>
+<script src="/js/src/jquery-ui-1.12.1/jquery-ui.min.js "></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
+  integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+  integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script type="text/javascript"
+  src="https://cdn.datatables.net/v/dt/dt-1.10.18/b-1.5.4/b-html5-1.5.4/datatables.min.js"></script>
+<script type="text/javascript"
+  src="https://cdn.datatables.net/plug-ins/1.10.20/features/pageResize/dataTables.pageResize.min.js"></script>
+<script type="text/javascript"
+  src="https://cdn.datatables.net/plug-ins/1.10.20/features/scrollResize/dataTables.scrollResize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.debug.js"
+  integrity="sha384-THVO/sM0mFD9h7dfSndI6TS0PgAGavwKvB5hAxRRvc0o9cPLohB0wb/PTA7LdUHs" crossorigin="anonymous"></script>
+<script src="https://d3js.org/d3.v5.js"></script>
+<script src="/js/src/d3pie.js"></script>
+<script src="/js/src/leaflet.markercluster.js"></script>
+<script src="/js/src/leaflet.editable.min.js"></script>
+<script src="/js/src/jszip.min.js"></script>
+<script src="/js/src/FileSaver.min.js"></script>
+<script type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+<script src="/js/src/html2canvas.min.js"></script>
+
+<!-- UTILS -->
+<script src="/js/utils/checkScreenSize.js"></script>
+<script src="/js/utils/convertDomToImage.js"></script>
+<script src="/js/utils/loadDatatable.js"></script>
+<script src="/js/utils/loadPieChart.js"></script>
+<script src="/js/utils/loadHistogram.js"></script>
+<script src="/js/utils/loadMarkers.js"></script>
+
+<!-- SCRIPTS -->
+<script src="/js/infogroup.js"></script>
+<script src="/js/map.js"></script>
+<script src="/meta/naicsKeys.js"></script>
+<script src="/js/loadDropdown.js"></script>
+<script src="/js/loadAutoComplete.js"></script>
+<script src="/js/loadEditModal.js"></script>
+<script src="/js/loadLegend.js"></script>
+<script src="/js/loadEstablishments.js"></script>
+<script src="/js/exportData.js"></script>
+<script src="/js/editing/sendBusinessEdit.js"></script>
+
+<!-- INIT -->
+<script src="/js/init.js"></script>
 <%include ./partials/footer.ejs %>
 <!-- TODO: Add loading animation -->

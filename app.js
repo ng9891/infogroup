@@ -1,5 +1,4 @@
 //Module dependencies
-
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -11,17 +10,19 @@ const LocalStrategy = require('passport-local');
 const uuid = require('uuid/v4');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
+const fetch = require('node-fetch');
 
 //Create server
 const app = express();
 
-app.set("view engine", "ejs");
+app.set('view engine', 'ejs');
 app.use(cors());
 // app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Session setup
 app.use(
   session({
     genid: (req) => {
@@ -37,6 +38,7 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+
 // configure passport.js to use the local strategy
 passport.use(
   new LocalStrategy({usernameField: 'email'}, (email, password, done) => {
@@ -77,6 +79,7 @@ passport.deserializeUser(function(json, done) {
   done(null, json);
 });
 
+// Middleware for locals variables
 app.use((req, res, next) => {
   res.locals.localUser = req.user;
   next();

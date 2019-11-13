@@ -18,7 +18,7 @@
 * Output: Initial page working properly with dropdowns and autocomplete features.
 */
 $(document).ready(function() {
-  let query_input, query_type;
+  let query_input, query_type, query_version;
   $('#query-search').keydown((event) => {
     //Enter Key
     if (event.keyCode == 13) {
@@ -33,7 +33,8 @@ $(document).ready(function() {
 
   // Search button on nav bar
   d3.select('#query-button').on('click', (e) => {
-    clearUsrMarker(); // function in map.js to clear user drawings
+    // clearUsrMarker(); // function in map.js to clear user drawings
+    // clearUi();
     query_input = d3.select('#query-search').property('value');
     query_type = d3.select('#query-dropdown').property('value');
     query_version = d3.select('#version-dropdown').property('value');
@@ -43,21 +44,21 @@ $(document).ready(function() {
         if (query_input.length < 4 || isNaN(+query_input)) {
           alert('Invalid Input');
         } else {
-          loadZipEstablishments(query_input, query_version);
+          loadEstablishments(query_type, query_input, query_version);
         }
         break;
       case 'county':
         if (query_input.length <= 3) {
           alert('Invalid Input');
         } else {
-          loadCountyEstablishments(query_input, query_version);
+          loadEstablishments(query_type, query_input, query_version);
         }
         break;
       case 'mpo':
         if (query_input.length <= 3) {
           alert('Invalid Input');
         } else {
-          loadMpoEstablishments(query_input, query_version);
+          loadEstablishments(query_type, query_input, query_version);
         }
         break;
       case 'mun':
@@ -65,14 +66,15 @@ $(document).ready(function() {
           alert('Invalid Input');
         } else {
           let indexOfDash = query_input.indexOf('-');
-          let mun, county;
+          // let mun, county;
+          let inputObj = {};
           if (indexOfDash !== -1) {
             let type = query_input.slice(indexOfDash + 2);
-            mun = type.slice(0, type.indexOf('/'));
-            county = type.slice(type.indexOf('/') + 1);
-            query_input = query_input.slice(0, indexOfDash - 1);
+            inputObj['type'] = type.slice(0, type.indexOf('/'));
+            inputObj['county'] = type.slice(type.indexOf('/') + 1);
+            inputObj['mun'] = query_input.slice(0, indexOfDash - 1);
           }
-          loadMunEstablishments(query_input, query_version, mun, county);
+          loadEstablishments(query_type, inputObj, query_version);
         }
         break;
       case 'naics':
@@ -108,29 +110,6 @@ $(document).ready(function() {
   // General Legend
   loadLegend();
 });
-
-$(window).on('load', function() {
-  // Animate loader off screen
-  $('.loader').fadeOut('slow');
-});
-
-//Progress bar for chunk loading leaflet cluster
-var progress = document.getElementById('progress');
-var progressBar = document.getElementById('progress-bar');
-
-function updateProgressBar(processed, total, elapsed, layersArray) {
-  // console.log("updateProgressBar");
-  // console.log(processed +' '+ total + ' '+ elapsed);
-  if (elapsed > 1000) {
-    // if it takes more than a second to load, display the progress bar:
-    progress.style.display = 'block';
-    progressBar.style.width = Math.round(processed / total * 100) + '%';
-  }
-  if (processed === total) {
-    // all markers processed - hide the progress bar:
-    progress.style.display = 'none';
-  }
-}
 
 function loadAdvancedSearchListener() {
   $('#salesvolume-dropdown a').click(function(e) {
@@ -176,7 +155,8 @@ function loadAdvancedSearchListener() {
       mun_type: mun_type,
       mun_county: mun_county,
     };
-    loadAdvancedSearchEstablishments(formBody, query_version);
+    // loadAdvancedSearchEstablishments(formBody, query_version);
+    loadEstablishments('adv', formBody, query_version);
 
     $('.advancedSearchContainer').toggleClass('open');
   });

@@ -2,12 +2,11 @@
 let db_service = require('../utils/db_service');
 
 //Takes an offset and limit to load the county with pagination.
-function geobympo(mpo_name, version='current', offset, limit=0) {
-    let from_statement = 'businesses_2014';
-    if(version === 'original') from_statement = 'businesses_2014_o';
-    return new Promise(function (resolve, reject) {
-        let sql =
-            `WITH mpo AS (
+function geobympo(mpo_name, version = 'current', offset, limit = 0) {
+  let from_statement = 'businesses_2014';
+  if (version === 'original') from_statement = 'businesses_2014_o';
+  return new Promise(function(resolve, reject) {
+    let sql = `WITH mpo AS (
                 SELECT 
                 geom
                 FROM mpo
@@ -26,7 +25,8 @@ function geobympo(mpo_name, version='current', offset, limit=0) {
             "ALEMPSZ", 
             "PRMSICDS", 
             "LSALVOLDS", 
-            "SQFOOTCD", 
+            "ALSLSVOL", 
+            "SQFOOTCD",  
             "BE_Payroll_Expense_Code",
             "BE_Payroll_Expense_Range",
             "BE_Payroll_Expense_Description"
@@ -35,47 +35,46 @@ function geobympo(mpo_name, version='current', offset, limit=0) {
             ORDER BY COALESCE("ALEMPSZ", 0) DESC
             OFFSET ${offset}
         `;
-        if(limit) sql += ' LIMIT ' + limit;
+    if (limit) sql += ' LIMIT ' + limit;
 
-        db_service.runQuery(sql, [], (err, data) => {
-            if (err) return reject(err.stack);
-            resolve(data.rows);
-        });
+    db_service.runQuery(sql, [], (err, data) => {
+      if (err) return reject(err.stack);
+      resolve(data.rows);
     });
+  });
 }
 
-const geoByMpoRequest = function (request, response) {
-    if (!request.params.mpo) {
-        return response.status(400)
-            .json({
-                status: 'Error',
-                responseText: 'No county specified'
-            });
+const geoByMpoRequest = function(request, response) {
+  if (!request.params.mpo) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No county specified',
+    });
+  }
+
+  if (!request.query.offset) {
+    request.query.offset = 0;
+  }
+
+  //Sets the amount of point to display in the map.
+  // if (!request.query.limiter) {
+  //     request.query.limiter = process.env.QUERY_LIMIT; //QUERY_LIMIT from env file.
+  // }
+
+  geobympo(request.params.mpo, request.query.v, request.query.offset, request.query.limiter).then(
+    (data) => {
+      return response.status(200).json({
+        data: data,
+      });
+    },
+    function(err) {
+      console.error(err);
+      return response.status(500).json({
+        status: 'Error',
+        responseText: 'Error in query ' + err,
+      });
     }
-
-    if (!request.query.offset) {
-        request.query.offset = 0;
-    }
-
-    //Sets the amount of point to display in the map.
-    // if (!request.query.limiter) {
-    //     request.query.limiter = process.env.QUERY_LIMIT; //QUERY_LIMIT from env file.
-    // }
-
-    geobympo(request.params.mpo, request.query.v, request.query.offset, request.query.limiter)
-        .then(data => {
-            return response.status(200)
-                .json({
-                    data: data,
-                });
-        }, function (err) {
-            console.error(err);
-            return response.status(500)
-                .json({
-                    status: 'Error',
-                    responseText: 'Error in query ' + err
-                });
-        });
-}
+  );
+};
 
 module.exports = geoByMpoRequest;

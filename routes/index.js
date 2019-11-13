@@ -12,7 +12,7 @@ let approveBusiness = require('../controllers/editing/approveBusiness');
 
 router.get('/login', function(req, res, next) {
   // res.sendFile(path.join(__dirname, '../public/views/login.html'));.
-  res.render('../views/login.ejs');
+  res.render('../views/login.ejs', {noSearchBar: true});
 });
 
 router.post('/login', function(req, res, next) {
