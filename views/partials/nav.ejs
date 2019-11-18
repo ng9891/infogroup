@@ -28,9 +28,15 @@
     <div class="col-sm-2">
       <div id="login" class="nav navbar-nav navbar-right">
         <ul class="navbar-nav ml-auto">
+          <%if(!localUser){%>
           <li class="nav-item">
             <a class="nav-link" href="/login">Login</a>
           </li>
+          <%}else{%>
+            <li class="nav-item">
+              <a class="nav-link" href="/logout">Logout</a>
+            </li>
+          <%}%>
         </ul>
       </div>
     </div>

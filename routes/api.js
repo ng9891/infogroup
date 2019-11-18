@@ -1,4 +1,7 @@
 const router = require('express').Router();
+const {isLoggedIn, secureAPI} = require('../middleware/middleware.js');
+
+router.use(secureAPI);
 
 let byZip = require('../controllers/byZip');
 let byId = require('../controllers/byId');

@@ -71,8 +71,17 @@ function loadEditModal(business_id, version = 'current') {
     $('#modal_ACSLSVOL').val(convertToMillionFromThousand(est.ACSLSVOL));
 
     // Sets the location container text to the address
-    $('.modal_location_edit_container .header').html(`${est.PRMADDR},${est.PRMCITY},${est.PRMSTATE} ${est.PRMZIP} 
-                - <span class='expand_header'><a href='#'>Edit</a></span>`);
+    const isAdmin = d3.select('.role').node().value;
+    let address = `${est.PRMADDR}, ${est.PRMCITY}, ${est.PRMSTATE} ${est.PRMZIP} `;
+    if (isAdmin === 'false') {
+      $('.modal_location_edit_container .header').html(
+        `${address} - <span class='expand_header'><a href='#'>View</a></span>`
+      );
+    } else {
+      $('.modal_location_edit_container .header').html(
+        `${address} - <span class='expand_header'><a href='#'>Edit</a></span>`
+      );
+    }
 
     loadEditModal_eventListeners();
   }, function(err) {

@@ -1,32 +1,12 @@
 //Creates a Datatable with the information in data
-function loadDatatable(establishments) {
+function loadDatatable(est) {
   return new Promise((resolve) => {
     // var wh = $(window).height();
     // var calcDataTableHeight = LessThan17inch ? wh * 0.23 : wh * 0.3;
 
-    let obj = {
-      data: [],
-    };
-
-    establishments = establishments.data.map((est) => {
-      if (!est.NAICSCD) {
-        est.NAICSCD = 99;
-      }
-      obj.data.push({
-        id: est.id,
-        lat: est.geopoint.coordinates[1] && est.geopoint.coordinates[0] ? est.geopoint.coordinates[1] : null,
-        lon: est.geopoint.coordinates[1] && est.geopoint.coordinates[0] ? est.geopoint.coordinates[0] : null,
-        name: est.CONAME,
-        employee: est.ALEMPSZ,
-        industry: est.NAICSDS,
-        prmsic: est.PRMSICDS,
-        naicsTwoDigit: est.NAICSCD.toString().slice(0, 2),
-      });
-    });
-
     $(document).ready(function() {
+      const isAdmin = d3.select('.role').node().value;
       let table = $('#jq_datatable').DataTable({
-        dom: 'Bfrtip',
         buttons: [
           {
             extend: '',
@@ -34,7 +14,7 @@ function loadDatatable(establishments) {
             action: exportDataAsync,
           },
         ],
-        data: obj.data,
+        data: est.data,
         columns: [
           {
             title: 'id',
@@ -42,14 +22,14 @@ function loadDatatable(establishments) {
           },
           {
             title: 'Name',
-            data: 'name',
+            data: 'CONAME',
             render: function(data, type, row, meta) {
               if (type === 'display') {
                 data =
                   '<a href="#" onclick="locatePointByCoordinate(' +
-                  row['lat'] +
+                  row['geopoint'].coordinates[1] +
                   ', ' +
-                  row['lon'] +
+                  row['geopoint'].coordinates[0] +
                   ')" data-zoom="12">' +
                   data +
                   '</a>';
@@ -59,21 +39,28 @@ function loadDatatable(establishments) {
           },
           {
             title: 'EmpSZ',
-            data: 'employee',
+            data: 'ALEMPSZ',
           },
           {
             title: 'NAICS',
-            data: 'industry',
+            data: 'NAICSDS',
+            render: function(data) {
+              if (!data) return 'UNCLASSIFIED ESTABLISHMENTS';
+              return data;
+            },
           },
           {
             title: 'Primary SIC',
-            data: 'prmsic',
+            data: 'PRMSICDS',
           },
           {
             title: 'PRM',
             data: null,
-            render: function(data, type, row, meta) {
+            render: function(data, type, row) {
               if (type === 'display') {
+                if (isAdmin === 'false') {
+                  return 'Yes';
+                }
                 data =
                   "<div class='onoffswitch'><input type='checkbox' name='onoffswitch' onclick='updatePrimaryField(" +
                   row['id'] +
@@ -90,20 +77,37 @@ function loadDatatable(establishments) {
           {
             title: '',
             data: null,
-            defaultContent:
-              "<a id='btn_edit' href='' class='btn btn-primary btn-xs' data-toggle='modal' data-target='#editModal'>Edit</a>",
+            render: function() {
+              let name = 'Edit';
+              let className = 'btn btn-success btn-xs';
+              if (isAdmin === 'false') {
+                name = 'View';
+                className = 'btn btn-primary btn-xs';
+              }
+              return `<a id='btn_edit' href='' class='${className}' data-toggle='modal' data-target='#editModal'>${name}</a>`;
+            },
           },
           {
             title: 'lat',
-            data: 'lat',
+            data: 'geopoint',
+            render: function(data) {
+              return data.coordinates[1];
+            },
           },
           {
             title: 'lon',
-            data: 'lon',
+            data: 'geopoint',
+            render: function(data) {
+              return data.coordinates[0];
+            },
           },
           {
             title: '2Digit',
-            data: 'naicsTwoDigit',
+            data: 'NAICSCD',
+            render: function(data) {
+              if (!data) return 99;
+              return data.toString().slice(0, 2);
+            },
           },
         ],
         columnDefs: [
@@ -127,6 +131,7 @@ function loadDatatable(establishments) {
         initComplete: function() {
           return resolve('Datatable loaded');
         },
+        dom: 'Bfrtip',
         fixedColumns: true,
         bLengthChange: false,
         pageResize: true,
@@ -134,8 +139,31 @@ function loadDatatable(establishments) {
         scrollY: '0px',
         scrollCollapse: true,
         scrollResize: true,
+        deferRender: true,
       });
+      /*
+      dom: 'Bftir',
+        deferRender: true,
+        scrollY: 350,
+        scrollCollapse: true,
+        scroller: true,
+        bDestroy: true,
+      *******
+      dom: 'Bfrtip',
+      fixedColumns: true,
+        bLengthChange: false,
+        pageResize: true,
+        destroy: true,
+        scrollY: '0px',
+        scrollCollapse: true,
+        scrollResize: true,
+        scroller: true,
+        deferRender: true,
+      */
 
+      if (isAdmin === 'false') {
+        table.column(5).visible(false);
+      }
       // Edit button event listener
       $('#jq_datatable tbody').unbind('click').on('click', 'td a', function() {
         let data_row = table.row($(this).parents('tr')).data();

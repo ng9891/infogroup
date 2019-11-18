@@ -1,24 +1,20 @@
-const path = require('path');
 const router = require('express').Router();
+const {isLoggedIn} = require('../middleware/middleware.js');
 const passport = require('passport');
 
-let editBusiness = require('../controllers/editing/editBusiness');
-let approveBusiness = require('../controllers/editing/approveBusiness');
-
-//EDIT ROUTES
-//TODO: check for auth and permission
-// router.post('/edit/:bus_id', editBusiness);
-// router.put('/:audit_id', approveBusiness);
-
-router.get('/login', function(req, res, next) {
+router.get('/login', (req, res) => {
   // res.sendFile(path.join(__dirname, '../public/views/login.html'));.
+  if (req.user) return res.redirect('/');
   res.render('../views/login.ejs', {noSearchBar: true});
 });
 
-router.post('/login', function(req, res, next) {
-  console.log('Inside POST /login callback');
+router.post('/login', (req, res, next) => {
+  if (req.user) {
+    return res.redirect('/');
+  }
+  // console.log('Inside POST /login callback');
   passport.authenticate('local', (err, user, info) => {
-    console.log('/login POST - authenticated', err, user, info);
+    // console.log('authenticated', err, user, info);
     if (info) {
       return res.json(info.message);
     }
@@ -28,30 +24,36 @@ router.post('/login', function(req, res, next) {
     if (!user) {
       return res.json('not authenticated');
     }
-    req.login(user, (err) => {
+    req.logIn(user, (err) => {
       if (err) {
-        console.log(err);
-        return res.redirect('/login');
+        return next(err);
       }
       return res.json({status: 'logged in'});
     });
   })(req, res, next);
 });
 
-router.get('/logout', function(req, res, next) {
+router.get('/logout', (req, res, next) => {
+  req.logout();
   if (req.session) {
-    req.session.destroy(function(err) {
+    req.session.destroy((err) => {
       if (err) {
         return next(err);
       }
-      console.log('you are logged out, Please log in again!\n');
+      res.clearCookie(req.sessionID);
       return res.redirect('/login');
     });
   }
 });
 
 /* GET home page. */
-router.get('*', function(req, res, next) {
+router.get('/infogroup', (req, res) => {
+  // res.sendFile(path.join(__dirname, '../public/views/index.html'));
+  res.render('../views/landing.ejs');
+});
+
+/* GET home page. */
+router.get('/', isLoggedIn, (req, res) => {
   // res.sendFile(path.join(__dirname, '../public/views/index.html'));
   res.render('../views/index.ejs');
 });

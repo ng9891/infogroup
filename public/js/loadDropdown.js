@@ -34,42 +34,53 @@ function loadDropdown_SalesVolume(input) {
   // Edit Modal
   let modal_salesVol_dropdown = $('#modal_LSALVOLCD');
   let modal_corpSalesVol_dropdown = $('#modal_CSALVOLCD');
-  modal_salesVol_dropdown.empty();
-
   let adv_salesVol_dropdown = $('#salesvolume-dropdown');
 
-  modal_corpSalesVol_dropdown[0].innerHTML = modal_salesVol_dropdown[0].innerHTML = input.data
+  let list = input.data
     .map((est) => {
       if (est.LSALVOLCD !== null)
         return `<li value=${est.LSALVOLCD}><a class='dropdown-item' href='#'>${est.LSALVOLCD} - ${est.LSALVOLDS}</a></li>`;
     })
     .join('');
 
-  adv_salesVol_dropdown[0].innerHTML = input.data
-    .map((est) => `<a class='dropdown-item' href='#'>${est.LSALVOLDS == null ? 'Sales Volume' : est.LSALVOLDS}</a>`)
-    .join('');
+  if (modal_corpSalesVol_dropdown[0]) {
+    modal_corpSalesVol_dropdown[0].innerHTML = list;
+  }
+  if (modal_salesVol_dropdown[0]) {
+    modal_salesVol_dropdown.empty();
+    modal_salesVol_dropdown[0].innerHTML = list;
+  }
+  if (adv_salesVol_dropdown[0]) {
+    adv_salesVol_dropdown[0].innerHTML = input.data
+      .map((est) => `<a class='dropdown-item' href='#'>${est.LSALVOLDS == null ? 'Sales Volume' : est.LSALVOLDS}</a>`)
+      .join('');
+  }
 }
 
 function loadDropdown_EmpSize(input) {
   // Edit Modal
   let modal_empSZ_dropdown = $('#modal_LEMPSZCD');
-  modal_empSZ_dropdown.empty();
-  modal_empSZ_dropdown[0].innerHTML = input.data
-    .map((est) => {
-      if (est.LSALVOLCD !== null)
-        return `<li value=${est.LEMPSZCD}><a class='dropdown-item' href='#'>${est.LEMPSZCD} - ${est.LEMPSZDS}</a></li>`;
-    })
-    .join('');
+  if (modal_empSZ_dropdown[0]) {
+    modal_empSZ_dropdown.empty();
+    modal_empSZ_dropdown[0].innerHTML = input.data
+      .map((est) => {
+        if (est.LSALVOLCD !== null)
+          return `<li value=${est.LEMPSZCD}><a class='dropdown-item' href='#'>${est.LEMPSZCD} - ${est.LEMPSZDS}</a></li>`;
+      })
+      .join('');
+  }
 }
 
 function loadDropdown_SqFoot(input) {
   // Edit Modal
   let modal_SQFoot_dropdown = $('#modal_SQFOOTCD');
-  modal_SQFoot_dropdown.empty();
-  modal_SQFoot_dropdown[0].innerHTML = input.data
-    .map((est) => {
-      if (est.LSALVOLCD !== null)
-        return `<li value=${est.SQFOOTCD}><a class='dropdown-item' href='#'>${est.SQFOOTCD} - ${est.SQFOOTDS}</a></li>`;
-    })
-    .join('');
+  if (modal_SQFoot_dropdown[0]) {
+    modal_SQFoot_dropdown.empty();
+    modal_SQFoot_dropdown[0].innerHTML = input.data
+      .map((est) => {
+        if (est.LSALVOLCD !== null)
+          return `<li value=${est.SQFOOTCD}><a class='dropdown-item' href='#'>${est.SQFOOTCD} - ${est.SQFOOTDS}</a></li>`;
+      })
+      .join('');
+  }
 }

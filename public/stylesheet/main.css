@@ -33,6 +33,7 @@
   );
   --inputTransitionDuration: var(--transitionDuration);
   --inputTransitionTF: var(--transitionTF);
+  --navBarSize: 55px;
 }
 
 /* Resetting margins for different browser */
@@ -131,7 +132,7 @@ body{
 }
 #mapid {
   position: absolute;
-  top:55px; /* Same as bootstrap navbar*/
+  top:var(--navBarSize); /* Same as bootstrap navbar*/
   bottom:0; 
   right: 0; 
   left: 0; 
@@ -373,7 +374,7 @@ body{
 .loader {
  position: fixed;
  left: 0px;
- top: 50px;
+ top: var(--navBarSize);
  width: 100%;
  height: 100%;
  z-index: 9999;
