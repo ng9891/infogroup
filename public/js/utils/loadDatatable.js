@@ -1,10 +1,10 @@
-//Creates a Datatable with the information in data
+// Creates a Datatable with the information in data
 function loadDatatable(est) {
   return new Promise((resolve) => {
     // var wh = $(window).height();
     // var calcDataTableHeight = LessThan17inch ? wh * 0.23 : wh * 0.3;
 
-    $(document).ready(function() {
+    $(document).ready(() => {
       const isAdmin = d3.select('.role').node().value;
       let table = $('#jq_datatable').DataTable({
         buttons: [
@@ -102,7 +102,7 @@ function loadDatatable(est) {
             },
           },
           {
-            title: '2Digit',
+            title: '2DigitNAICS',
             data: 'NAICSCD',
             render: function(data) {
               if (!data) return 99;
@@ -176,12 +176,12 @@ function loadDatatable(est) {
 }
 
 function clearDatatable() {
-  let table = $('#jq_datatable');
+  const table = $('#jq_datatable');
   if ($.fn.DataTable.isDataTable(table)) table.DataTable().clear().draw();
 }
 
 function destroyDatatable() {
-  let table = $('#jq_datatable');
+  const table = $('#jq_datatable');
   if ($.fn.DataTable.isDataTable(table)) table.DataTable().destroy();
 }
 
@@ -195,7 +195,7 @@ function locatePointByCoordinate(lat, lon) {
       mymap.removeLayer(selectedBusinessMkr);
     }
     selectedBusinessMkr = new L.marker([lat, lon], {}).addTo(mymap);
-    selectedBusinessMkr.on('click', function() {
+    selectedBusinessMkr.on('click', () => {
       mymap.removeLayer(selectedBusinessMkr);
     });
     markerList.push(selectedBusinessMkr);

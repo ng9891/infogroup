@@ -35,7 +35,7 @@ const passport = require('passport'),
 
 passport.use(new LocalStrategy({usernameField: 'email'},(email, password, done) => {
   let query = `
-      SELECT id, password, email, isAdmin
+      SELECT id, password, email, isadmin
       FROM users
 			WHERE email = $1;
         `;

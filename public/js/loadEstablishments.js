@@ -13,7 +13,7 @@
    * @param {String} version  
    */
   loadEstablishments = (queryType, queryInput, version) => {
-    if(!queryType) return;
+    if (!queryType) return;
 
     let reqURL = `/api/by${queryType}/${queryInput}?v=${version}`;
     let overlayURL = `/api/get${queryType}/${queryInput}`;
@@ -50,17 +50,18 @@
       }
       // Search criteria for display
       let firstRow = {
-        MPO: queryInput.mpo,
-        County: queryInput.county,
-        Mun: queryInput.mun,
-        'Mun County': queryInput.mun_county,
+        MPO: queryInput.mpo || '',
+        County: queryInput.county || '',
+        Mun: queryInput.mun || '',
+        MunType: queryInput.mun_type || '',
+        MunCounty: queryInput.mun_county || '',
       };
       let secondRow = {
-        Industry: queryInput.industry,
-        Code: queryInput.naicscd,
-        EmpMin: queryInput.minEmp,
-        EmpMax: queryInput.maxEmp,
-        Sales: queryInput.lsalvol,
+        NAICS: queryInput.industry || '',
+        Code: queryInput.naicscd || '',
+        EmpMin: queryInput.minEmp || '',
+        EmpMax: queryInput.maxEmp || '',
+        Sales: queryInput.lsalvol || '',
       };
       let arr_obj = [firstRow, secondRow];
       searchValue = buildSearchValString(arr_obj);
@@ -74,7 +75,7 @@
       async (data) => {
         if (data.data.length === 0) {
           d3.select('.loader').classed('hidden', true);
-          console.log('Query not found.');
+          // console.log('Query not found.');
           if (queryType === 'adv') {
             $('.advancedSearchContainer').toggleClass('open');
             $('#search-message').show().delay(5000).fadeOut();
@@ -96,7 +97,7 @@
       }
     );
   };
-  
+
   /**
    * Loads different components on the main page based on data.
    * 
@@ -323,24 +324,24 @@
   };
 
   // Helper function to print the search value in '.search-description'
-let buildSearchValString = (arr_obj) => {
-  let arr_str = [];
-  arr_obj.map((obj) => {
-    let key_arr = Object.keys(obj);
-    let string = '';
-    let filtered_key_arr = key_arr.filter((k) => {
-      return obj[k] != '';
+  let buildSearchValString = (arr_obj) => {
+    let arr_str = [];
+    // For search info and search value.
+    arr_obj.map((obj) => {
+      let key_arr = Object.keys(obj);
+      let string = '';
+      let filtered_key_arr = key_arr.filter((k) => {
+        return obj[k] != '';
+      });
+      // Format it as county: kings,
+      filtered_key_arr.map((k, i) => {
+        if (obj[k]) {
+          string += ` ${k}: ${obj[k]}`;
+          if (i < filtered_key_arr.length - 1) string += ',';
+        }
+      });
+      arr_str.push(string);
     });
-
-    filtered_key_arr.map((k, i) => {
-      if(obj[k]){
-        string += ` ${k}: ${obj[k]}`;
-        if (i < filtered_key_arr.length - 1) string += ',';
-      }
-    });
-    arr_str.push(string);
-  });
-
-  return arr_str;
-}
+    return arr_str;
+  };
 })();

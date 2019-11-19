@@ -1,6 +1,5 @@
 <%include ./partials/header.ejs %>
   <%if(localUser){%>
-    <%console.log('inejs', localUser)%>
     <input class="role" type="hidden" value="<%=localUser.isadmin%>" />
   <%}%>
   <div class="loader"></div>

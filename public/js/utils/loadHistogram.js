@@ -182,6 +182,7 @@
   updateHistogram = async (data, title, xLabel, yLabel, isPercent = false) => {
     return new Promise((resolve) => {
       // start to load histogram
+      let trans_duration = 300;
       let max_Yvalue = d3.max(data, function(d) {
         return d.yValues;
       });
@@ -204,7 +205,7 @@
         .attr('class', 'xaxis')
         .attr('transform', `translate(0, ${height})`)
         .transition()
-        .duration(500)
+        .duration(trans_duration)
         .call(xAxis);
 
       // INIT Y axis
@@ -215,7 +216,7 @@
         yAxis = d3.axisLeft(yScale).tickFormat((d) => d + '%');
       }
 
-      graph.append('g').attr('class', 'yaxis').transition().duration(1000).call(yAxis);
+      graph.append('g').attr('class', 'yaxis').transition().duration(trans_duration).call(yAxis);
 
       // Draw horizontal lines across graph
       const makeYLines = () => d3.axisLeft().scale(yScale);
@@ -238,7 +239,7 @@
         .attr('class', 'bar')
         .merge(hist)
         .transition()
-        .duration(500)
+        .duration(trans_duration)
         .attr('x', (d) => xScale(d.xValues))
         .attr('y', (d) => yScale(d.yValues))
         .attr('height', (d) => height - yScale(d.yValues))
@@ -294,7 +295,7 @@
         .append('text')
         .attr('class', 'bar-label')
         .transition()
-        .duration(500)
+        .duration(trans_duration)
         .attr('x', (d) => xScale(d.xValues) + xScale.bandwidth() / 2)
         .attr('y', (d) => yScale(d.yValues) - 10) //was +30
         .attr('text-anchor', 'middle')
@@ -308,7 +309,7 @@
         .append('text')
         .attr('class', 'title')
         .transition()
-        .duration(500)
+        .duration(trans_duration)
         .attr('x', width / 2 + margin * 0.5)
         .attr('y', 40)
         .attr('text-anchor', 'middle')
@@ -319,7 +320,7 @@
         .append('text')
         .attr('class', 'label')
         .transition()
-        .duration(500)
+        .duration(trans_duration)
         .attr('x', width / 2 + margin * 0.5)
         .attr('y', height + margin * 1.5)
         .attr('text-anchor', 'middle')
@@ -330,7 +331,7 @@
         .append('text')
         .attr('class', 'label')
         .transition()
-        .duration(500)
+        .duration(trans_duration)
         .attr('x', -(height / 2) - margin)
         .attr('y', margin / 3)
         .attr('transform', 'rotate(-90)')
@@ -368,21 +369,36 @@
     });
   };
 
-  // Updates the histogram in '.hist'. Global scope.
+  // Updates card container in statistic tab
   updateCardContainer = (est) => {
     let totalCompanies = est.data.length;
     let totalEmployees = 0;
     let totalSalesVol = 0;
+    let totalCorpSalesVol = 0;
 
     est.data.map((est) => {
-      totalEmployees += est.ALEMPSZ;
-      totalSalesVol += est.ALSLSVOL;
+      totalEmployees += +est.ALEMPSZ;
+      totalSalesVol += +est.ALSLSVOL;
+      totalCorpSalesVol += +est.ACSLSVOL;
     });
 
     let avgSalesVol = totalSalesVol / totalCompanies;
+    let avgCSalesVol = totalCorpSalesVol / totalCompanies;
     let avgEmp = totalEmployees / totalCompanies;
 
     let data = [
+      {
+        title: 'Total Sales',
+        body: `$${totalSalesVol}`,
+      },
+      {
+        title: 'Avg Sales Volume',
+        body: `$${avgSalesVol.toFixed(2)}`,
+      },
+      {
+        title: 'Avg Corp Sales Volume',
+        body: `$${avgCSalesVol.toFixed(2)}`,
+      },
       {
         title: 'Total Companies',
         body: totalCompanies,
@@ -395,14 +411,6 @@
         title: 'Avg Employees',
         body: avgEmp.toFixed(2),
       },
-      {
-        title: 'Total Sales',
-        body: `$${totalSalesVol}`,
-      },
-      {
-        title: 'Avg Sales Volume',
-        body: `$${avgSalesVol.toFixed(2)}`,
-      },
     ];
 
     // Create Cards dynamically. Could be done in ejs instead.
@@ -414,7 +422,7 @@
       .merge(cardContainer)
       .classed('col-sm-6 col-md-4 col-lg-3 pb-2', true)
       .append('div')
-      .classed('card', true)
+      .attr("class", function(d) { return "card" + " " + d.title.toLowerCase().split(' ').join('');})
       .append('div')
       .classed('card-body', true);
     cardBody.append('h5').classed('card-title', true).text((d) => {

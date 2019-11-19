@@ -212,7 +212,7 @@ body{
   transition: transform 0.2s linear;
 }
 
-.infoContainer.open{
+.infoContainer.closed{
   /* maybe a bit hardcoded hiding the container*/
   /* right: -1000px; */
   transform: translate3d(99.80%,0,0);
