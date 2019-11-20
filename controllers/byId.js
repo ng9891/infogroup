@@ -6,40 +6,43 @@ function geobyid(business_id, version = 'current') {
   if (version === 'original') from_statement = 'businesses_2014_o';
   return new Promise(function(resolve, reject) {
     let sql = `SELECT 
-            id, 
-            ST_ASGeoJSON(ST_transform(geom,4326)) as geoPoint, 
-            "CONAME",
-            alias,
-            "NAICSCD",
-            "NAICSDS", 
-            "LEMPSZCD", 
-            "LEMPSZDS",
-            "ALEMPSZ", 
-            "ACEMPSZ",
-            "SQFOOTCD",
-            "SQFOOTDS",
-            "PRMSICCD",
-            "PRMSICDS",
-            "PRMADDR",
-            "PRMCITY",
-            "PRMSTATE",
-            "PRMZIP",
-            "LATITUDEO",
-            "LONGITUDEO",
-            "LSALVOLCD",
-            "LSALVOLDS",
-            "ALSLSVOL",
-            "CSALVOLCD",
-            "CSALVOLDS",
-            "ACSLSVOL",
-            "MATCHCD",
-            "TRANSTYPE",
-            "TRANSTYPE",
-			      "INDFIRMCD",
-			      "INDFIRMDS"
-            FROM ${from_statement}
-            WHERE id = $1;
-        `;
+      id, 
+      ST_ASGeoJSON(ST_transform(geom,4326)) as geoPoint, 
+      "CONAME",
+      alias,
+      "NAICSCD",
+      "NAICSDS", 
+      "LEMPSZCD", 
+      "LEMPSZDS",
+      "ALEMPSZ", 
+      "ACEMPSZ",
+      "SQFOOTCD",
+      "SQFOOTDS",
+      "PRMSICCD",
+      "PRMSICDS",
+      "PRMADDR",
+      "PRMCITY",
+      "PRMSTATE",
+      "PRMZIP",
+      "LATITUDEO",
+      "LONGITUDEO",
+      "LSALVOLCD",
+      "LSALVOLDS",
+      "ALSLSVOL",
+      "CSALVOLCD",
+      "CSALVOLDS",
+      "ACSLSVOL",
+      "MATCHCD",
+      "TRANSTYPE",
+      "TRANSTYPE",
+      "INDFIRMCD",
+      "INDFIRMDS"
+      "BE_Payroll_Expense_Code",
+      "BE_Payroll_Expense_Range",
+      "BE_Payroll_Expense_Description"
+      FROM ${from_statement}
+      WHERE id = $1;
+    `;
 
     db_service.runQuery(sql, [business_id], (err, data) => {
       if (err) return reject(err.stack);
@@ -48,7 +51,7 @@ function geobyid(business_id, version = 'current') {
   });
 }
 
-const requestGeoById = function(request, response) {
+const requestGeoById = (request, response) => {
   if (!request.params.id) {
     response.status(400).json({
       status: 'Error',
@@ -62,7 +65,7 @@ const requestGeoById = function(request, response) {
         data: data,
       });
     },
-    function(err) {
+    (err) => {
       console.error(err);
       return response.status(500).json({
         status: 'Error',
