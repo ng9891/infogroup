@@ -1,6 +1,6 @@
 <%include ./partials/header.ejs %>
   <%if(localUser){%>
-    <input class="role" type="hidden" value="<%=localUser.isadmin%>" />
+    <input class="role" type="hidden" value="<%=localUser.isadmin || false%>" />
   <%}%>
   <div class="loader"></div>
   <div class='mapContainer'>
