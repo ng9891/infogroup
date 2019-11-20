@@ -7,7 +7,7 @@
       <div id="mapid"></div>
       <div id="map-draw-tooltip"></div>
   </div>
-  <%if(localUser && localUser.isAdmin){%>
+  <%if(localUser && localUser.isadmin){%>
     <%include ./partials/editModal/editModal.ejs %>
   <%}else{%>
     <%include ./partials/editModal/editModalView.ejs %>
@@ -60,6 +60,30 @@
       </div>
       <div class="input-group col-md-12 mb-3">
         <div class="input-group-prepend">
+          <span class="input-group-text">Road No.</span>
+        </div>
+        <input type="text" id="adv_roadNo" class="form-control" placeholder="e.g. 87">
+        <div class="input-group col-md-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Signing</span>
+          </div>
+          <input type="text" id="adv_roadSigning" class="form-control" placeholder="e.g. I">
+        </div>
+        <div class="input-group col-md-4">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Dist</span>
+            </div>
+            <input type="text" id="adv_roadDist" class="form-control" placeholder="Miles(opt)">
+          </div>
+        <!-- <div class="input-group col-md-4">
+          <div class="input-group-prepend">
+            <span class="input-group-text">GID</span>
+          </div>
+          <input type="text" id="adv_roadGid" class="form-control" placeholder="OPTIONAL">
+        </div> -->
+      </div>
+      <div class="input-group col-md-12 mb-3">
+        <div class="input-group-prepend">
           <span class="input-group-text">Employees</span>
         </div>
         <input type="text" class="form-control" id="min-emplsize" placeholder="Min">&nbsp;
@@ -70,7 +94,7 @@
           <div class="input-group-prepend">
             <span class="input-group-text">County</span>
           </div>
-          <input type="text" id="countyId" class="form-control" placeholder="e.g. Montgomery">
+          <input type="text" id="countyName" class="form-control" placeholder="e.g. Montgomery">
         </div>
         <div class="input-group col-md-6">
           <div class="input-group-prepend">
@@ -98,7 +122,8 @@
         </div>
       </div>
       <div class="col-md-12">
-        <button class="btn btn-primary btn-md ml-auto" id="advsearch-button" type="submit">Search</button>&nbsp;<label
+        <button class="btn btn-primary btn-md ml-auto" id="advsearch-button" type="submit">Search</button>
+        <button class="btn btn-secondary btn-md ml-auto" id="advsearch-resetBtn">Reset</button>&nbsp;<label
           id="search-message">*No
           match found</label>
       </div>

@@ -35,7 +35,7 @@ function loadAutoComplete(){
     });
 
     // Advance search autocomplete
-    autoComplete_url("#countyId", 'county',1);
+    autoComplete_url("#countyName", 'county',1);
     autoComplete_url("#mpoId", 'mpo',1);
     autoComplete_url("#munId", 'mun');
 

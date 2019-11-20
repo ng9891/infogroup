@@ -38,37 +38,10 @@
       searchValue.push('County: ' + queryInput.county);
     } else if (queryType === 'adv') {
       searchInfo = 'Search:';
-      let query = $.param(queryInput);
-      reqURL = '/api/search?' + query;
-      queryInput.query_version = version;
-      if (queryInput.mun != '') {
-        overlayURL = '/api/getmun/' + queryInput.mun;
-      } else if (queryInput.county != '') {
-        overlayURL = '/api/getcounty/' + queryInput.county;
-      } else if (queryInput.mpo != '') {
-        overlayURL = '/api/getmpo/' + queryInput.mpo;
-      }
-      // Search criteria for display
-      let firstRow = {
-        MPO: queryInput.mpo || '',
-        County: queryInput.county || '',
-        Mun: queryInput.mun || '',
-        MunType: queryInput.mun_type || '',
-        MunCounty: queryInput.mun_county || '',
-      };
-      let secondRow = {
-        NAICS: queryInput.industry || '',
-        Code: queryInput.naicscd || '',
-        EmpMin: queryInput.minEmp || '',
-        EmpMax: queryInput.maxEmp || '',
-        Sales: queryInput.lsalvol || '',
-      };
-      let arr_obj = [firstRow, secondRow];
-      searchValue = buildSearchValString(arr_obj);
+      [reqURL, overlayURL, searchValue] = getAdvSearchInfo(queryInput);
     } else if (queryType === 'draw') {
       [reqURL, overlayURL, searchInfo, searchValue] = getDrawInfo();
     }
-
     d3.select('.loader').classed('hidden', false);
     clearComponents(queryType);
     d3.json(reqURL).then(
@@ -176,21 +149,35 @@
    * adds it into the queryLayer and mymap array.
    * Also adds the layer control button for the overlay.
    *
-   * @param {Array[Array[]]} data 
+   * @param {Object{data:Array[]}} data 
    */
   let loadQueryOverlay = (data) => {
     return new Promise((resolve) => {
       if (queryLayer.length > 0) {
         let cLayer = queryLayer.pop();
         mymap.removeLayer(cLayer);
-        queryLayer = [];
         layerControl.removeLayer(cLayer);
+        queryLayer = [];
       }
 
       // console.log(data.data);
-      var layer = [];
+      let l = [];
       data.data.map((d) => {
-        layer.push(JSON.parse(d.geom));
+        let dataObject = JSON.parse(d.geom);
+        if (d.signing)
+          dataObject.properties = {
+            gis_id: d.gis_id,
+            gid: d.gid,
+            dot_id: d.dot_id,
+            road_name: d.road_name,
+            route: d.route,
+            county_name: d.county_name,
+            muni_name: d.muni_name,
+            mpo_desc: d.mpo_desc,
+            signing: d.signing,
+            fc: d.fc,
+          };
+        l.push(dataObject);
       });
 
       let layerStyle = {
@@ -199,14 +186,85 @@
         opacity: 0.4,
       };
 
-      layer = L.geoJSON(layer, {
+      let overlay = L.geoJSON(l, {
         style: layerStyle,
+        onEachFeature: (feature, layer) => {
+          if (feature.properties) {
+            let popupContent = `
+            <b>gis_id : ${feature.properties.gis_id}</b><br>
+            gid : ${feature.properties.gid}<br>
+            dot_id : ${feature.properties.dot_id}<br>
+            Road_Name : ${feature.properties.road_name}<br>
+            Route :  ${feature.properties.route}<br>
+            County : ${feature.properties.county_name}<br>
+            Municipality : ${feature.properties.muni_name}<br>
+            MPO : ${feature.properties.mpo_desc}<br>
+            Signing : ${feature.properties.signing}<br>
+            FC : ${feature.properties.fc}
+            `;
+            layer.bindPopup(popupContent);
+          }
+        },
+      }).on('click', function(e) {
+        if (!data.data[0].signing) return;
+        // Check for selected
+        if (roadSelected) {
+          // Reset selected to default style
+          e.target.resetStyle(roadSelected);
+        }
+        // Assign new selected
+        roadSelected = e.layer;
+        // Bring selected to front
+        roadSelected.bringToFront();
+        // Style selected
+        roadSelected.setStyle({
+          color: 'red',
+        });
       });
-      queryLayer.push(layer);
-      mymap.addLayer(layer);
-      layerControl.addOverlay(layer, 'Overlay Layer');
+      queryLayer.push(overlay);
+      mymap.addLayer(overlay);
+      layerControl.addOverlay(overlay, 'Overlay Layer');
       resolve('Overlay Loaded');
     });
+  };
+  /**
+   * 
+   * @param {Object} queryInput 
+   */
+  let getAdvSearchInfo = (queryInput) => {
+    let query = $.param(queryInput);
+    let reqURL = '/api/search?' + query;
+    let overlayURL = '';
+    if (queryInput.roadNo != '') {
+      overlayURL = `/api/getRoad?roadNo=${queryInput.roadNo}&county=${queryInput.county}&\
+      signing=${queryInput.roadSigning}&gid=${queryInput.roadGid}`;
+    } else {
+      if (queryInput.mun != '') {
+        overlayURL = '/api/getmun/' + queryInput.mun;
+      } else if (queryInput.county != '') {
+        overlayURL = '/api/getcounty/' + queryInput.county;
+      } else if (queryInput.mpo != '') {
+        overlayURL = '/api/getmpo/' + queryInput.mpo;
+      }
+    }
+    // Search criteria for display
+    let firstRow = {
+      MPO: queryInput.mpo || '',
+      County: queryInput.county || '',
+      Mun: queryInput.mun || '',
+      MunType: queryInput.mun_type || '',
+      MunCounty: queryInput.mun_county || '',
+    };
+    let secondRow = {
+      NAICS: queryInput.naicsds || '',
+      Code: queryInput.naicscd || '',
+      EmpMin: queryInput.minEmp || '',
+      EmpMax: queryInput.maxEmp || '',
+      Sales: queryInput.lsalvol || '',
+    };
+    let arr_obj = [firstRow, secondRow];
+    let searchValue = buildSearchValString(arr_obj);
+    return [reqURL, overlayURL, searchValue];
   };
   /**
    * Checks for the last layer of the user input and gets the coordinate for the layer.

@@ -100,7 +100,7 @@ $(document).ready(function() {
 
   //Button listener to hide infoContainer
   $('.infoContainerButton').click(() => {
-    $('.infoContainer').toggleClass('open');
+    $('.infoContainer').toggleClass('closed');
   });
 
   // Autocomplete
@@ -123,9 +123,13 @@ function loadAdvancedSearchListener() {
   d3.select('#advsearch-button').on('click', (e) => {
     let industry = $('#adv_NAICSDS').val().trim();
     let naicscode = $('#adv_NAICSCD').val().trim();
+    let roadNo = $('#adv_roadNo').val().trim();
+    let roadSigning = $('#adv_roadSigning').val().trim();
+    // let roadGid = $('#adv_roadGid').val().trim();
+    let roadDist = $('#adv_roadDist').val().trim();
     let minempl = $('#min-emplsize').val().trim();
     let maxempl = $('#max-emplsize').val().trim();
-    let county_name = $('#countyId').val().trim();
+    let county_name = $('#countyName').val().trim();
     let mpo_name = $('#mpoId').val().trim();
     let mun_name = $('#munId').val().trim();
 
@@ -144,8 +148,12 @@ function loadAdvancedSearchListener() {
     let query_version = d3.select('#version-dropdown').property('value');
 
     let formBody = {
-      industry: industry,
+      naicsds: industry,
       naicscd: naicscode,
+      roadNo: roadNo,
+      roadSigning: roadSigning,
+      // roadGid: roadGid,
+      roadDist: roadDist,
       minEmp: minempl,
       maxEmp: maxempl,
       lsalvol: lsalvol,
@@ -154,11 +162,27 @@ function loadAdvancedSearchListener() {
       mun: mun_name,
       mun_type: mun_type,
       mun_county: mun_county,
+      version: query_version,
     };
-    // loadAdvancedSearchEstablishments(formBody, query_version);
+
     loadEstablishments('adv', formBody, query_version);
 
     $('.advancedSearchContainer').toggleClass('open');
+  });
+
+  d3.select('#advsearch-resetBtn').on('click', (e) => {
+    $('#adv_NAICSDS').val('');
+    $('#adv_NAICSCD').val('');
+    $('#adv_roadNo').val('');
+    $('#adv_roadSigning').val('');
+    // $('#adv_roadGid').val('');
+    $('#adv_roadDist').val('');
+    $('#min-emplsize').val('');
+    $('#max-emplsize').val('');
+    $('#countyName').val('');
+    $('#mpoId').val('');
+    $('#munId').val('');
+    $('#dropdownSalesVolume').text('Sales Volume');
   });
 }
 

@@ -1,11 +1,11 @@
 const router = require('express').Router();
+const {isLoggedIn, secureAPI} = require('../middleware/middleware.js');
 
 let editBusiness = require('../controllers/editing/editBusiness');
 let approveBusiness = require('../controllers/editing/approveBusiness');
 
 //EDIT ROUTES
-//TODO: check for auth and permission
-// router.post('/edit/:bus_id', editBusiness);
+router.post('/:bus_id', isLoggedIn, editBusiness);
 // router.put('/:audit_id', approveBusiness);
 
 module.exports = router;

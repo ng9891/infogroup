@@ -21,6 +21,7 @@ let getMpo = require('../controllers/getMpo');
 let getMun = require('../controllers/getMun');
 let getSic_AutoComplete = require('../controllers/getSic');
 let getSic = require('../controllers/getSic');
+let getRoad = require('../controllers/getRoad');
 
 let advancedSearch = require('../controllers/advancedSearch');
 
@@ -43,6 +44,7 @@ router.get('/getmpo/:mpo', getMpo);
 router.get('/getmun/:mun', getMun);
 router.get('/getsic/:sic', getSic_AutoComplete);
 router.get('/getsic', getSic);
+router.get('/getroad', getRoad);
 
 router.get('/search', advancedSearch);
 

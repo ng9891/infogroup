@@ -4,6 +4,7 @@ let db_service = require('../../utils/db_service');
 function editBusiness(id, form) {
   return new Promise(function(resolve, reject) {
     let [sql, values] = build_query(id, form);
+    // console.log(sql,values);
     db_service.runQuery(sql, values, (err, data) => {
       if (err) return reject(err.stack);
       resolve('success');
@@ -11,7 +12,7 @@ function editBusiness(id, form) {
   });
 }
 
-const editBusinessRequest = function(request, response) {
+const editBusinessRequest = (request, response) => {
   if (!request.params.bus_id || isNaN(parseInt(request.params.bus_id, 10))) {
     return response.status(400).json({
       status: 'Error',
@@ -25,7 +26,7 @@ const editBusinessRequest = function(request, response) {
         data: data,
       });
     },
-    function(err) {
+    (err) => {
       console.error(err);
       return response.status(500).json({
         status: 'Error',

@@ -5,10 +5,8 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const apiRoutes = require('./routes/api');
 const indexRoutes = require('./routes/index');
+const editRoutes = require('./routes/edit');
 const passport = require('./utils/passport.js');
-// const passport = require('passport');
-// const LocalStrategy = require('passport-local').Strategy;
-// const db = require('./utils/db_service');
 const uuid = require('uuid/v4');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
@@ -46,6 +44,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/api', apiRoutes);
+app.use('/edit', editRoutes);
 app.use('/', indexRoutes);
 
 // catch 404 and forward to error handler

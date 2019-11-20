@@ -9,6 +9,7 @@ const markers = L.markerClusterGroup({
 var markerList = []; //contains all the points from query
 var queryLayer = []; //contains the query layer or bounding box of query
 var usrMarkers = []; //contains all the marker drawn by user
+var roadSelected;
 
 // var redoBuffer = [];
 
