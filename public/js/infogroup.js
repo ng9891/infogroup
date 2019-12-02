@@ -73,6 +73,8 @@ $(document).ready(function() {
             inputObj['type'] = type.slice(0, type.indexOf('/'));
             inputObj['county'] = type.slice(type.indexOf('/') + 1);
             inputObj['mun'] = query_input.slice(0, indexOfDash - 1);
+          }else{
+            inputObj['mun'] = query_input;
           }
           loadEstablishments(query_type, inputObj, query_version);
         }
@@ -162,7 +164,7 @@ function loadAdvancedSearchListener() {
       mun: mun_name,
       mun_type: mun_type,
       mun_county: mun_county,
-      version: query_version,
+      v: query_version,
     };
 
     loadEstablishments('adv', formBody, query_version);

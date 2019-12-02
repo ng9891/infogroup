@@ -3,49 +3,30 @@ const {isLoggedIn, secureAPI} = require('../middleware/middleware.js');
 
 router.use(secureAPI);
 
-let byZip = require('../controllers/byZip');
-let byId = require('../controllers/byId');
-let byCounty = require('../controllers/byCounty');
-let byMpo = require('../controllers/byMpo');
-let byMun = require('../controllers/byMun');
-let byDistance = require('../controllers/byDistance');
-let byRectangle = require('../controllers/byRectangle');
+let byCtrl = require('../controllers/byReqController');
+let getCtrl = require('../controllers/getReqController');
 
-let getIndustries = require('../controllers/getIndustries');
-let getSalesVolume = require('../controllers/getSalesVolume');
-let getEmpSize = require('../controllers/getEmpSize');
-let getSqFoot = require('../controllers/getSqFoot');
-let getZip = require('../controllers/getZip');
-let getCounty = require('../controllers/getCounty');
-let getMpo = require('../controllers/getMpo');
-let getMun = require('../controllers/getMun');
-let getSic_AutoComplete = require('../controllers/getSic');
-let getSic = require('../controllers/getSic');
-let getRoad = require('../controllers/getRoad');
+// API Routes
+router.get('/search', byCtrl.reqGeoBySearch);
+router.get('/bycounty/:county', byCtrl.reqGeoByCounty);
+router.get('/bydistance', byCtrl.reqGeoByDistance);
+router.get('/byid/:id', byCtrl.reqGeoById);
+router.get('/bympo/:mpo', byCtrl.reqGeoByMpo);
+router.get('/bymun/:mun', byCtrl.reqGeoByMun);
+router.get('/byrectangle', byCtrl.reqGeoByRectangle);
+router.get('/byzip/:zipcode', byCtrl.reqGeoByZip);
 
-let advancedSearch = require('../controllers/advancedSearch');
-
-//API ROUTES
-router.get('/byzip/:zipcode', byZip);
-router.get('/byid/:id', byId);
-router.get('/bycounty/:county', byCounty);
-router.get('/bympo/:mpo', byMpo);
-router.get('/bymun/:mun', byMun);
-router.get('/bydistance', byDistance);
-router.get('/byrectangle', byRectangle);
-
-router.get('/getindustries', getIndustries);
-router.get('/getsalesvolume', getSalesVolume);
-router.get('/getempsize', getEmpSize);
-router.get('/getsqfoot', getSqFoot);
-router.get('/getzip/:zip', getZip);
-router.get('/getcounty/:county', getCounty);
-router.get('/getmpo/:mpo', getMpo);
-router.get('/getmun/:mun', getMun);
-router.get('/getsic/:sic', getSic_AutoComplete);
-router.get('/getsic', getSic);
-router.get('/getroad', getRoad);
-
-router.get('/search', advancedSearch);
+// GET Routes
+router.get('/getcounty/:county', getCtrl.reqGetCounty);
+router.get('/getempsize', getCtrl.reqGetEmpSize);
+router.get('/getindustries', getCtrl.reqGetNaics);
+router.get('/getmpo/:mpo', getCtrl.reqGeoGetMpo);
+router.get('/getmun/:mun', getCtrl.reqGeoGetMun);
+router.get('/getroad', getCtrl.reqGeoGetRoad);
+router.get('/getsalesvolume', getCtrl.reqGetSalesVolume);
+router.get('/getsic/:sic', getCtrl.reqGetSic);
+router.get('/getsic', getCtrl.reqGetSic);
+router.get('/getsqfoot', getCtrl.reqGetSqFoot);
+router.get('/getzip/:zip', getCtrl.reqGeoGetZip);
 
 module.exports = router;

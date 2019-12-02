@@ -33,8 +33,8 @@ function loadPieChart(establishments) {
       pie_content.push(tmp);
     });
 
-    pie_h = LessThan17inch ? 260 : 300;
-    pie_w = LessThan17inch ? 560 : 750;
+    pie_h = LessThan17inch ? 260 : 290;
+    pie_w = LessThan17inch ? 560 : 700;
     let industries = [];
     let lastChosenSegment;
 

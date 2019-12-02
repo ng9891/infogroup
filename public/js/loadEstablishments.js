@@ -12,7 +12,7 @@
    * @param {String} queryInput
    * @param {String} version  
    */
-  loadEstablishments = (queryType, queryInput, version) => {
+  loadEstablishments = (queryType, queryInput, version = 'current') => {
     if (!queryType) return;
 
     let reqURL = `/api/by${queryType}/${queryInput}?v=${version}`;
@@ -24,8 +24,8 @@
       reqURL = `/api/bymun/${queryInput.mun}?v=${version}`;
       let param = '';
       if (queryInput.type && queryInput.county) {
-        param += '?mun_type=' + queryInput.type + '&county=' + queryInput.county;
-        reqURL += '&mun_type=' + queryInput.type + '&county=' + queryInput.county;
+        param += '?munType=' + queryInput.type + '&county=' + queryInput.county;
+        reqURL += '&munType=' + queryInput.type + '&county=' + queryInput.county;
         searchInfo = queryInput.type;
       } else {
         param += '?exact=1';
@@ -44,31 +44,26 @@
     }
     d3.select('.loader').classed('hidden', false);
     clearComponents(queryType);
-    d3.json(reqURL).then(
-      async (data) => {
+    d3
+      .json(reqURL)
+      .then(async (data) => {
         if (data.data.length === 0) {
           d3.select('.loader').classed('hidden', true);
-          // console.log('Query not found.');
           if (queryType === 'adv') {
             $('.advancedSearchContainer').toggleClass('open');
             $('#search-message').show().delay(5000).fadeOut();
           }
           searchInfo = `NOT FOUND ${searchInfo}`;
         } else {
-          try {
-            await loadComponents(data, overlayURL);
-          } catch (err) {
-            console.log(err);
-          }
+          await loadComponents(data, overlayURL);
           d3.select('.loader').classed('hidden', true);
         }
         updateSearchInfo(searchInfo, searchValue);
-      },
-      (err) => {
+      })
+      .catch((err) => {
         console.log(err);
         alert(`Query Error on ${searchInfo}`);
-      }
-    );
+      });
   };
 
   /**
@@ -84,7 +79,7 @@
       loadDatatable(data),
       loadHistogram(data),
       queryOverlay(overlayURL),
-    ]);
+    ]).catch((err) => console.log(err));
   };
   /**
    * Clears different components on the main page.
@@ -164,6 +159,7 @@
       let l = [];
       data.data.map((d) => {
         let dataObject = JSON.parse(d.geom);
+        // If it is a road Query. Display info.
         if (d.signing)
           dataObject.properties = {
             gis_id: d.gis_id,
@@ -208,10 +204,7 @@
       }).on('click', function(e) {
         if (!data.data[0].signing) return;
         // Check for selected
-        if (roadSelected) {
-          // Reset selected to default style
-          e.target.resetStyle(roadSelected);
-        }
+        if (roadSelected) e.target.resetStyle(roadSelected); // Reset selected to default style
         // Assign new selected
         roadSelected = e.layer;
         // Bring selected to front
@@ -235,6 +228,7 @@
     let query = $.param(queryInput);
     let reqURL = '/api/search?' + query;
     let overlayURL = '';
+    // Road Query
     if (queryInput.roadNo != '') {
       overlayURL = `/api/getRoad?roadNo=${queryInput.roadNo}&county=${queryInput.county}&\
       signing=${queryInput.roadSigning}&gid=${queryInput.roadGid}`;
@@ -248,7 +242,9 @@
       }
     }
     // Search criteria for display
+    if(!queryInput.roadSigning) queryInput.roadSigning = '';
     let firstRow = {
+      Road: queryInput.roadSigning + queryInput.roadNo || '',
       MPO: queryInput.mpo || '',
       County: queryInput.county || '',
       Mun: queryInput.mun || '',
@@ -256,6 +252,7 @@
       MunCounty: queryInput.mun_county || '',
     };
     let secondRow = {
+      Dist: queryInput.roadDist || '',
       NAICS: queryInput.naicsds || '',
       Code: queryInput.naicscd || '',
       EmpMin: queryInput.minEmp || '',
@@ -375,9 +372,9 @@
     if (!searchValue) searchValue = '';
     if (Array.isArray(searchValue)) {
       // Different description loading for advances search as it sends an array
-      $('.search-description').html('<h4>' + searchType + ' ' + searchValue[0] + '</h4> <p>' + searchValue[1] + '</p>');
+      $('.search-description').html('<h4>' + searchType + ' ' + searchValue[0] + '</h4> <h6>' + searchValue[1] + '</h6>');
     } else {
-      $('.search-description').html('<h4>' + searchType + ' ' + searchValue + '</h4><p></p>');
+      $('.search-description').html('<h4>' + searchType + ' ' + searchValue + '</h4><h6></h6>');
     }
   };
 

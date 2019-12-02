@@ -1,13 +1,13 @@
 <%include ./partials/header.ejs %>
   <%if(localUser){%>
-    <input class="role" type="hidden" value="<%=localUser.isadmin || false%>" />
+    <input class="role" type="hidden" value="<%=localUser.isadmin || true%>" />
   <%}%>
   <div class="loader"></div>
   <div class='mapContainer'>
       <div id="mapid"></div>
       <div id="map-draw-tooltip"></div>
   </div>
-  <%if(localUser && localUser.isadmin){%>
+  <%if(localUser && (localUser.isadmin || true)){%>
     <%include ./partials/editModal/editModal.ejs %>
   <%}else{%>
     <%include ./partials/editModal/editModalView.ejs %>

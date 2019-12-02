@@ -163,7 +163,7 @@ body{
   position: fixed;
   top: 6%;
   right: 0%;
-  height: 90%;
+  height: 93%;
   background-color:#E8E8E8;
   z-index: 800;
   border-radius: 5px;
@@ -181,7 +181,7 @@ body{
   position: fixed;
   top: 30%;
   left: 0%;
-  height: 45%;
+  height: 50%;
   background-color:#E8E8E8;
   z-index: 800;
   border-radius: 5px;
@@ -283,7 +283,7 @@ body{
 }
 
 .datatable-wrapper{
-  height: 45vh;
+  height: 43vh;
 }
 .datatable {
   /* margin: 0 auto; */

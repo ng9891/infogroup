@@ -392,11 +392,11 @@
         body: `$${totalSalesVol}`,
       },
       {
-        title: 'Avg Sales Volume',
+        title: 'Avg Sales',
         body: `$${avgSalesVol.toFixed(2)}`,
       },
       {
-        title: 'Avg Corp Sales Volume',
+        title: 'Avg Corp Sales',
         body: `$${avgCSalesVol.toFixed(2)}`,
       },
       {
