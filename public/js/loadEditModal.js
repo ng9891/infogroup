@@ -255,15 +255,14 @@ function selectRange_SalesVolume(e) {
   switch (queryType) {
     case 'ALSLSVOL':
       slsvolInput = $('#modal_ALSLSVOL').val().trim();
-      slsvolInput = parseInt(slsvolInput, 10);
       targetElement = '#modal_LSALVOLCD';
       break;
     case 'ACSLSVOL':
       slsvolInput = $('#modal_ACSLSVOL').val().trim();
-      slsvolInput = parseInt(slsvolInput, 10);
       targetElement = '#modal_CSALVOLCD';
       break;
   }
+  slsvolInput = parseFloat(slsvolInput);
   slsvolInput = convertToThousandFromMillion(slsvolInput);
   if (isBetween(slsvolInput, 1, 499)) {
     $(targetElement + ' li[value="A"]').click();

@@ -1,5 +1,5 @@
-const getQuery = require('../services/2014/getQuery');
-// const getQuery = require('../services/2019/getQuery');
+// const getQuery = require('../services/2014/getQuery');
+const getQuery = require('../services/getQuery');
 function successHandler(data, response) {
   return response.status(200).json({
     data: data,

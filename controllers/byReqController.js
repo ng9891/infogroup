@@ -1,5 +1,5 @@
-const byQuery = require('../services/2014/byQuery');
-// const byQuery = require('../services/2019/byQuery');
+// const byQuery = require('../services/2014/byQuery');
+const byQuery = require('../services/byQuery');
 function successHandler(data, response) {
   return response.status(200).json({
     data: data,

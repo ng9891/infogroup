@@ -87,12 +87,14 @@ function loadMarkers(establishments) {
         marker
           .bindPopup(
             `
-				<b>Company : ${est.CONAME}</b><br>
-		    	Employees : ${est.ALEMPSZ ? est.ALEMPSZ.toLocaleString() : ''}<br>
-		    	Payroll : ${est.BE_Payroll_Expense_Description}<br>
-		    	NAICS :  ${est.NAICSCD}<br>
-		    	Industry : ${est.NAICSDS}
-		    	`
+              <b>Company : ${est.CONAME}</b><br>
+              Actual_Emp_Size : ${est.ALEMPSZ ? est.ALEMPSZ.toLocaleString() : ''}<br>
+              NAICS_CODE :  ${est.NAICSCD}<br>
+              NAICS_DESC : ${est.NAICSDS}<br>
+              Date_of_SIC : ${est.YEAR_SIC_ADDED}<br>
+              Big_Business : ${est.BIG_BUSINESS}<br>
+              High_Tech : ${est.HIGHTECHBUSINESS}
+		    	  `
           )
           .openPopup();
 
