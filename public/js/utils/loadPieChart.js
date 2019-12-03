@@ -133,9 +133,24 @@ function loadPieChart(establishments) {
         },
         onload: function() {
           $('.pieChart-loader').fadeOut('slow');
+          addResponsiveViewbox(pie_w, pie_h);
           resolve('PieChart Loaded');
         },
       },
     });
   });
+  function addResponsiveViewbox(width, height) {
+    d3
+      .select('#pieChart')
+      // Make Responsive
+      .classed('pieContainer', true)
+      .select('svg')
+      // Delete old attributes
+      .attr('width', null)
+      .attr('height', null)
+      // Replace with viewbox
+      .attr('viewBox', `0 0 ${width} ${height}`)
+      .attr('preserveAspectRatio', 'xMinYMin meet')
+      .classed('svg-content-responsive', true);
+  }
 }

@@ -13,17 +13,23 @@
 
     let margin = 5;
     let width = d3.select('.legendContainer').style('width').slice(0, -2) - 2 * margin;
-    let height = d3.select('.legendContainer').style('height').slice(0, -2) - 2 * margin;
-    var svg = d3
-      .select('.legendContainer')
-      .append('svg')
-      .attr('viewBox', `0 0 ${width} ${height+105}`) // Height is hardcoded 
-      .append('g')
-      .attr('transform', 'translate(' + margin + ',' + margin + ')');
-
+    // let height = d3.select('.legendContainer').style('height').slice(0, -2) - 2 * margin;
     let legendRectSize = 17;
     let legendSpacing = 4;
     let rect_size = legendRectSize + legendSpacing;
+
+    var svg = d3
+      .select('.legendContainer')
+      .append('div')
+      // Container class to make it responsive.
+      .classed('svg-container', true)
+      .append('svg')
+      .attr('preserveAspectRatio', 'xMinYMin meet')
+      .attr('viewBox', `0 0 ${width} ${rect_size * data.length + 10}`) // BoxSize * amountOfItems
+      // Class to make it responsive.
+      .classed('svg-content-responsive', true)
+      .append('g')
+      .attr('transform', 'translate(' + margin + ',' + margin + ')');
 
     let legend = svg
       .selectAll('.legend')
@@ -36,23 +42,24 @@
         return 'translate( 0,' + vert + ')';
       });
 
-    // draw legend colored rectangles
-    // legend.append('rect').attr('x', width - 50).attr('width', 17).attr('height', 17).style('fill', function(d) {
-    //   return d.color;
-    // });
     legend
       .append('rect')
-      .attr('x', width - margin*5)
+      .attr('x', width - margin * 5)
       .attr('width', legendRectSize)
       .attr('height', legendRectSize)
       .style('fill', function(d) {
-          return d.color;
-        });
+        return d.color;
+      });
 
-    // draw legend text
-    legend.append('text').attr('x', (width - margin*5) - legendSpacing).attr('y', 12).style('text-anchor', 'end').text(function(d) {
-      return `${d.desc} - ${d.naicsKey}`;
-    });
+    // Draw legend text
+    legend
+      .append('text')
+      .attr('x', width - margin * 5 - legendSpacing)
+      .attr('y', 12)
+      .style('text-anchor', 'end')
+      .text(function(d) {
+        return `${d.desc} - ${d.naicsKey}`;
+      });
   };
 
   let getLegendData = function() {

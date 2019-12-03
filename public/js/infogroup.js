@@ -123,6 +123,7 @@ function loadAdvancedSearchListener() {
   // $('#adv_NAICSDS').unbind("change").change(autoFillText_avdSearch);
 
   d3.select('#advsearch-button').on('click', (e) => {
+    let coname = $('#adv_CONAME').val().trim();
     let industry = $('#adv_NAICSDS').val().trim();
     let naicscode = $('#adv_NAICSCD').val().trim();
     let roadNo = $('#adv_roadNo').val().trim();
@@ -150,6 +151,7 @@ function loadAdvancedSearchListener() {
     let query_version = d3.select('#version-dropdown').property('value');
 
     let formBody = {
+      coname: coname,
       naicsds: industry,
       naicscd: naicscode,
       roadNo: roadNo,
@@ -173,6 +175,7 @@ function loadAdvancedSearchListener() {
   });
 
   d3.select('#advsearch-resetBtn').on('click', (e) => {
+    $('#adv_CONAME').val('');
     $('#adv_NAICSDS').val('');
     $('#adv_NAICSCD').val('');
     $('#adv_roadNo').val('');

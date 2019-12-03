@@ -1,13 +1,10 @@
 #hist {
   /* width: 600px; */
-  height: 400px;
+  height: 65%;
   /* margin: auto; */
   background-color: #2f4a6d;
 }
-#hist svg {
-  width: 100%;
-  height: 100%;
-}
+
 #hist .bar {
   fill: #80cbc4;
 }

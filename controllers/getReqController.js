@@ -13,6 +13,24 @@ function errorHandler(err, response) {
   });
 }
 
+exports.reqGetConame = (request, response) => {
+  if (!request.params.coname) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No company name specified',
+    });
+  }
+
+  getQuery
+    .geoGetConameList(request.params.coname)
+    .then((data) => {
+      return successHandler(data, response);
+    })
+    .catch((err) => {
+      return errorHandler(err, response);
+    });
+};
+
 exports.reqGetCounty = (request, response) => {
   if (!request.params.county) {
     return response.status(400).json({

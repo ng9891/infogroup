@@ -50,6 +50,7 @@ function getBusinessVersion(version) {
 }
 
 const column = {
+  CONAME: 'COMPANY_NAME',
   ALEMPSZ: 'ACTUAL_LOCATION_EMPLOYMENT_SIZE',
   PRMZIP: 'PRIMARY_ZIP_CODE',
   NAICSDS: 'NAICS_DESC',
@@ -179,6 +180,7 @@ module.exports = {
   geoBySearch: (
     {
       v = 'current',
+      coname = '',
       naicsds = '',
       naicscd = '',
       minEmp = '',
@@ -205,6 +207,10 @@ module.exports = {
       return 'AND ' + statement + '\n';
     }
     let params = [];
+    if (coname !== '') {
+      where += addANDStatement(`UPPER("${column.CONAME}") LIKE UPPER($${params.length + 1})`);
+      params.push(`${coname}%`);
+    }
     if (naicsds !== '') {
       where += addANDStatement(`"${column.NAICSDS}" = $${params.length + 1}`);
       params.push(naicsds);

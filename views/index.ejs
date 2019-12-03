@@ -48,6 +48,12 @@
     <div class="container mt-3">
       <div class="input-group col-md-12 mb-3">
         <div class="input-group-prepend">
+          <span class="input-group-text">Company Name</span>
+        </div>
+        <input type="text" id="adv_CONAME" class="form-control" placeholder="e.g. Wendy's">
+      </div>
+      <div class="input-group col-md-12 mb-3">
+        <div class="input-group-prepend">
           <span class="input-group-text">Industry</span>
         </div>
         <input type="text" id="adv_NAICSDS" class="form-control" placeholder="e.g. Financial">
@@ -89,13 +95,13 @@
         <input type="text" class="form-control" id="min-emplsize" placeholder="Min">&nbsp;
         <input type="text" class="form-control" id="max-emplsize" placeholder="Max">
       </div>
-      <div class="col-md-14 input-group mb-3">
-        <div class="input-group col-md-6">
+      <div class="input-group col-md-12 mb-3">
+
           <div class="input-group-prepend">
             <span class="input-group-text">County</span>
           </div>
           <input type="text" id="countyName" class="form-control" placeholder="e.g. Montgomery">
-        </div>
+
         <div class="input-group col-md-6">
           <div class="input-group-prepend">
             <span class="input-group-text">MPO</span>
@@ -103,13 +109,11 @@
           <input type="text" id="mpoId" class="form-control" placeholder="e.g. CDTC">
         </div>
       </div>
-      <div class="col-md-14 input-group mb-3">
-        <div class="col-md-6 input-group">
+      <div class="input-group col-md-12 mb-3">
           <div class="input-group-prepend">
             <span class="input-group-text">Municipality</span>
           </div>
           <input type="text" id="munId" class="form-control" placeholder="e.g. Hudson">
-        </div>
         <div class="col-md-3 input-group">
           <div class="dropdown dropdown-btn">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownSalesVolume"
@@ -151,7 +155,7 @@
       <div class="row">
         <div class="col-sm-12 col-lg-6">
           <div id="hist">
-            <svg></svg>
+            <!-- <svg preserveAspectRatio="xMinYMin meet" viewBox="0 0 600 400" class="svg-content-responsive"></svg> -->
           </div>
         </div>
         <div class="col-sm-12 col-lg-6">

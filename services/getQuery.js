@@ -12,6 +12,7 @@ function queryDB(query, params) {
 
 const bussinessVersion = 'businesses';
 const column = {
+  CONAME: 'COMPANY_NAME',
   LEMPSZDS: 'LOCATION_EMPLOYMENT_SIZE_DESC',
   LEMPSZCD: 'LOCATION_EMPLOYMENT_SIZE_CODE',
   NAICSDS:"NAICS_DESC",
@@ -24,6 +25,15 @@ const column = {
   SQFOOTDS:"SQUARE_FOOTAGE_DESC",
 }
 module.exports = {
+  geoGetConameList: (coname) =>{
+    let sql = `
+      SELECT DISTINCT "${column.CONAME}" as name
+      FROM businesses as b
+      WHERE UPPER("${column.CONAME}") LIKE UPPER($1)
+      ORDER BY "${column.CONAME}";
+    `;
+    return queryDB(sql, [`${coname}%`]);
+  },
   geoGetCounty: (county) => {
     let sql = `
       SELECT 

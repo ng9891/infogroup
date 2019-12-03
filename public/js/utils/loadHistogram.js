@@ -187,12 +187,22 @@
         return d.yValues;
       });
 
-      d3.select('#hist').selectAll('svg > *').remove(); // clearing histogram each time
-      const svg = d3.select('#hist').selectAll('svg');
-
       const margin = 80;
       const width = 600 - 2 * margin;
       const height = 400 - 2 * margin;
+
+      d3.select('#hist').selectAll('div > *').remove(); // clearing histogram each time
+      const svg = d3
+        .select('#hist')
+        .append('div')
+        // Container class to make it responsive.
+        .classed('svg-container', true)
+        .append('svg')
+        // Responsive SVG needs these 2 attributes and no width and height attr.
+        .attr('preserveAspectRatio', 'xMinYMin meet')
+        .attr('viewBox', `0 0 600 400`)
+        // Class to make it responsive.
+        .classed('svg-content-responsive', true);
 
       // Create a new graph
       const graph = svg.append('svg').append('g').attr('transform', `translate(${margin}, ${margin})`);
@@ -236,6 +246,9 @@
       // Create rect and merge
       hist_enter
         .append('rect')
+        .classed('rect', true)
+        .attr('width', width)
+        .attr('height', height)
         .attr('class', 'bar')
         .merge(hist)
         .transition()
@@ -422,7 +435,9 @@
       .merge(cardContainer)
       .classed('col-sm-6 col-md-4 col-lg-3 pb-2', true)
       .append('div')
-      .attr("class", function(d) { return "card" + " " + d.title.toLowerCase().split(' ').join('');})
+      .attr('class', function(d) {
+        return 'card' + ' ' + d.title.toLowerCase().split(' ').join('');
+      })
       .append('div')
       .classed('card-body', true);
     cardBody.append('h5').classed('card-title', true).text((d) => {
