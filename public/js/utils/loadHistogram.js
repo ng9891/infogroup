@@ -77,17 +77,11 @@
       result_content = [];
     let i = 0,
       x,
-      total_empl_size = 0,
-      total_comp_num = 0,
-      total_sales_vol = 0,
       count,
       item,
       it;
 
     est.data.map((est) => {
-      total_comp_num += 1;
-      total_empl_size += est.ALEMPSZ;
-      total_sales_vol += est.ALSLSVOL;
       arr_employees.push(est.ALEMPSZ);
       arr_sales_vol.push(est.ALSLSVOL);
     });
@@ -117,12 +111,6 @@
     let min_employee_size = d3.min(result_content, function(d) {
       return d.employees;
     }); //result_content.reduce((min, p) => p.employees < min ? p.employees : min, result_content[0].employees);
-    let avg_employee_size = Math.round(
-      d3.mean(result_content, function(d) {
-        return d.employees;
-      })
-    );
-    let avg_sales_vol = Math.round(d3.mean(arr_sales_vol));
 
     est.data.map((est) => {
       if (est.ALEMPSZ === max_employee_size) {
@@ -205,7 +193,7 @@
         .classed('svg-content-responsive', true);
 
       // Create a new graph
-      const graph = svg.append('svg').append('g').attr('transform', `translate(${margin}, ${margin})`);
+      const graph = svg.append('g').attr('transform', `translate(${margin}, ${margin})`);
 
       // INIT X axis
       let xScale = d3.scaleBand().range([0, width]).domain(data.map((s) => s.xValues)).padding(0.2);

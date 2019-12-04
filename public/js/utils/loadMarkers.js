@@ -89,8 +89,11 @@ function loadMarkers(establishments) {
             `
               <b>Company : ${est.CONAME}</b><br>
               Actual_Emp_Size : ${est.ALEMPSZ ? est.ALEMPSZ.toLocaleString() : ''}<br>
-              NAICS_CODE :  ${est.NAICSCD}<br>
-              NAICS_DESC : ${est.NAICSDS}<br>
+              NAICS_Code :  ${est.NAICSCD}<br>
+              NAICS_Desc : ${est.NAICSDS}<br>
+              INDFIRM_Code : ${est.INDIVIDUAL_FIRM_CODE}<br>
+              INDFIRM_Desc : ${est.INDIVIDUAL_FIRM_DESC}<br>
+              Match_Code: ${est.MATCHCD}<br>
               Date_of_SIC : ${est.YEAR_SIC_ADDED}<br>
               Big_Business : ${est.BIG_BUSINESS}<br>
               High_Tech : ${est.HIGHTECHBUSINESS}

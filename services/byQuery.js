@@ -2,37 +2,41 @@
 let dbService = require('../utils/db_service');
 let utils = require('../utils/utils');
 
+const column = utils.columnNames;
+
 const selectStatement = `
-  id,
-  ST_ASGeoJSON(ST_transform(b.geom,4326)) as geoPoint,
-  "COMPANY_NAME" as alias,
-  "COMPANY_NAME" as "CONAME",
-  "NAICS_CODE" as "NAICSCD",
-  "NAICS_DESC" as "NAICSDS", 
-  "LOCATION_EMPLOYMENT_SIZE_CODE" as "LEMPSZCD", 
-  "LOCATION_EMPLOYMENT_SIZE_DESC" as "LEMPSZDS",
-  "ACTUAL_LOCATION_EMPLOYMENT_SIZE" as "ALEMPSZ", 
-  "ACTUAL_CORPORATE_EMPLOYMENT_SIZE" as "ACEMPSZ",
-  "SQUARE_FOOTAGE_CODE" as "SQFOOTCD",
-  "SQUARE_FOOTAGE_DESC" as "SQFOOTDS",
-  "PRIMARY_SIC_CODE" as "PRMSICCD",
-  "PRIMARY_SIC_DESC" as "PRMSICDS",
-  "PRIMARY_ADDRESS" as "PRMADDR",
-  "PRIMARY_CITY" as "PRMCITY",
-  "PRIMARY_STATE" as "PRMSTATE",
-  "PRIMARY_ZIP_CODE" as "PRMZIP",
-  "LATITUDE_1" as "LATITUDEO",
-  "LONGITUDE_1" as "LONGITUDEO",
-  "LOCATION_SALES_VOLUME_CODE" as "LSALVOLCD",
-  "LOCATION_SALES_VOLUME_DESC" as "LSALVOLDS",
-  "ACTUAL_LOCATION_SALES_VOLUME" as "ALSLSVOL",
-  "CORPORATE_SALES_VOLUME_CODE" as "CSALVOLCD",
-  "CORPORATE_SALES_VOLUME_DESC" as "CSALVOLDS",
-  "ACTUAL_CORPORATE_SALES_VOLUME" as "ACSLSVOL",
-  "MATCH_LEVEL_CODE" as "MATCHCD",
-  "YEAR_SIC_ADDED",
-  "BIG_BUSINESS",
-  "HIGHTECHBUSINESS"
+  "${column.id}" as id,
+  ST_ASGeoJSON(ST_transform(b."${column.geom}",4326)) as geoPoint,
+  "${column.PRMADDR}" as "PRMADDR",
+  "${column.PRMCITY}" as "PRMCITY",
+  "${column.PRMSTATE}" as "PRMSTATE",
+  "${column.PRMZIP}" as "PRMZIP",
+  "${column.CONAME}" as alias,
+  "${column.CONAME}" as "CONAME",
+  "${column.NAICSCD}" as "NAICSCD",
+  "${column.NAICSDS}" as "NAICSDS", 
+  "${column.LEMPSZCD}" as "LEMPSZCD", 
+  "${column.LEMPSZDS}" as "LEMPSZDS",
+  "${column.ALEMPSZ}" as "ALEMPSZ", 
+  "${column.ACEMPSZ}" as "ACEMPSZ",
+  "${column.SQFOOTCD}" as "SQFOOTCD",
+  "${column.SQFOOTDS}" as "SQFOOTDS",
+  "${column.PRMSICCD}" as "PRMSICCD",
+  "${column.PRMSICDS}" as "PRMSICDS",
+  "${column.LSALVOLCD}" as "LSALVOLCD",
+  "${column.LSALVOLDS}" as "LSALVOLDS",
+  "${column.ALSLSVOL}" as "ALSLSVOL",
+  "${column.CSALVOLCD}" as "CSALVOLCD",
+  "${column.CSALVOLDS}" as "CSALVOLDS",
+  "${column.ACSLSVOL}" as "ACSLSVOL",
+  "${column.MATCHCD}" as "MATCHCD",
+  "${column.INDIVIDUAL_FIRM_CODE}" as "INDIVIDUAL_FIRM_CODE",
+  "${column.INDIVIDUAL_FIRM_DESC}" as "INDIVIDUAL_FIRM_DESC",
+  "${column.YEAR_SIC_ADDED}" as "YEAR_SIC_ADDED",
+  "${column.BIG_BUSINESS}" as "BIG_BUSINESS",
+  "${column.HIGHTECHBUSINESS}" as "HIGHTECHBUSINESS",
+  "${column.LATITUDEO}" as "LATITUDEO",
+  "${column.LONGITUDEO}" as "LONGITUDEO"
 \n`;
 
 function queryDB(query, params) {
@@ -48,15 +52,6 @@ function getBusinessVersion(version) {
   if (version === 'original') return 'businesses_o';
   return 'businesses';
 }
-
-const column = {
-  CONAME: 'COMPANY_NAME',
-  ALEMPSZ: 'ACTUAL_LOCATION_EMPLOYMENT_SIZE',
-  PRMZIP: 'PRIMARY_ZIP_CODE',
-  NAICSDS: 'NAICS_DESC',
-  NAICSCD: 'NAICS_CODE',
-  LSALVOLDS: 'LOCATION_SALES_VOLUME_DESC',
-};
 
 module.exports = {
   geoByCounty: (county_name, v = 'current', offset = 0, limit = null) => {

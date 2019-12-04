@@ -1,9 +1,6 @@
 // Creates a Datatable with the information in data
 function loadDatatable(est) {
   return new Promise((resolve) => {
-    // var wh = $(window).height();
-    // var calcDataTableHeight = LessThan17inch ? wh * 0.23 : wh * 0.3;
-
     $(document).ready(() => {
       const isAdmin = d3.select('.role').node().value;
       let table = $('#jq_datatable').DataTable({
@@ -183,21 +180,4 @@ function clearDatatable() {
 function destroyDatatable() {
   const table = $('#jq_datatable');
   if ($.fn.DataTable.isDataTable(table)) table.DataTable().destroy();
-}
-
-// Marker creation when a business is selected
-// TODO: Make this a helper function and refactor selectedBusinessMkr.
-let selectedBusinessMkr;
-function locatePointByCoordinate(lat, lon) {
-  if (lat != null && lon != null) {
-    mymap.setView([lat, lon], 19);
-    if (selectedBusinessMkr) {
-      mymap.removeLayer(selectedBusinessMkr);
-    }
-    selectedBusinessMkr = new L.marker([lat, lon], {}).addTo(mymap);
-    selectedBusinessMkr.on('click', () => {
-      mymap.removeLayer(selectedBusinessMkr);
-    });
-    markerList.push(selectedBusinessMkr);
-  }
 }

@@ -25,11 +25,6 @@ const mapBox = L.tileLayer(
   }
 );
 
-const OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-});
-
 const Stamen_Toner = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.{ext}', {
   attribution:
     'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -52,6 +47,16 @@ const Esri_WorldStreetMap = L.tileLayer(
   }
 );
 
+const googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3']
+});
+
+const googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3']
+});
+
 const mymap = L.map('mapid', {
   preferCanvas: true,
   keyboard: false,
@@ -62,10 +67,11 @@ const mymap = L.map('mapid', {
 
 var baseMaps = {
   MapBox: mapBox,
-  'OSM-Mapnik': OpenStreetMap_Mapnik,
+  GoogleStreets:googleStreets,
   'OSM-Black & White': OpenStreetMap_BlackAndWhite,
   'Stamen-Toner': Stamen_Toner,
   'Esri-WorldStreetMap': Esri_WorldStreetMap,
+  Satellite: googleSat,
 };
 
 var layerControl = L.control.layers(baseMaps, null, {position: 'bottomleft'}).addTo(mymap);

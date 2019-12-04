@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const {isLoggedIn, secureAPI} = require('../middleware/middleware.js');
 
-// router.use(secureAPI);
+router.use(secureAPI);
 
 let byCtrl = require('../controllers/byReqController');
 let getCtrl = require('../controllers/getReqController');

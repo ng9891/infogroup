@@ -1,5 +1,6 @@
 'use strict';
 let dbService = require('../utils/db_service');
+let utils = require('../utils/utils');
 
 function queryDB(query, params) {
   return new Promise((resolve, reject) => {
@@ -11,19 +12,8 @@ function queryDB(query, params) {
 }
 
 const bussinessVersion = 'businesses';
-const column = {
-  CONAME: 'COMPANY_NAME',
-  LEMPSZDS: 'LOCATION_EMPLOYMENT_SIZE_DESC',
-  LEMPSZCD: 'LOCATION_EMPLOYMENT_SIZE_CODE',
-  NAICSDS:"NAICS_DESC",
-  NAICSCD:"NAICS_CODE",
-  LSALVOLDS:'LOCATION_SALES_VOLUME_DESC',
-  LSALVOLCD:'LOCATION_SALES_VOLUME_CODE',
-  PRMSICCD:'PRIMARY_SIC_CODE',
-  PRMSICDS:'PRIMARY_SIC_DESC',
-  SQFOOTCD:"SQUARE_FOOTAGE_CODE",
-  SQFOOTDS:"SQUARE_FOOTAGE_DESC",
-}
+const column = utils.columnNames;
+
 module.exports = {
   geoGetConameList: (coname) =>{
     let sql = `

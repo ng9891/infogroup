@@ -21,29 +21,18 @@
     let searchValue = queryInput;
 
     if (queryType === 'mun') {
-      reqURL = `/api/bymun/${queryInput.mun}?v=${version}`;
-      let param = '';
-      if (queryInput.type && queryInput.county) {
-        param += '?munType=' + queryInput.type + '&county=' + queryInput.county;
-        reqURL += '&munType=' + queryInput.type + '&county=' + queryInput.county;
-        searchInfo = queryInput.type;
-      } else {
-        param += '?exact=1';
-        searchInfo = 'Municipal';
-      }
-      overlayURL = '/api/getmun/' + queryInput.mun + param;
-      // Search criteria for display
-      searchValue = [];
-      searchValue.push(queryInput.mun);
-      searchValue.push('County: ' + queryInput.county);
+      [reqURL, overlayURL, searchInfo, searchType, searchValue] = getMunInfo(queryInput);
     } else if (queryType === 'adv') {
       searchInfo = 'Search:';
       [reqURL, overlayURL, searchValue] = getAdvSearchInfo(queryInput);
     } else if (queryType === 'draw') {
-      [reqURL, overlayURL, searchInfo, searchValue] = getDrawInfo();
+      [reqURL, overlayURL, searchInfo, searchValue] = getDrawInfo(usrMarkers); // userMarkers is a global var
     }
+
+    if (!reqURL) return alert(`Error in URL. ${searchInfo}`);
+
     d3.select('.loader').classed('hidden', false);
-    clearComponents(queryType);
+    clearUiComponents(queryType);
     d3
       .json(reqURL)
       .then(async (data) => {
@@ -55,7 +44,7 @@
           }
           searchInfo = `NOT FOUND ${searchInfo}`;
         } else {
-          await loadComponents(data, overlayURL);
+          await loadUiComponents(data, overlayURL);
           d3.select('.loader').classed('hidden', true);
         }
         updateSearchInfo(searchInfo, searchValue);
@@ -72,7 +61,7 @@
    * @param {Array[Array[]]} data 
    * @param {String} overlayURL 
    */
-  let loadComponents = (data, overlayURL) => {
+  let loadUiComponents = (data, overlayURL) => {
     return Promise.all([
       loadMarkers(data),
       loadPieChart(data),
@@ -85,7 +74,7 @@
    * Clears different components on the main page.
    * @param {String} queryType 
    */
-  let clearComponents = (queryType) => {
+  let clearUiComponents = (queryType) => {
     $('#pieChart').empty(); // Piechart
     clearDatatable(); // loadDatatable.js
     d3.select('.hist').select('.svg').remove(); // Histogram
@@ -220,6 +209,31 @@
       resolve('Overlay Loaded');
     });
   };
+
+  /**
+   * Gets the information from input to create an URL for the mun API request to the server.
+   * @param {Object} queryInput 
+   */
+  let getMunInfo = (queryInput) => {
+    let searchInfo, searchType;
+    let reqURL = `/api/bymun/${queryInput.mun}?v=${version}`;
+    let param = '';
+    if (queryInput.type && queryInput.county) {
+      param += '?munType=' + queryInput.type + '&county=' + queryInput.county;
+      reqURL += '&munType=' + queryInput.type + '&county=' + queryInput.county;
+      searchInfo = queryInput.type;
+    } else {
+      param += '?exact=1';
+      searchInfo = 'Municipal';
+    }
+    let overlayURL = '/api/getmun/' + queryInput.mun + param;
+    // Search criteria for display
+    let searchValue = [];
+    searchValue.push(queryInput.mun);
+    searchValue.push('County: ' + queryInput.county);
+
+    return [reqURL, overlayURL, searchInfo, searchType, searchValue];
+  };
   /**
    * 
    * @param {Object} queryInput 
@@ -242,8 +256,9 @@
       }
     }
     // Search criteria for display
-    if(!queryInput.roadSigning) queryInput.roadSigning = '';
+    if (!queryInput.roadSigning) queryInput.roadSigning = '';
     let firstRow = {
+      Name: queryInput.coname || '',
       Road: queryInput.roadSigning + queryInput.roadNo || '',
       MPO: queryInput.mpo || '',
       County: queryInput.county || '',
@@ -264,11 +279,12 @@
     return [reqURL, overlayURL, searchValue];
   };
   /**
-   * Checks for the last layer of the user input and gets the coordinate for the layer.
+   * Identifies the type of drawing the user made and creates the API URL to make the request.
+   * The drawn layer is in global variable userMarkers.
    * returns [reqURL, overlayURL, searchType, searchValue] according to the drawing query.
-   * 
+   * @param {Array} queryInput 
    */
-  let getDrawInfo = () => {
+  let getDrawInfo = (layerArray) => {
     //Helper functions to check the type of drawing
     function drawingType(layer) {
       if (layer instanceof L.Marker) return 'marker';
@@ -329,10 +345,10 @@
       return reqURL;
     }
 
-    if (usrMarkers.length === 0) return;
+    if (layerArray.length === 0) return;
 
     let reqURL, overlayURL, searchValue, searchType;
-    let layer = usrMarkers[usrMarkers.length - 1]; //last layer
+    let layer = layerArray[layerArray.length - 1]; // last layer
     switch (drawingType(layer)) {
       case 'marker':
         reqURL = markerQuery(layer);
@@ -355,6 +371,8 @@
         break;
       default:
         console.log('Error. Shape is not recognizable');
+        searchType = 'Error. Shape is not recognizable';
+        searchValue = '';
         return;
     }
     return [reqURL, overlayURL, searchType, searchValue];
@@ -372,7 +390,9 @@
     if (!searchValue) searchValue = '';
     if (Array.isArray(searchValue)) {
       // Different description loading for advances search as it sends an array
-      $('.search-description').html('<h4>' + searchType + ' ' + searchValue[0] + '</h4> <h6>' + searchValue[1] + '</h6>');
+      $('.search-description').html(
+        '<h4>' + searchType + ' ' + searchValue[0] + '</h4> <h6>' + searchValue[1] + '</h6>'
+      );
     } else {
       $('.search-description').html('<h4>' + searchType + ' ' + searchValue + '</h4><h6></h6>');
     }
