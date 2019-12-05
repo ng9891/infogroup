@@ -6,7 +6,8 @@ router.use(secureAPI);
 let byCtrl = require('../controllers/byReqController');
 let getCtrl = require('../controllers/getReqController');
 
-// API Routes
+// BY QUERY Routes
+router.get('/bygeocode/:q', byCtrl.reqGeoByGeocode);
 router.get('/search', byCtrl.reqGeoBySearch);
 router.get('/bycounty/:county', byCtrl.reqGeoByCounty);
 router.get('/bydistance', byCtrl.reqGeoByDistance);
@@ -16,7 +17,7 @@ router.get('/bymun/:mun', byCtrl.reqGeoByMun);
 router.get('/byrectangle', byCtrl.reqGeoByRectangle);
 router.get('/byzip/:zipcode', byCtrl.reqGeoByZip);
 
-// GET Routes
+// GET QUERY Routes
 router.get('/getconame/:coname', getCtrl.reqGetConame);
 router.get('/getcounty/:county', getCtrl.reqGetCounty);
 router.get('/getempsize', getCtrl.reqGetEmpSize);

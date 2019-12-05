@@ -25,11 +25,8 @@
  * Output: A fully functional Modal Form with input validation and automatic selection.
  */
 function loadEditModal(business_id, version = 'current') {
-  if (!business_id || business_id === '') {
-    console.log(business_id);
-    return;
-  }
-
+  if (!business_id || business_id === '') return;
+  
   let reqURL = '/api/byid/' + business_id + '?v=' + version;
   d3.json(reqURL).then((data) => {
     if (data.data.length === 0) {
@@ -110,7 +107,8 @@ function loadEditModal_eventListeners() {
     e.stopPropagation();
     form[0].classList.add('was-validated');
     if (form[0].checkValidity() === true) {
-      sendBusinessEdit(); // Submit
+      alert('Sorry. Feature still in development.')
+      // sendBusinessEdit(); // Submit
     }
   });
 

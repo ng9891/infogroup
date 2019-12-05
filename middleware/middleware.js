@@ -9,7 +9,7 @@ module.exports = {
   secureAPI: (req,res,next) =>{
     if (!req.isAuthenticated()) {
       res.status(401);
-      return res.json({'error': 'Please Login'});
+      return res.redirect("/login");
 		}
     next();
   },

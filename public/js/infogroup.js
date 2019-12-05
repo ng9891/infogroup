@@ -33,67 +33,46 @@ $(document).ready(function() {
 
   // Search button on nav bar
   d3.select('#query-button').on('click', (e) => {
-    // clearUsrMarker(); // function in map.js to clear user drawings
-    // clearUi();
     query_input = d3.select('#query-search').property('value');
     query_type = d3.select('#query-dropdown').property('value');
     query_version = d3.select('#version-dropdown').property('value');
     query_input = query_input.trim();
     switch (query_type) {
       case 'zip':
-        if (query_input.length < 4 || isNaN(+query_input)) {
-          alert('Invalid Input');
-        } else {
-          loadEstablishments(query_type, query_input, query_version);
-        }
-        break;
-      case 'county':
-        if (query_input.length <= 3) {
-          alert('Invalid Input');
-        } else {
-          loadEstablishments(query_type, query_input, query_version);
-        }
-        break;
-      case 'mpo':
-        if (query_input.length <= 3) {
-          alert('Invalid Input');
-        } else {
-          loadEstablishments(query_type, query_input, query_version);
-        }
+        if (query_input.length < 2 || isNaN(+query_input)) return alert('Invalid Input');
         break;
       case 'mun':
-        if (query_input.length <= 3) {
-          alert('Invalid Input');
-        } else {
+        if (query_input.length >= 4 && isNaN(+query_input)) {
           let indexOfDash = query_input.indexOf('-');
-          // let mun, county;
           let inputObj = {};
           if (indexOfDash !== -1) {
             let type = query_input.slice(indexOfDash + 2);
             inputObj['type'] = type.slice(0, type.indexOf('/'));
             inputObj['county'] = type.slice(type.indexOf('/') + 1);
             inputObj['mun'] = query_input.slice(0, indexOfDash - 1);
-          }else{
+          } else {
             inputObj['mun'] = query_input;
           }
-          loadEstablishments(query_type, inputObj, query_version);
+          query_input = inputObj;
+          break;
         }
+      case 'county':
+      case 'mpo':
+      case 'geocoding':
+        if (query_input.length < 4 || !isNaN(+query_input)) return alert('Invalid Input');
         break;
-      case 'naics':
-        if (query_input.length < 2) {
-          alert('Invalid Input');
-        } else {
-        }
-        break;
+      default:
+        return alert('Invalid Query Selection');
     }
+    loadEstablishments(query_type, query_input, query_version);
   });
 
-  //Button listener to show statisticsContainer
+  // Button listener to show statisticsContainer
   $('.statisticsContainerButton').click(() => {
     $('.statisticsContainer').toggleClass('open');
   });
 
-  //Button listener to show advancedSearchContainer
+  // Button listener to show advancedSearchContainer
   $('.advancedSearchContainerButton').click(() => {
     $('.advancedSearchContainer').toggleClass('open');
     $('#search-message').hide();
@@ -118,9 +97,6 @@ function loadAdvancedSearchListener() {
     $(this).parents('.dropdown').find('.btn').html($(this).text() + ' <span class="caret"></span>');
     $(this).parents('.dropdown').find('.btn').val($(this).data('value'));
   });
-
-  $('#adv_NAICSCD').unbind('change').change(autoFillText_avdSearch);
-  // $('#adv_NAICSDS').unbind("change").change(autoFillText_avdSearch);
 
   d3.select('#advsearch-button').on('click', (e) => {
     let coname = $('#adv_CONAME').val().trim();
@@ -166,7 +142,6 @@ function loadAdvancedSearchListener() {
       mun: mun_name,
       mun_type: mun_type,
       mun_county: mun_county,
-      v: query_version,
     };
 
     loadEstablishments('adv', formBody, query_version);
@@ -197,30 +172,10 @@ function loadAdvancedSearchListener() {
 function updatePrimaryField(entityId) {
   // TODO: Some Ajax request to update business_audit (boolean field)
   if (document.getElementById('prmswitch' + entityId).checked) {
-    alert('update business_audit for id = ' + entityId + ' (make this field primary)');
+    alert('Sorry. Feature is in development. Make field primary.');
+    // alert('update business_audit for id = ' + entityId + ' (make this field primary)');
   } else {
-    alert('update business_audit for id = ' + entityId + ' (make this field not primary)');
-  }
-}
-function autoFillText_avdSearch(e) {
-  let element = e.target.id;
-  let queryType = element.slice(4, -2); // Takes out 'modal_' and last 2 chars
-  let type = element.substr(-2); // Gets CD or DS
-  let arr = [];
-  let change_element; // Element to autofill
-  let input;
-  switch (queryType) {
-    case 'NAICS':
-      input = $('#' + element).val();
-      if (type === 'CD') {
-        arr = _obj_naics_arr[0];
-        change_element = '#adv_NAICSDS';
-      }
-      if (type === 'DS') {
-        arr = _obj_naics_arr[1];
-        change_element = '#adv_NAICSCD';
-      }
-      if (arr[input]) $(change_element).val(arr[input]);
-      break;
+    alert('Sorry. Feature is in development. Make field non-primary.');
+    // alert('update business_audit for id = ' + entityId + ' (make this field not primary)');
   }
 }

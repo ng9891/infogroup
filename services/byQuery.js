@@ -54,6 +54,35 @@ function getBusinessVersion(version) {
 }
 
 module.exports = {
+  /**
+   * Creates a geometry from GeoJSON and query points around a buffer of 'dist' value.
+   * Input should be a valid geoJSON
+   * @param {GeoJSON} geoJson 
+   * @param {String} v 
+   * @param {Number} dist 
+   */
+  geoByGeoJson: (geoJson, v = 'current', dist = 0.5) => {
+    let json = JSON.stringify(geoJson);
+    let bussinessVersion = getBusinessVersion(v);
+    let withStatement = `
+      WITH geojson as (
+        SELECT ST_GeomFromGeoJSON(json_array_elements(gdata.gj->'features')->>'geometry') as geom
+        FROM (
+          SELECT $1::json as gj
+        ) as gdata
+      )
+    `;
+    let sql = `
+      ${withStatement}
+      SELECT ${selectStatement}
+      FROM (
+        SELECT ST_Transform(ST_Collect(geojson.geom),26918) AS geom
+        FROM geojson
+      ) as geoCollection, ${bussinessVersion} as b
+      WHERE ST_DWithin(geoCollection.geom, b.geom, $2);
+    `;
+    return queryDB(sql, [json, utils.convertMilesToMeters(dist)]);
+  },
   geoByCounty: (county_name, v = 'current', offset = 0, limit = null) => {
     let bussinessVersion = getBusinessVersion(v);
     let withStatement = `
@@ -192,6 +221,10 @@ module.exports = {
       mpo = '',
     } = {}
   ) => {
+    coname = decodeURIComponent(coname);
+    naicsds = decodeURIComponent(naicsds);
+    lsalvol = decodeURIComponent(lsalvol);
+    mpo = decodeURIComponent(mpo);
     let bussinessVersion = getBusinessVersion(v);
     let from = `FROM ${bussinessVersion} as b\n`;
     let where = `WHERE `;
@@ -207,8 +240,8 @@ module.exports = {
       params.push(`${coname}%`);
     }
     if (naicsds !== '') {
-      where += addANDStatement(`"${column.NAICSDS}" = $${params.length + 1}`);
-      params.push(naicsds);
+      where += addANDStatement(`"${column.NAICSDS}" LIKE $${params.length + 1}`);
+      params.push(`${naicsds}%`);
     }
     if (naicscd !== '') {
       where += addANDStatement(`"${column.NAICSCD}" = $${params.length + 1}`);

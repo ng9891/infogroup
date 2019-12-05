@@ -12,25 +12,36 @@
    * @param {String} queryInput
    * @param {String} version  
    */
-  loadEstablishments = (queryType, queryInput, version = 'current') => {
+  loadEstablishments = async (queryType, queryInput, version = 'current') => {
     if (!queryType) return;
 
-    let reqURL = `/api/by${queryType}/${queryInput}?v=${version}`;
-    let overlayURL = `/api/get${queryType}/${queryInput}`;
-    let searchInfo = queryType.toUpperCase();
-    let searchValue = queryInput;
-
-    if (queryType === 'mun') {
+    let reqURL, overlayURL, searchInfo, searchValue;
+    if (queryType === 'zip' || queryType === 'county' || queryType === 'mpo') {
+      reqURL = `/api/by${queryType}/${queryInput}?`;
+      overlayURL = `/api/get${queryType}/${queryInput}`;
+      searchInfo = queryType.toUpperCase();
+      searchValue = queryInput;
+    } else if (queryType === 'mun') {
       [reqURL, overlayURL, searchInfo, searchType, searchValue] = getMunInfo(queryInput);
     } else if (queryType === 'adv') {
       searchInfo = 'Search:';
       [reqURL, overlayURL, searchValue] = getAdvSearchInfo(queryInput);
     } else if (queryType === 'draw') {
       [reqURL, overlayURL, searchInfo, searchValue] = getDrawInfo(usrMarkers); // userMarkers is a global var
+    } else if (queryType === 'geocoding') {
+      reqURL = `/api/bygeocode/${queryInput}?`;
+      overlayURL = 'json';
+      searchInfo = 'Geocode';
+      searchValue = [null, queryInput];
+    } else {
+      console.log('Invalid query type');
+      return;
     }
 
     if (!reqURL) return alert(`Error in URL. ${searchInfo}`);
-
+    // Add versioning.
+    reqURL += `&v=${version}`;
+    reqURL = encodeURI(reqURL);
     d3.select('.loader').classed('hidden', false);
     clearUiComponents(queryType);
     d3
@@ -58,7 +69,7 @@
   /**
    * Loads different components on the main page based on data.
    * 
-   * @param {Array[Array[]]} data 
+   * @param {JSON Object} data 
    * @param {String} overlayURL 
    */
   let loadUiComponents = (data, overlayURL) => {
@@ -67,7 +78,7 @@
       loadPieChart(data),
       loadDatatable(data),
       loadHistogram(data),
-      queryOverlay(overlayURL),
+      loadOverlay(data, overlayURL),
     ]).catch((err) => console.log(err));
   };
   /**
@@ -95,119 +106,136 @@
       markerList = [];
     }
   };
+
   /**
-   * Fetch data specified by overlayURL.
-   * Calls loadQueryOverlay() if its a valid URL.
-   * Loads circle if its a marker query.
+   * Creates and add overlay layer to the map by calling addOverlayToMap() located in map.js
+   * @param {JSON Object} data 
    * @param {String} overlayURL 
-   */
-  let queryOverlay = (overlayURL) => {
-    return new Promise((resolve, reject) => {
-      if (!overlayURL) resolve('Overlay not specified');
+  */
+  let loadOverlay = (data, overlayURL) => {
+    return new Promise(async (resolve, reject) => {
+      if (!overlayURL) return resolve('Overlay not specified');
+      let overlay;
       if (overlayURL === 'marker') {
         // Draw marker default radius of 1 mile.
         let layer = usrMarkers[usrMarkers.length - 1];
-        let circle = L.circle([layer.getLatLng().lat, layer.getLatLng().lng], {radius: 1609}); // 1609.34m = 1 mile
-        queryLayer.push(circle);
-        mymap.addLayer(circle);
-        layerControl.addOverlay(circle, 'Overlay Layer');
-        resolve('Overlay Loaded');
+        overlay = L.circle([layer.getLatLng().lat, layer.getLatLng().lng], {radius: 1609}); // 1609.34m = 1 mile
+      } else if (overlayURL === 'circle' || overlayURL === 'rectangle') {
+        overlay = Object.assign(usrMarkers[usrMarkers.length - 1]); // Deep Copy
+      } else if (overlayURL === 'json') {
+        // Build JSON to match the app format.
+        let builtGeoJsonToMatchFormat = {data: []};
+        let overlayFeatures = JSON.parse(data.overlayJson).features;
+        for (let feature of overlayFeatures) {
+          builtGeoJsonToMatchFormat.data.push({
+            geom: feature.geometry,
+            properties: feature.properties,
+          });
+        }
+        overlay = createGeoJsonOverlay(builtGeoJsonToMatchFormat);
       } else {
         //Get Query layer/ bounding box
-        d3.json(overlayURL).then(
-          async (data) => {
-            await loadQueryOverlay(data);
-            resolve('Overlay Loaded');
-          },
-          (err) => {
-            reject(err);
-          }
-        );
+        overlayURL = encodeURI(overlayURL);
+        let jsonOverlay = await d3.json(overlayURL).catch((err) => {
+          return reject(err);
+        });
+        overlay = createGeoJsonOverlay(jsonOverlay);
       }
+      addOverlayToMap(overlay); // Function in map.js
+      resolve('Overlay Loaded');
     });
   };
   /**
-   * Function will add various overlays depending on the user query.
-   *
-   * Takes an object that contains the GeoJSON geometry of the queried area and
-   * adds it into the queryLayer and mymap array.
-   * Also adds the layer control button for the overlay.
-   *
-   * @param {Object{data:Array[]}} data 
+   * Creates the information displayed on each Feature on the Overlay Layer
+   * @param {Leaflet Object} feature 
+   * @param {Leaflet Object} layer 
    */
-  let loadQueryOverlay = (data) => {
-    return new Promise((resolve) => {
-      if (queryLayer.length > 0) {
-        let cLayer = queryLayer.pop();
-        mymap.removeLayer(cLayer);
-        layerControl.removeLayer(cLayer);
-        queryLayer = [];
-      }
+  let onEachOverlayFeature = (feature, layer) => {
+    if (!feature.properties) return;
+    let popupContent = ``;
 
-      // console.log(data.data);
-      let l = [];
-      data.data.map((d) => {
-        let dataObject = JSON.parse(d.geom);
-        // If it is a road Query. Display info.
-        if (d.signing)
-          dataObject.properties = {
-            gis_id: d.gis_id,
-            gid: d.gid,
-            dot_id: d.dot_id,
-            road_name: d.road_name,
-            route: d.route,
-            county_name: d.county_name,
-            muni_name: d.muni_name,
-            mpo_desc: d.mpo_desc,
-            signing: d.signing,
-            fc: d.fc,
-          };
-        l.push(dataObject);
-      });
-
-      let layerStyle = {
-        color: '#4169e1',
-        weight: 4,
-        opacity: 0.4,
-      };
-
-      let overlay = L.geoJSON(l, {
-        style: layerStyle,
-        onEachFeature: (feature, layer) => {
-          if (feature.properties) {
-            let popupContent = `
-            <b>gis_id : ${feature.properties.gis_id}</b><br>
-            gid : ${feature.properties.gid}<br>
-            dot_id : ${feature.properties.dot_id}<br>
-            Road_Name : ${feature.properties.road_name}<br>
-            Route :  ${feature.properties.route}<br>
-            County : ${feature.properties.county_name}<br>
-            Municipality : ${feature.properties.muni_name}<br>
-            MPO : ${feature.properties.mpo_desc}<br>
-            Signing : ${feature.properties.signing}<br>
-            FC : ${feature.properties.fc}
-            `;
-            layer.bindPopup(popupContent);
-          }
-        },
-      }).on('click', function(e) {
-        if (!data.data[0].signing) return;
-        // Check for selected
-        if (roadSelected) e.target.resetStyle(roadSelected); // Reset selected to default style
-        // Assign new selected
-        roadSelected = e.layer;
-        // Bring selected to front
-        roadSelected.bringToFront();
-        // Style selected
-        roadSelected.setStyle({
-          color: 'red',
+    for (key in feature.properties) {
+      if (key === 'icon' && layer instanceof L.Marker) {
+        let customIcon = new L.Icon({
+          iconSize: [24, 24],
+          iconAnchor: [13, 24],
+          popupAnchor: [1, -24],
+          iconUrl: feature.properties['icon'],
         });
-      });
-      queryLayer.push(overlay);
-      mymap.addLayer(overlay);
-      layerControl.addOverlay(overlay, 'Overlay Layer');
-      resolve('Overlay Loaded');
+        layer.setIcon(customIcon);
+        continue;
+      }
+      popupContent += `<b>${key}</b> : ${feature.properties[key]}<br>`;
+    }
+    layer.bindPopup(popupContent);
+  };
+
+  /**
+   * Returns a geoJSON Leaflet Layer from input.
+   * Created overlay layer will have a click listener if it contain properties.
+   * onEachOverlayFeature() called when there is properties to display.
+   * @param {JSON Object} data 
+   */
+  let createGeoJsonOverlay = (data) => {
+    let l = [];
+    let overlayType;
+    data.data.map((d) => {
+      let dataObject = d.geom;
+      if (typeof d.geom === 'string') dataObject = JSON.parse(d.geom);
+      // If it is a road Query. Display info.
+      if (d.signing) {
+        overlayType = 'road';
+        dataObject.properties = {
+          gis_id: d.gis_id,
+          gid: d.gid,
+          dot_id: d.dot_id,
+          Road_Name: d.road_name,
+          Route: d.route,
+          County: d.county_name,
+          Municipality: d.muni_name,
+          MPO: d.mpo_desc,
+          Signing: d.signing,
+          FC: d.fc,
+        };
+      } else if (d.properties && d.properties.osm_id) {
+        overlayType = 'geocoding';
+        dataObject.properties = d.properties;
+      }
+      l.push(dataObject);
     });
+
+    let layerStyle = {
+      color: '#4169e1',
+      weight: 4,
+      opacity: 0.7,
+    };
+
+    let overlay = L.geoJSON(l, {
+      style: layerStyle,
+      onEachFeature: onEachOverlayFeature,
+    });
+
+    if (overlayType) {
+      overlay.on('click', (e) => {
+        // Check for selected
+        if (featureSelected) e.target.resetStyle(featureSelected); // Reset selected to default style
+        // Assign new selected
+        featureSelected = e.layer;
+        // If it's not a point.
+        if (!(featureSelected instanceof L.Marker)) {
+          // Bring selected to front
+          featureSelected.bringToFront();
+          // Style selected
+          featureSelected.setStyle({
+            color: 'red',
+          });
+        }
+      });
+      overlay.on('popupclose', (e) => {
+        if (featureSelected) e.target.resetStyle(featureSelected);
+      });
+    }
+    return overlay;
   };
 
   /**
@@ -215,8 +243,9 @@
    * @param {Object} queryInput 
    */
   let getMunInfo = (queryInput) => {
+    if (!queryInput.mun) return;
     let searchInfo, searchType;
-    let reqURL = `/api/bymun/${queryInput.mun}?v=${version}`;
+    let reqURL = `/api/bymun/${queryInput.mun}?`;
     let param = '';
     if (queryInput.type && queryInput.county) {
       param += '?munType=' + queryInput.type + '&county=' + queryInput.county;
@@ -239,13 +268,14 @@
    * @param {Object} queryInput 
    */
   let getAdvSearchInfo = (queryInput) => {
+    if (typeof queryInput !== 'object') return;
     let query = $.param(queryInput);
     let reqURL = '/api/search?' + query;
     let overlayURL = '';
     // Road Query
     if (queryInput.roadNo != '') {
       overlayURL = `/api/getRoad?roadNo=${queryInput.roadNo}&county=${queryInput.county}&\
-      signing=${queryInput.roadSigning}&gid=${queryInput.roadGid}`;
+signing=${queryInput.roadSigning}&gid=${queryInput.roadGid}`;
     } else {
       if (queryInput.mun != '') {
         overlayURL = '/api/getmun/' + queryInput.mun;
@@ -361,11 +391,13 @@
         searchType = 'Circle Query';
         let radius = layer.getRadius() * 0.00062137;
         searchValue = radius.toFixed(4) + 'mi';
+        overlayURL = 'circle';
         break;
       case 'rectangle':
         reqURL = rectangleQuery(layer);
         searchType = 'Rectangle Query';
         searchValue = '';
+        overlayURL = 'rectangle';
         break;
       case 'polygon':
         break;
@@ -390,11 +422,9 @@
     if (!searchValue) searchValue = '';
     if (Array.isArray(searchValue)) {
       // Different description loading for advances search as it sends an array
-      $('.search-description').html(
-        '<h4>' + searchType + ' ' + searchValue[0] + '</h4> <h6>' + searchValue[1] + '</h6>'
-      );
+      $('.search-description').html(`<h4>${searchType} ${searchValue[0] || ''}</h4> <h6>${searchValue[1] || ''}</h6>`);
     } else {
-      $('.search-description').html('<h4>' + searchType + ' ' + searchValue + '</h4><h6></h6>');
+      $('.search-description').html(`<h4>${searchType} ${searchValue[0] || ''}</h4> <h6></h6>`);
     }
   };
 

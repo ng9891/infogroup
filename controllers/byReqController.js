@@ -1,5 +1,6 @@
 // const byQuery = require('../services/2014/byQuery');
 const byQuery = require('../services/byQuery');
+const geocode = require('../utils/geocode');
 function successHandler(data, response) {
   return response.status(200).json({
     data: data,
@@ -12,6 +13,52 @@ function errorHandler(err, response) {
     responseText: 'Error in query ' + err,
   });
 }
+/**
+ * Endpoint will geocode with parameter 'q'.
+ * Geocode API will be specified with query 'geocode'.
+ * Default Geocode API is Nominatim.
+ * After receiving geoJSON from API, Service geoByGeoJson() will be called
+ * to query data with the geoJSON.
+ */
+exports.reqGeoByGeocode = async (request, response) => {
+  if (!request.params.q) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No address specified',
+    });
+  }
+  let query = decodeURIComponent(request.params.q.trim());
+  let geoJson;
+  try {
+    switch (request.query.geocoder) {
+      default:
+        geoJson = await geocode.nomGeocode(query);
+    }
+  } catch (err) {
+    console.log(err);
+    return response.status(500).json({
+      status: 'Error',
+      responseText: 'Geocoding service not responding',
+    });
+  }
+  if (!geoJson || typeof geoJson !== 'object')
+    return response.status(500).json({
+      status: 'Error',
+      responseText: 'Geocoding service not responding',
+    });
+    
+  byQuery
+    .geoByGeoJson(geoJson)
+    .then((data) => {
+      return response.status(200).json({
+        data: data,
+        overlayJson: JSON.stringify(geoJson),
+      });
+    })
+    .catch((err) => {
+      return errorHandler(err, response);
+    });
+};
 
 exports.reqGeoBySearch = (request, response) => {
   if (!request.query) {
@@ -25,8 +72,9 @@ exports.reqGeoBySearch = (request, response) => {
   // Sanitize input
   Object.keys(query).forEach((k) => {
     if (!query[k]) return delete query[k];
+    // Checking if valid number.
     if (k === 'naicscd' || k === 'minEmp' || k === 'maxEmp' || k === 'roadNo' || k === 'roadGid' || k === 'roadDist') {
-      if (isNaN(+query[k])) return delete query[k];
+      if (isNaN(parseFloat(query[k]))) return delete query[k];
     }
   });
   // Empty query or only version property included. Return empty array.
@@ -91,7 +139,7 @@ exports.reqGeoByDistance = (request, response) => {
 
 exports.reqGeoById = (request, response) => {
   if (!request.params.id) {
-    response.status(400).json({
+    return response.status(400).json({
       status: 'Error',
       responseText: 'No id',
     });
@@ -180,9 +228,14 @@ exports.reqGeoByRectangle = (request, response) => {
 
 exports.reqGeoByZip = (request, response) => {
   if (!request.params.zipcode) {
-    response.status(400).json({
+    return response.status(400).json({
       status: 'Error',
       responseText: 'No zipcode specified',
+    });
+  } else if (isNaN(parseInt(request.params.zipcode, 10))) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'Invalid Zipcode',
     });
   }
   byQuery

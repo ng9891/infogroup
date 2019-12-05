@@ -9,7 +9,7 @@ const markers = L.markerClusterGroup({
 var markerList = []; //contains all the points from query
 var queryLayer = []; //contains the query layer or bounding box of query
 var usrMarkers = []; //contains all the marker drawn by user
-var roadSelected;
+var featureSelected;
 
 // var redoBuffer = [];
 
@@ -47,14 +47,14 @@ const Esri_WorldStreetMap = L.tileLayer(
   }
 );
 
-const googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
-    maxZoom: 20,
-    subdomains:['mt0','mt1','mt2','mt3']
+const googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+  maxZoom: 20,
+  subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
 });
 
-const googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
-    maxZoom: 20,
-    subdomains:['mt0','mt1','mt2','mt3']
+const googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+  maxZoom: 20,
+  subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
 });
 
 const mymap = L.map('mapid', {
@@ -67,7 +67,7 @@ const mymap = L.map('mapid', {
 
 var baseMaps = {
   MapBox: mapBox,
-  GoogleStreets:googleStreets,
+  GoogleStreets: googleStreets,
   'OSM-Black & White': OpenStreetMap_BlackAndWhite,
   'Stamen-Toner': Stamen_Toner,
   'Esri-WorldStreetMap': Esri_WorldStreetMap,
@@ -194,7 +194,7 @@ let tooltip = L.DomUtil.get('map-draw-tooltip'); // Tooltip providing info of ra
 function queryDrawing() {
   // loadDrawingEstablishments();
   let query_version = d3.select('#version-dropdown').property('value');
-  loadEstablishments('draw',null,query_version);
+  loadEstablishments('draw', null, query_version);
   // Clear tooltip but we don't want to get rid of the listeners for drawing edits.
   tooltip.style.display = 'none';
 }
@@ -250,7 +250,7 @@ mymap.on('editable:drawing:start', clearUsrMarker);
 mymap.on('editable:drawing:commit', addUsrMarker);
 
 //Event listeners key down during drawing
-var onKeyDown = function(e) {
+let onKeyDown = function(e) {
   //ESC button to stop drawing.
   if (e.keyCode == 27) {
     if (!this.editTools._drawingEditor) return;
@@ -282,3 +282,10 @@ L.DomEvent.addListener(document, 'keydown', onKeyDown, mymap);
 //---
 // END MAP EVENT LISTENER
 //---
+
+function addOverlayToMap(layerObject) {
+  // TODO: Check if valid
+  queryLayer.push(layerObject);
+  mymap.addLayer(layerObject);
+  layerControl.addOverlay(layerObject, 'Overlay Layer');
+}
