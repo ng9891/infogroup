@@ -16,11 +16,14 @@
     if (!queryType) return;
 
     let reqURL, overlayURL, searchInfo, searchValue;
-    if (queryType === 'zip' || queryType === 'county' || queryType === 'mpo') {
+    if (queryType === 'zip' || queryType === 'mpo') {
       reqURL = `/api/by${queryType}/${queryInput}?`;
       overlayURL = `/api/get${queryType}/${queryInput}`;
       searchInfo = queryType.toUpperCase();
       searchValue = queryInput;
+    }else if(queryType === 'county'){
+      searchInfo = queryType.toUpperCase();
+      [reqURL, overlayURL, searchValue] = getCountyInfo(queryInput);
     } else if (queryType === 'mun') {
       [reqURL, overlayURL, searchInfo, searchType, searchValue] = getMunInfo(queryInput);
     } else if (queryType === 'adv') {
@@ -207,7 +210,7 @@
     let layerStyle = {
       color: '#4169e1',
       weight: 4,
-      opacity: 0.7,
+      opacity: 0.5,
     };
 
     let overlay = L.geoJSON(l, {
@@ -237,7 +240,17 @@
     }
     return overlay;
   };
+  let getCountyInfo = (queryInput) => {
+    if(!queryInput && !queryInput.county) return;
+    reqURL = `/api/bycounty/${queryInput.county}?stateCode=${queryInput.stateCode}`;
+    overlayURL = `/api/getcounty/${queryInput.county}?stateCode=${queryInput.stateCode}`;
+    // Search criteria for display
+    let searchValue = [];
+    searchValue.push(queryInput.county);
+    searchValue.push('State: ' + queryInput.stateCode);
 
+    return [reqURL, overlayURL, searchValue];
+  };
   /**
    * Gets the information from input to create an URL for the mun API request to the server.
    * @param {Object} queryInput 
@@ -280,7 +293,7 @@ signing=${queryInput.roadSigning}&gid=${queryInput.roadGid}`;
       if (queryInput.mun != '') {
         overlayURL = '/api/getmun/' + queryInput.mun;
       } else if (queryInput.county != '') {
-        overlayURL = '/api/getcounty/' + queryInput.county;
+        overlayURL = `/api/getcounty/${queryInput.county}?statecode=${queryInput.statecode || ''}`;
       } else if (queryInput.mpo != '') {
         overlayURL = '/api/getmpo/' + queryInput.mpo;
       }
@@ -424,7 +437,7 @@ signing=${queryInput.roadSigning}&gid=${queryInput.roadGid}`;
       // Different description loading for advances search as it sends an array
       $('.search-description').html(`<h4>${searchType} ${searchValue[0] || ''}</h4> <h6>${searchValue[1] || ''}</h6>`);
     } else {
-      $('.search-description').html(`<h4>${searchType} ${searchValue[0] || ''}</h4> <h6></h6>`);
+      $('.search-description').html(`<h4>${searchType} ${searchValue || ''}</h4> <h6></h6>`);
     }
   };
 

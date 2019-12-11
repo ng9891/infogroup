@@ -116,7 +116,11 @@ function autoComplete_url(inputId, column, minlen = 2) {
             let arr_data = [];
             data.data.map((d) => {
               if (d.muni_type) {
+                // Municipal query formatting
                 d.name += ' - ' + capitalizeFirstLetter(d.muni_type) + '/' + capitalizeFirstLetter(d.county);
+              }else if(d.state){
+                // County formatting
+                d.name += ' - ' + capitalizeFirstLetter(d.state_code);
               }
               arr_data.push(`${d.name}`);
               if (d.abbrv) arr_data.push(d.abbrv); // Abbreviation and name query AC for MPO

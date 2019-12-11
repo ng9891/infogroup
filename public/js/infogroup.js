@@ -41,6 +41,16 @@ $(document).ready(function() {
       case 'zip':
         if (query_input.length < 2 || isNaN(+query_input)) return alert('Invalid Input');
         break;
+      case 'county':
+        if (query_input.length < 4) return alert('Invalid Input');
+        let indexOfDash = query_input.lastIndexOf('-');
+        let inputObj = {};
+        if (indexOfDash !== -1) {
+          inputObj['county'] = query_input.slice(0, indexOfDash - 1);
+          inputObj['stateCode'] = query_input.slice(indexOfDash + 2);
+        }
+        query_input = inputObj;
+        break;
       case 'mun':
         if (query_input.length >= 4 && isNaN(+query_input)) {
           let indexOfDash = query_input.indexOf('-');
@@ -56,7 +66,6 @@ $(document).ready(function() {
           query_input = inputObj;
           break;
         }
-      case 'county':
       case 'mpo':
       case 'geocoding':
         if (query_input.length < 4 || !isNaN(+query_input)) return alert('Invalid Input');
@@ -108,12 +117,19 @@ function loadAdvancedSearchListener() {
     let roadDist = $('#adv_roadDist').val().trim();
     let minempl = $('#min-emplsize').val().trim();
     let maxempl = $('#max-emplsize').val().trim();
-    let county_name = $('#countyName').val().trim();
+    let county = $('#countyName').val().trim();
+    let indexOfDash = county.lastIndexOf('-');
+    let state, stateCode;
+    if (indexOfDash !== -1) {
+      stateCode = county.slice(indexOfDash + 2);
+      county = county.slice(0, indexOfDash - 1);
+    }
+
     let mpo_name = $('#mpoId').val().trim();
     let mun_name = $('#munId').val().trim();
 
     let mun_type, mun_county;
-    let indexOfDash = mun_name.indexOf('-');
+    indexOfDash = mun_name.indexOf('-');
     if (indexOfDash !== -1) {
       let type = mun_name.slice(indexOfDash + 2);
       mun_type = type.slice(0, type.indexOf('/'));
@@ -137,7 +153,9 @@ function loadAdvancedSearchListener() {
       minEmp: minempl,
       maxEmp: maxempl,
       lsalvol: lsalvol,
-      county: county_name,
+      county: county,
+      state: state,
+      stateCode: stateCode,
       mpo: mpo_name,
       mun: mun_name,
       mun_type: mun_type,

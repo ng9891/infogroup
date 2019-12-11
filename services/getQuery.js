@@ -11,11 +11,13 @@ function queryDB(query, params) {
   });
 }
 
-const bussinessVersion = 'businesses';
 const column = utils.columnNames;
+const table = utils.tableNames;
+const bussinessVersion = table.business;
+
 
 module.exports = {
-  geoGetConameList: (coname) =>{
+  geoGetConameList: (coname) => {
     let sql = `
       SELECT DISTINCT "${column.CONAME}" as name
       FROM businesses as b
@@ -24,15 +26,25 @@ module.exports = {
     `;
     return queryDB(sql, [`${coname}%`]);
   },
-  geoGetCounty: (county) => {
+  geoGetCounty: (county, {state = null, stateCode = null} = {}) => {
     let sql = `
       SELECT 
-      county.name AS name,
+      INITCAP(county.name) AS name,
+      state,
+      state_code,
       ST_ASGeoJSON(ST_Transform(geom, 4326)) AS geom
-      FROM counties_shoreline AS county
-      WHERE UPPER(county.name) LIKE UPPER($1);
+      FROM (SELECT name, 'NEW YORK' as state, 'NY' as state_code, geom
+          FROM "counties_shoreline" 
+          UNION ALL
+          SELECT DISTINCT name, state, state_code, geom
+          FROM "counties_neighbor"
+        )AS county
+      WHERE UPPER(county.name) LIKE UPPER($1)
+      AND ($2::char IS NULL OR UPPER(state) = UPPER($2))
+      AND ($3::char IS NULL OR UPPER(state_code) = UPPER($3))
+      ORDER BY name;
     `;
-    return queryDB(sql, [`${county}%`]);
+    return queryDB(sql, [`${county}%`, state, stateCode]);
   },
   getEmpSizeList: () => {
     let sql = `
@@ -146,7 +158,7 @@ module.exports = {
   getSic: (sic, type = 'BOTH') => {
     let columnToQuery = '';
     let whereStatement = '';
-    let orderBy = ''
+    let orderBy = '';
     let param = [];
     if (!sic) {
       columnToQuery = `"${column.PRMSICCD}" as "PRMSICCD", "${column.PRMSICDS}" as "PRMSICDS"`;

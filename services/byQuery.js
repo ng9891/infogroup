@@ -3,6 +3,7 @@ let dbService = require('../utils/db_service');
 let utils = require('../utils/utils');
 
 const column = utils.columnNames;
+const table = utils.tableNames;
 
 const selectStatement = `
   "${column.id}" as id,
@@ -11,6 +12,7 @@ const selectStatement = `
   "${column.PRMCITY}" as "PRMCITY",
   "${column.PRMSTATE}" as "PRMSTATE",
   "${column.PRMZIP}" as "PRMZIP",
+  "${column.COUNTY}" as "COUNTY",
   "${column.CONAME}" as alias,
   "${column.CONAME}" as "CONAME",
   "${column.NAICSCD}" as "NAICSCD",
@@ -49,8 +51,8 @@ function queryDB(query, params) {
 }
 
 function getBusinessVersion(version) {
-  if (version === 'original') return 'businesses_o';
-  return 'businesses';
+  if (version === 'original') return `${table.business}_o`;
+  return `${table.business}`;
 }
 
 module.exports = {
@@ -83,14 +85,22 @@ module.exports = {
     `;
     return queryDB(sql, [json, utils.convertMilesToMeters(dist)]);
   },
-  geoByCounty: (county_name, v = 'current', offset = 0, limit = null) => {
+  geoByCounty: (county_name, {state = null, stateCode = null, v = 'current', offset = 0, limit = null} = {}) => {
     let bussinessVersion = getBusinessVersion(v);
     let withStatement = `
       WITH county AS (
         SELECT 
         geom
-        FROM counties_shoreline as county
+        FROM (
+          SELECT name,'NEW YORK' as state,'NY' as state_code, ST_Transform(geom,26918) as geom
+          FROM "counties_shoreline" 
+          UNION ALL
+          SELECT DISTINCT name, state, state_code, geom
+          FROM "counties_neighbor"
+        ) as county
         WHERE UPPER(county.name) = UPPER($1)
+        AND ($2::char IS NULL OR UPPER(state) = UPPER($2))
+        AND ($3::char IS NULL OR UPPER(state_code) = UPPER($3))
         LIMIT 1
       )
     `;
@@ -100,10 +110,10 @@ module.exports = {
       FROM ${bussinessVersion} as b, county
       WHERE ST_Contains(county.geom, b.geom)
       ORDER BY COALESCE("${column.ALEMPSZ}", 0) DESC
-      OFFSET $2
-      LIMIT $3
+      OFFSET $4
+      LIMIT $5
     `;
-    return queryDB(sql, [county_name, offset, limit]);
+    return queryDB(sql, [county_name, state, stateCode, offset, limit]);
   },
   geoByDistance: ({lon, lat, dist = 1609, v = 'current'} = {}) => {
     let bussinessVersion = getBusinessVersion(v);
@@ -218,13 +228,19 @@ module.exports = {
       mun_type = '',
       mun_county = '',
       county = '',
+      state = null,
+      stateCode = null,
       mpo = '',
     } = {}
   ) => {
     coname = decodeURIComponent(coname);
     naicsds = decodeURIComponent(naicsds);
     lsalvol = decodeURIComponent(lsalvol);
-    mpo = decodeURIComponent(mpo);
+    county = (county) ? decodeURIComponent(county) : '';
+    state = (state) ? decodeURIComponent(state) : null;
+    stateCode = (stateCode) ? decodeURIComponent(stateCode) : null;
+    mpo = (mpo) ? decodeURIComponent(mpo) : '';
+
     let bussinessVersion = getBusinessVersion(v);
     let from = `FROM ${bussinessVersion} as b\n`;
     let where = `WHERE `;
@@ -303,13 +319,21 @@ module.exports = {
         params.push(mun_county);
         where += addANDStatement(`ST_Contains(mun.geom, b.geom)`);
       } else if (county !== '') {
-        from += `,( 
-              SELECT county.geom
-              FROM counties_shoreline as county
-              WHERE UPPER(county.name) = UPPER($${params.length + 1})
+        from += `,(
+              SELECT counties.geom
+              FROM (
+                SELECT name,'NEW YORK' as state,'NY' as state_code, ST_Transform(geom,26918) as geom
+                FROM "counties_shoreline"
+                UNION ALL
+                SELECT DISTINCT name, state, state_code, geom
+                FROM "counties_neighbor"
+              ) as counties
+              WHERE UPPER(counties.name) = UPPER($${params.length + 1})
+              AND ($${params.length + 2}::char IS NULL OR UPPER(state) = UPPER($${params.length + 2}))
+              AND ($${params.length + 3}::char IS NULL OR UPPER(state_code) = UPPER($${params.length + 3}))
               LIMIT 1) as county\n`;
         where += addANDStatement(`ST_Contains(county.geom, b.geom)`);
-        params.push(county);
+        params.push(county, state, stateCode);
       } else if (mpo !== '') {
         from += `,(
               SELECT mpo.geom

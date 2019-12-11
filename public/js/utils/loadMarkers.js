@@ -87,7 +87,9 @@ function loadMarkers(establishments) {
         marker
           .bindPopup(
             `
+              <b>ID: ${est.id} </b></br>
               <b>Company : ${est.CONAME}</b><br>
+              County : ${est.COUNTY}, ${est.PRMSTATE}<br>
               Actual_Emp_Size : ${est.ALEMPSZ ? est.ALEMPSZ.toLocaleString() : ''}<br>
               NAICS_Code :  ${est.NAICSCD}<br>
               NAICS_Desc : ${est.NAICSDS}<br>

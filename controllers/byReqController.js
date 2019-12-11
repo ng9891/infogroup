@@ -46,7 +46,7 @@ exports.reqGeoByGeocode = async (request, response) => {
       status: 'Error',
       responseText: 'Geocoding service not responding',
     });
-    
+
   byQuery
     .geoByGeoJson(geoJson)
     .then((data) => {
@@ -101,7 +101,7 @@ exports.reqGeoByCounty = (request, response) => {
   }
 
   byQuery
-    .geoByCounty(request.params.county, request.query.v, request.query.offset, request.query.limit)
+    .geoByCounty(request.params.county, request.query)
     .then((data) => {
       return successHandler(data, response);
     })

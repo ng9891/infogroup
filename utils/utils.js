@@ -10,6 +10,7 @@ module.exports = {
     PRMCITY: 'PRIMARY_CITY',
     PRMSTATE: 'PRIMARY_STATE',
     PRMZIP: 'PRIMARY_ZIP_CODE',
+    COUNTY: 'COUNTY_NAME',
     LEMPSZDS: 'LOCATION_EMPLOYMENT_SIZE_DESC',
     LEMPSZCD: 'LOCATION_EMPLOYMENT_SIZE_CODE',
     ALEMPSZ: 'ACTUAL_LOCATION_EMPLOYMENT_SIZE',
@@ -35,4 +36,7 @@ module.exports = {
     LATITUDEO: 'LATITUDE_1',
     LONGITUDEO: 'LONGITUDE_1',
   },
+  tableNames:{
+    business: 'businesses',
+  }
 };

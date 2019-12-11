@@ -40,7 +40,7 @@ exports.reqGetCounty = (request, response) => {
   }
 
   getQuery
-    .geoGetCounty(request.params.county)
+    .geoGetCounty(request.params.county, request.query)
     .then((data) => {
       return successHandler(data, response);
     })
