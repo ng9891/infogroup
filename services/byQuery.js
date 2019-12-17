@@ -78,7 +78,7 @@ module.exports = {
       ${withStatement}
       SELECT ${selectStatement}
       FROM (
-        SELECT ST_Transform(ST_Collect(geojson.geom),26918) AS geom
+        SELECT ST_Transform(ST_Collect(ST_SetSRID(geojson.geom,4326)),26918) AS geom
         FROM geojson
       ) as geoCollection, ${bussinessVersion} as b
       WHERE ST_DWithin(geoCollection.geom, b.geom, $2);
