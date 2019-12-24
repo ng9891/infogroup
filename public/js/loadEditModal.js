@@ -24,9 +24,10 @@
  *                   - version {string} as 'current' or 'original'
  * Output: A fully functional Modal Form with input validation and automatic selection.
  */
+
 function loadEditModal(business_id, version = 'current') {
   if (!business_id || business_id === '') return;
-  
+
   let reqURL = '/api/byid/' + business_id + '?v=' + version;
   d3.json(reqURL).then((data) => {
     if (data.data.length === 0) {
@@ -70,15 +71,18 @@ function loadEditModal(business_id, version = 'current') {
     // Sets the location container text to the address
     const isAdmin = d3.select('.role').node().value;
     let address = `${est.PRMADDR}, ${est.PRMCITY}, ${est.PRMSTATE} ${est.PRMZIP} `;
-    if (isAdmin === 'false') {
-      $('.modal_location_edit_container .header').html(
-        `${address} - <span class='expand_header'><a href='#'>View</a></span>`
-      );
-    } else {
-      $('.modal_location_edit_container .header').html(
-        `${address} - <span class='expand_header'><a href='#'>Edit</a></span>`
-      );
-    }
+    $('.modal_location_edit_container .header').html(
+      `${address} - <span class='expand_header'><a href='#'>View</a></span>`
+    );
+    // if (isAdmin === 'false') {
+    //   $('.modal_location_edit_container .header').html(
+    //     `${address} - <span class='expand_header'><a href='#'>View</a></span>`
+    //   );
+    // } else {
+    //   $('.modal_location_edit_container .header').html(
+    //     `${address} - <span class='expand_header'><a href='#'>Edit</a></span>`
+    //   );
+    // }
 
     loadEditModal_eventListeners();
   }, function(err) {
@@ -95,19 +99,14 @@ function loadEditModal(business_id, version = 'current') {
 // Load the event listeners for the editmodal.
 // Calls various helper function for range checking and automatic selection.
 function loadEditModal_eventListeners() {
-  // Listener to expand the content inside location edit container
-  $('.modal_location_edit_container .header .expand_header').unbind('click').click(() => {
-    $content = $('.modal_location_edit_container .content');
-    $content.slideToggle(500);
-  });
-
-  var form = $('#modal-form');
+  let editMarker; // Used as a local marker variable for editing a business location.
+  let form = $('#modal-form');
   form.unbind('submit').on('submit', (e) => {
     e.preventDefault();
     e.stopPropagation();
     form[0].classList.add('was-validated');
     if (form[0].checkValidity() === true) {
-      alert('Sorry. Feature still in development.')
+      alert('Sorry. Feature still in development.');
       // sendBusinessEdit(); // Submit
     }
   });
@@ -120,9 +119,10 @@ function loadEditModal_eventListeners() {
 
   // Closes the modal and resets the form
   $('#editModal').unbind('hidden.bs.modal').on('hidden.bs.modal', function() {
-    var form = $('#modal-form');
-    // Reset Custom validity on close
-    modalExpand();
+    let form = $('#modal-form');
+    // Revert changes done by modalShrink();
+    $('#editModal .modal_expand').click();
+    removeMarker(editMarker);
     $('.modal_location_edit_container .content').hide();
     $('#modal_newaddress').html('');
     $('#modal_newaddress_container').hide();
@@ -201,6 +201,66 @@ function loadEditModal_eventListeners() {
 
   $('#modal_PRMSICCD').unbind('change').change(autoFillText_modal);
   $('#modal_PRMSICDS').unbind('change').change(autoFillText_modal);
+
+  // Location Container Event Listener
+  // Listener to expand the content inside location edit container
+  $('.modal_location_edit_container .header .expand_header').unbind('click').click(() => {
+    $content = $('.modal_location_edit_container .content');
+    $content.slideToggle(500);
+  });
+
+  $('#editModal .modal_location_edit_container .locate_addr').unbind('click').click(() => {
+    // Create marker
+    let lat = $('#modal_LATITUDE').val();
+    let lon = $('#modal_LONGITUDE').val();
+    locatePointByCoordinate(lat, lon);
+    modalShrink();
+  });
+
+  $('#editModal .modal_location_edit_container .geocode_addr').unbind('click').click(() => {
+    console.log('clicked geocode_addr');
+  });
+
+  $('#editModal .modal_expand').unbind('click').click(() => {
+    // Remove the marker if it was set.
+    removeSelectedBusinessMkr();
+    modalExpand();
+  });
+
+  $('#editModal .modal_editLocation').unbind('click').click(() => {
+    showLocationEditCtrl();
+    // Editing mode
+    let lat = $('#modal_LATITUDE').val();
+    let lon = $('#modal_LONGITUDE').val();
+    // editMarker is a local variable to hold editing data.
+    editMarker = newDraggableMarkerByLatLon(lat, lon); // Map.js function
+    let redIcon = new L.Icon({
+      iconUrl: '/stylesheet/images/leaflet-color-markers/marker-icon-red.png',
+      shadowUrl: '/stylesheet/images/leaflet-color-markers/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41],
+    });
+    editMarker.setIcon(redIcon);
+    editMarker.addTo(mymap);
+  });
+
+  $('#editModal .modal_editLocation_cancel').unbind('click').click(() => {
+    hideLocationEditCtrl();
+    removeMarker(editMarker);
+  });
+
+  $('#editModal .modal_editLocation_accept').unbind('click').click(() => {
+    hideLocationEditCtrl();
+    // editMarker is a local variable to hold editing data.
+    let coord = editMarker.getLatLng();
+    removeMarker(editMarker);
+    locatePointByCoordinate(coord.lat, coord.lng);
+    // Set lon and lat
+    $('#modal_LATITUDE').val(coord.lat);
+    $('#modal_LONGITUDE').val(coord.lng);
+  });
 }
 
 /*
@@ -466,38 +526,13 @@ function convertToThousandFromMillion(input) {
   return parseFloat(input) * 1000;
 }
 
-function locateAddress() {
+function locateAddressWithGeocode() {
   var street_addr = $('#modal_PRMADDR').val();
   var city_addr = $('#modal_PRMCITY').val();
   var state_addr = $('#modal_PRMSTATE').val();
   var zip_addr = $('#modal_PRMZIP').val();
 
   // console.log(latitude + ' ' + longitude);
-  // CSS changes below makes map active under the edit modal window
-  $('#editModal').css({
-    position: 'relative',
-  });
-  $('.modal-body').slideUp();
-  $('.modal-footer').slideUp();
-
-  if (!$('.modal.in').length) {
-    $('.modal-dialog').css({
-      top: 0,
-      left: 0,
-    });
-  }
-
-  $('#editModal').modal({
-    backdrop: 'static',
-    keyboard: false,
-    show: true,
-  });
-
-  $('.modal-dialog').draggable({
-    handle: '.modal-header',
-  });
-
-  $('#modal_expand').show();
 
   // Parsing Street Address that comes from our DB for GeoSearch
   if (street_addr.trim() && city_addr.trim() && state_addr.trim() && zip_addr.trim()) {
@@ -606,11 +641,71 @@ function checkAddress() {
   $('#modal_newaddress_container').show();
 }
 
+function showLocationEditCtrl() {
+  // Hide previous buttons
+  $('#editModal .modal_expand_container').hide();
+  // Show new buttons
+  $('#editModal .modal_expand_container_editing').show();
+}
+
+function hideLocationEditCtrl() {
+  // Hide edit buttons
+  $('#editModal .modal_expand_container_editing').hide();
+  // Show expand buttons
+  $('#editModal .modal_expand_container').show();
+}
+function modalShrink() {
+  // Hide everytab in main window
+  $('.infoContainer, .advancedSearchContainer, .statisticsContainer, .legendContainer ').hide();
+  // CSS changes below makes map active under the edit modal window
+  $('#editModal').css({
+    position: 'relative',
+  });
+  $('#editModal .modal-body').slideUp();
+  $('#editModal .modal-footer').slideUp();
+
+  if (!$('#editModal .modal.in').length) {
+    $('.modal-dialog').css({
+      top: 0,
+      left: 0,
+    });
+  }
+
+  $('#editModal').modal({
+    backdrop: 'static',
+    keyboard: false,
+    show: true,
+  });
+
+  $('#editModal .modal-dialog').draggable({
+    disabled: false,
+    handle: '.modal-header',
+  });
+  $('#editModal .modal_expand_container').show();
+}
+
 function modalExpand() {
+  // Show main windows
+  $('.infoContainer, .advancedSearchContainer, .statisticsContainer, .legendContainer ').show();
+  hideLocationEditCtrl(); // Just in case when modal is closed while editing.
+  // Expand editModal and disable dragging
   $('#editModal').css({
     position: '',
   });
-  $('.modal-body').slideDown();
-  $('.modal-footer').slideDown();
-  $('#modal_expand').hide();
+  $('#editModal .modal-body').slideDown();
+  $('#editModal .modal-footer').slideDown();
+
+  $('.modal-dialog').css({
+    top: 0,
+    left: 0,
+  });
+
+  // Check if there's a draggable instance
+  if ($('#editModal .modal-dialog').draggable('instance')) {
+    // If there is, destroy it
+    $('#editModal .modal-dialog').draggable('destroy');
+    // $('#editModal .modal-dialog').draggable('disable');
+  }
+
+  $('#editModal .modal_expand_container').hide();
 }

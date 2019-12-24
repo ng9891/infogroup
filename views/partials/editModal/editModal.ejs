@@ -3,7 +3,14 @@
       <div class="modal-content">
         <div class="modal-header pt-reduced pb-reduced">
           <div class="modal-title pt-reduced pb-reduced" id="modal_title">MODAL TITLE PLACEHOLDER</div>
-          <a href="#" class="ml-3 mt-2" id="modal_expand" onclick="modalExpand()">Expand</a>
+          <span class="ml-auto modal_expand_container">
+              <a href="#" class="btn btn-warning modal_expand">Expand</a>
+              <a href="#" class="btn btn-secondary modal_editLocation">Edit Location</a>
+          </span>
+          <span class="ml-auto modal_expand_container_editing">
+              <a href="#" class="btn btn-danger modal_editLocation_cancel">Cancel</a>
+              <a href="#" class="btn btn-primary modal_editLocation_accept">Accept</a>
+          </span>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -14,55 +21,54 @@
               <div class="header">Address</div>
               <div class="content">
                 <div class="form-row">
-                  <div class="col-sm-3">
+                  <div class="form-group col-sm-6">
                     <label for="modal_PRMADDR">PRM ADDR</label>
                     <input type="text" class="form-control" id="modal_PRMADDR" required>
                     <div class="invalid-feedback">
                       Please provide a valid PRM ADDR.
                     </div>
                   </div>
-                  <div class="col-sm-2">
+                  <div class="form-group col-sm-6">
                     <label for="modal_PRMCITY">PRM CITY</label>
                     <input type="text" class="form-control" id="modal_PRMCITY" required>
                     <div class="invalid-feedback">
                       Please provide a valid PRM CITY.
                     </div>
                   </div>
-                  <div class="col-sm-1">
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-sm-3">
                     <label for="modal_PRMSTATE">STATE</label>
                     <input type="text" class="form-control" id="modal_PRMSTATE" required>
                     <div class="invalid-feedback">
                       Please provide a valid STATE.
                     </div>
                   </div>
-                  <div class="col-sm-2">
+                  <div class="form-group col-sm-3">
                     <label for="modal_PRMZIP">ZIP</label>
                     <input type="text" class="form-control" id="modal_PRMZIP" pattern="[0-9]*" required>
                     <div class="invalid-feedback">
                       Please provide a valid ZIP.
                     </div>
                   </div>
-                  <div class="col-sm-2">
+                  <div class="form-group col-sm-3">
                     <label for="modal_PRMZIP">LAT</label>
                     <input type="text" class="form-control" id="modal_LATITUDE" required>
                     <div class="invalid-feedback">
                       Please provide a valid latitude.
                     </div>
                   </div>
-                  <div class="col-sm-2">
+                  <div class="form-group col-sm-3">
                     <label for="modal_PRMZIP">LON</label>
                     <input type="text" class="form-control" id="modal_LONGITUDE" required>
                     <div class="invalid-feedback">
                       Please provide a valid latitude.
                     </div>
                   </div>
-                  <div class="col-sm-3">
-                    <!--hidden fields for latitude and longitude-->
-                    <!-- <input type="text" id="modal_LATITUDE"  required> -->
-                    <!-- <input type="text" id="modal_LONGITUDE" required> -->
-
-                    <a href="#" id="check_addr" onclick="checkAddress()">Check</a> |
-                    <a href="#" id="locate_addr" onclick="locateAddress()">Locate</a>
+                  <div class="form-group col-sm-5">
+                    <p><a href="#" class="locate_addr">Locate on Map</a> | 
+                      <a href="#" class="geocode_addr">Geocode Address</a>
+                    </p>
                   </div>
                 </div>
                 <div class="form-row" id="modal_newaddress_container">

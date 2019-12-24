@@ -194,7 +194,7 @@ let tooltip = L.DomUtil.get('map-draw-tooltip'); // Tooltip providing info of ra
 function queryDrawing() {
   // loadDrawingEstablishments();
   let query_version = d3.select('#version-dropdown').property('value');
-  loadEstablishments('draw', null, query_version);
+  loadEstablishments('draw', usrMarkers, query_version);
   // Clear tooltip but we don't want to get rid of the listeners for drawing edits.
   tooltip.style.display = 'none';
 }
@@ -288,4 +288,24 @@ function addOverlayToMap(layerObject) {
   queryLayer.push(layerObject);
   mymap.addLayer(layerObject);
   layerControl.addOverlay(layerObject, 'Overlay Layer');
+}
+
+function newDeletableMarkerByLatLon(lat, lon) {
+  let marker = new L.marker([lat, lon], {});
+  marker.on('click', (e) => {
+    removeMarker(e.target);
+  });
+  return marker;
+}
+
+function newDraggableMarkerByLatLon(lat, lon) {
+  let marker = new L.marker([lat, lon], {
+    draggable: true,
+    autoPan: true,
+  });
+  return marker;
+}
+
+function removeMarker(marker) {
+  if (marker) mymap.removeLayer(marker);
 }

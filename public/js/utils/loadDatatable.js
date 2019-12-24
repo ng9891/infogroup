@@ -23,7 +23,7 @@ function loadDatatable(est) {
             render: function(data, type, row, meta) {
               if (type === 'display') {
                 data =
-                  '<a href="#" onclick="locatePointByCoordinate(' +
+                  '<a href="#" onclick="locatePointByCoordinateDel(' +
                   row['geopoint'].coordinates[1] +
                   ', ' +
                   row['geopoint'].coordinates[0] +

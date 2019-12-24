@@ -30,7 +30,7 @@
       searchInfo = 'Search:';
       [reqURL, overlayURL, searchValue] = getAdvSearchInfo(queryInput);
     } else if (queryType === 'draw') {
-      [reqURL, overlayURL, searchInfo, searchValue] = getDrawInfo(usrMarkers); // userMarkers is a global var
+      [reqURL, overlayURL, searchInfo, searchValue] = getDrawInfo(queryInput); // userMarkers is a global var
     } else if (queryType === 'geocoding') {
       reqURL = `/api/bygeocode/${queryInput}?`;
       overlayURL = 'json';
