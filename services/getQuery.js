@@ -15,8 +15,23 @@ const column = utils.columnNames;
 const table = utils.tableNames;
 const bussinessVersion = table.business;
 
-
 module.exports = {
+  geoGetRoadListFromPoint: (lat = null, lon = null, dist=0.1) => {
+    let withStatement = `
+    WITH roadwaysFromP AS (
+      SELECT ST_Transform(geom,4326), *
+      FROM roadway
+      WHERE ST_DWithin(geography(ST_SetSRID(ST_MakePoint($1, $2),4326)), geography(ST_Transform(geom,4326)),$3)
+    )
+    `;
+    let sql = `
+    ${withStatement}
+    SELECT ST_ASGeoJSON(ST_transform(ST_Collect(rp.geom),4326)) as geopoint, dot_id as dot_id, signing, route_no, road_name, county_name
+    FROM roadwaysFromP as rp
+    GROUP BY rp.dot_id, 3,4,5,6
+    `;
+    return queryDB(sql, [lon,lat, utils.convertMilesToMeters(dist)]);
+  },
   geoGetConameList: (coname) => {
     let sql = `
       SELECT DISTINCT "${column.CONAME}" as name
@@ -125,13 +140,13 @@ module.exports = {
     sql += `\nORDER BY name;`;
     return queryDB(sql, params);
   },
-  geoGetRoad: ({roadNo = null, county = null, signing = 'I', gid = null, offset = 0, limit = null} = {}) => {
+  geoGetRoad: ({roadNo = null, county = null, signing = null, roadId = null, offset = 0, limit = null} = {}) => {
     let params = [];
     let sql = `
       SELECT ST_ASGeoJSON(ST_Transform(geom, 4326)) as geom, gid, gis_id, dot_id, road_name, route,\
        county_name, muni_name, mpo_desc,signing, fc
       FROM roadway\n`;
-    if (roadNo === null) sql += `WHERE route_no IS NULL`;
+    if (roadNo === null) sql += `WHERE (route_no IS NULL)`;
     else {
       sql += `WHERE route_no = $1::int`;
       params.push(roadNo);
@@ -139,11 +154,11 @@ module.exports = {
     sql += `  
       AND ($${params.length + 1}::varchar(40) IS NULL OR UPPER(county_name) = UPPER($${params.length + 1}))
       AND ($${params.length + 2}::varchar(10) IS NULL OR signing = UPPER($${params.length + 2}))
-      AND ($${params.length + 3}::int IS NULL OR gid = $${params.length + 3})
+      AND ($${params.length + 3}::int IS NULL OR dot_id = $${params.length + 3})
       OFFSET $${params.length + 4}
       LIMIT $${params.length + 5}
     ;`;
-    params.push(county, signing, gid, offset, limit);
+    params.push(county, signing, roadId, offset, limit);
     return queryDB(sql, params);
   },
   getSalesVolumeList: () => {

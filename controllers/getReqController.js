@@ -13,6 +13,44 @@ function errorHandler(err, response) {
   });
 }
 
+exports.reqGetNearbyRoad = (request, response) => {
+  if (!request.query.lat || !request.query.lon) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No latitude or longitude provided',
+    });
+  }
+
+  let lat = parseFloat(request.query.lat.trim());
+  let lon = parseFloat(request.query.lon.trim());
+  let dist = request.query.dist;
+  if (dist) dist = parseFloat(request.query.dist.trim());
+  if (isNaN(lat) || isNaN(lon) || (dist && isNaN(dist))) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'Invalid latitude, longitude or distance.',
+    });
+  } else if (dist > 10) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'Due to memory limit, distance cannot be larger than 10 miles.',
+    });
+  } else if (dist <= 0) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'Distance cannot be less than 0.',
+    });
+  }
+  getQuery
+    .geoGetRoadListFromPoint(lat, lon, dist)
+    .then((data) => {
+      return successHandler(data, response);
+    })
+    .catch((err) => {
+      return errorHandler(err, response);
+    });
+};
+
 exports.reqGetConame = (request, response) => {
   if (!request.params.coname) {
     return response.status(400).json({

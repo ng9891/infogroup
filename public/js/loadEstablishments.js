@@ -21,19 +21,19 @@
       overlayURL = `/api/get${queryType}/${queryInput}`;
       searchInfo = queryType.toUpperCase();
       searchValue = queryInput;
-    }else if(queryType === 'county'){
+    } else if (queryType === 'county') {
       searchInfo = queryType.toUpperCase();
       [reqURL, overlayURL, searchValue] = getCountyInfo(queryInput);
     } else if (queryType === 'mun') {
       [reqURL, overlayURL, searchInfo, searchType, searchValue] = getMunInfo(queryInput);
-    } else if (queryType === 'adv') {
+    } else if (queryType === 'adv' || queryType === 'road') {
       searchInfo = 'Search:';
       [reqURL, overlayURL, searchValue] = getAdvSearchInfo(queryInput);
     } else if (queryType === 'draw') {
       [reqURL, overlayURL, searchInfo, searchValue] = getDrawInfo(queryInput); // userMarkers is a global var
     } else if (queryType === 'geocoding') {
       reqURL = `/api/bygeocode/${queryInput}?`;
-      overlayURL = 'json';
+      overlayURL = 'geocode';
       searchInfo = 'Geocode';
       searchValue = [null, queryInput];
     } else {
@@ -45,8 +45,9 @@
     // Add versioning.
     reqURL += `&v=${version}`;
     reqURL = encodeURI(reqURL);
-    d3.select('.loader').classed('hidden', false);
+    // console.log(reqURL,overlayURL);
     clearUiComponents(queryType);
+    d3.select('.loader').classed('hidden', false);
     d3
       .json(reqURL)
       .then(async (data) => {
@@ -54,7 +55,8 @@
           d3.select('.loader').classed('hidden', true);
           if (queryType === 'adv') {
             $('.advancedSearchContainer').toggleClass('open');
-            $('#search-message').show().delay(5000).fadeOut();
+            $('#search-message').text('*No match found');
+            $('#search-message').show();
           }
           searchInfo = `NOT FOUND ${searchInfo}`;
         } else {
@@ -90,10 +92,15 @@
    */
   let clearUiComponents = (queryType) => {
     $('#pieChart').empty(); // Piechart
-    clearDatatable(); // loadDatatable.js
+    window.clearDatatable(); // loadDatatable.js
     d3.select('.hist').select('.svg').remove(); // Histogram
-    // If its a drwaing query, do not clear the drawings
-    if (queryType !== 'draw') clearUsrMarker(); // function in map.js to clear user drawings
+
+    // If its a drawing query, do not clear the drawings. Needed to draw overlay.
+    if (queryType !== 'draw') {
+      window.clearUsrMarker(); // function in map.js to clear user drawings
+      // If its not a drawing query and its not a road query. Close the sidebar.
+      if (queryType !== 'road') window.closeSideBar(); // function in loadNearbyRoad.js
+    }
 
     // Clearing queryOverlay in case of drawing query
     if (queryLayer.length > 0) {
@@ -122,10 +129,17 @@
       if (overlayURL === 'marker') {
         // Draw marker default radius of 1 mile.
         let layer = usrMarkers[usrMarkers.length - 1];
-        overlay = L.circle([layer.getLatLng().lat, layer.getLatLng().lng], {radius: 1609}); // 1609.34m = 1 mile
-      } else if (overlayURL === 'circle' || overlayURL === 'rectangle') {
-        overlay = Object.assign(usrMarkers[usrMarkers.length - 1]); // Deep Copy
-      } else if (overlayURL === 'json') {
+        let circle = L.circle([layer.getLatLng().lat, layer.getLatLng().lng], {radius: 1609}); // 1609.34m = 1 mile
+        let circleCenter = L.marker([layer.getLatLng().lat, layer.getLatLng().lng]);
+        overlay = L.layerGroup([circle, circleCenter]);
+      } else if (overlayURL === 'circle') {
+        // Create new circle / rectangle with different leafletid.
+        let layer = usrMarkers[usrMarkers.length - 1];
+        overlay = L.circle([layer.getLatLng().lat, layer.getLatLng().lng], {radius: layer.getRadius()}); // 1609.34m = 1 mile
+      } else if (overlayURL === 'rectangle') {
+        let layer = usrMarkers[usrMarkers.length - 1];
+        overlay = L.rectangle(layer.getBounds());
+      } else if (overlayURL === 'geocode') {
         // Build JSON to match the app format.
         let builtGeoJsonToMatchFormat = {data: []};
         let overlayFeatures = JSON.parse(data.overlayJson).features;
@@ -137,14 +151,15 @@
         }
         overlay = createGeoJsonOverlay(builtGeoJsonToMatchFormat);
       } else {
-        //Get Query layer/ bounding box
+        // URL is provided to get overlay. Zip, County, Road.. etc.
+        // Get Query layer/ bounding box
         overlayURL = encodeURI(overlayURL);
         let jsonOverlay = await d3.json(overlayURL).catch((err) => {
           return reject(err);
         });
         overlay = createGeoJsonOverlay(jsonOverlay);
       }
-      addOverlayToMap(overlay); // Function in map.js
+      window.addOverlayToMap(overlay); // Function in map.js
       resolve('Overlay Loaded');
     });
   };
@@ -219,6 +234,7 @@
     });
 
     if (overlayType) {
+      // For now only roads feature displaying.
       overlay.on('click', (e) => {
         // Check for selected
         if (featureSelected) e.target.resetStyle(featureSelected); // Reset selected to default style
@@ -241,7 +257,7 @@
     return overlay;
   };
   let getCountyInfo = (queryInput) => {
-    if(!queryInput && !queryInput.county) return;
+    if (!queryInput && !queryInput.county) return;
     reqURL = `/api/bycounty/${queryInput.county}?stateCode=${queryInput.stateCode}`;
     overlayURL = `/api/getcounty/${queryInput.county}?stateCode=${queryInput.stateCode}`;
     // Search criteria for display
@@ -286,9 +302,9 @@
     let reqURL = '/api/search?' + query;
     let overlayURL = '';
     // Road Query
-    if (queryInput.roadNo != '') {
-      overlayURL = `/api/getRoad?roadNo=${queryInput.roadNo}&county=${queryInput.county}&\
-signing=${queryInput.roadSigning}&gid=${queryInput.roadGid}`;
+    if (queryInput.roadNo || queryInput.roadId) {
+      overlayURL = `/api/getRoad?roadNo=${queryInput.roadNo || ''}&county=${queryInput.county}&\
+signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
     } else {
       if (queryInput.mun != '') {
         overlayURL = '/api/getmun/' + queryInput.mun;
@@ -299,10 +315,17 @@ signing=${queryInput.roadSigning}&gid=${queryInput.roadGid}`;
       }
     }
     // Search criteria for display
+    let roadDesc = '';
     if (!queryInput.roadSigning) queryInput.roadSigning = '';
+    if (queryInput.roadSigning === 'NONE') {
+      roadDesc = queryInput.roadName;
+    } else {
+      roadDesc = queryInput.roadSigning + queryInput.roadNo || '';
+    }
+    // if(queryInput.roadSigning === 'NONE')
     let firstRow = {
       Name: queryInput.coname || '',
-      Road: queryInput.roadSigning + queryInput.roadNo || '',
+      Road: roadDesc,
       MPO: queryInput.mpo || '',
       County: queryInput.county || '',
       Mun: queryInput.mun || '',
@@ -310,7 +333,7 @@ signing=${queryInput.roadSigning}&gid=${queryInput.roadGid}`;
       MunCounty: queryInput.mun_county || '',
     };
     let secondRow = {
-      Dist: queryInput.roadDist || '',
+      Dist: (queryInput.roadDist) ? queryInput.roadDist+'mi' : '',
       NAICS: queryInput.naicsds || '',
       Code: queryInput.naicscd || '',
       EmpMin: queryInput.minEmp || '',

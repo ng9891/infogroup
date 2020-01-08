@@ -3,20 +3,21 @@
 
 //markers will contain the markers for the plugin markerClusterGroup
 const markers = L.markerClusterGroup({
-  spiderfyOnMaxZoom: false,
-  disableClusteringAtZoom: 19,
+  spiderfyOnMaxZoom: true,
+  disableClusteringAtZoom: 20,
+  chunkedLoading: true,
 });
-var markerList = []; //contains all the points from query
-var queryLayer = []; //contains the query layer or bounding box of query
-var usrMarkers = []; //contains all the marker drawn by user
-var featureSelected;
+let markerList = []; //contains all the points from query
+let queryLayer = []; //contains the query layer or bounding box of query
+let usrMarkers = []; //contains all the marker drawn by user
+let featureSelected;
 
 // var redoBuffer = [];
 
 const mapBox = L.tileLayer(
   'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw',
   {
-    maxZoom: 19,
+    maxZoom: 20,
     attribution:
       'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
       '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
@@ -57,11 +58,11 @@ const googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z
   subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
 });
 
-const mymap = L.map('mapid', {
+var mymap = L.map('mapid', {
   preferCanvas: true,
   keyboard: false,
   editable: true,
-  maxZoom: 19,
+  maxZoom: 20,
   layers: [mapBox],
 }).setView([40.755, -74.0], 13);
 
@@ -93,19 +94,34 @@ L.EditControl = L.Control.extend({
     html: '',
   },
   onAdd: function(map) {
-    var container = '';
+    let container = '';
+    let link;
     switch (this.options.type) {
       case 'draw':
         container = L.DomUtil.create('div', 'leaflet-control leaflet-bar');
-        var link = L.DomUtil.create('a', '', container);
+        link = L.DomUtil.create('a', '', container);
         link.href = '#';
-        link.title = 'Create a new ' + this.options.kind;
+        let drawingOptions = {kind: this.options.kind};
+        if (drawingOptions.kind === 'road') {
+          link.title = 'Find nearby road';
+          let redIcon = new L.Icon({
+            iconUrl: '/stylesheet/images/leaflet-color-markers/marker-icon-red.png',
+            shadowUrl: '/stylesheet/images/leaflet-color-markers/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41],
+          });
+          drawingOptions.icon = redIcon;
+        } else {
+          link.title = 'Create a new ' + this.options.kind;
+        }
         link.innerHTML = this.options.html;
         L.DomEvent.on(link, 'click', L.DomEvent.stop).on(
           link,
           'click',
           function() {
-            window.LAYER = this.options.callback.call(map.editTools);
+            window.LAYER = this.options.callback.call(map.editTools, null, drawingOptions);
           },
           this
         );
@@ -113,7 +129,7 @@ L.EditControl = L.Control.extend({
       case 'query':
         //Defines the query button
         container = L.DomUtil.create('div', 'leaflet-control leaflet-bar queryBtn');
-        var link = L.DomUtil.create('a', 'leaflet-control-queryBtn', container);
+        link = L.DomUtil.create('a', 'leaflet-control-queryBtn', container);
         container.style = 'display:none;';
         link.href = '#';
         link.title = 'Query the drawing';
@@ -166,6 +182,16 @@ L.NewCircleControl = L.EditControl.extend({
   },
 });
 
+L.RoadSelectControl = L.EditControl.extend({
+  options: {
+    position: 'topleft',
+    callback: mymap.editTools.startMarker,
+    kind: 'road',
+    html: '&#9945',
+    type: 'draw',
+  },
+});
+
 L.NewQueryControl = L.EditControl.extend({
   options: {
     position: 'topleft',
@@ -180,6 +206,7 @@ L.NewQueryControl = L.EditControl.extend({
 mymap.addControl(new L.NewRectangleControl());
 mymap.addControl(new L.NewCircleControl());
 mymap.addControl(new L.NewMarkerControl());
+mymap.addControl(new L.RoadSelectControl());
 mymap.addControl(new L.NewQueryControl());
 //---
 // END MAP CONTROL TOOLS
@@ -229,9 +256,15 @@ function moveTooltip(e) {
 }
 
 function addUsrMarker(e) {
+  // If its a road nearby query;
   // On drawing commit, push drawing
   usrMarkers.push(e.layer);
   drawnItems.addLayer(e.layer);
+  if (e.layer.options.kind && e.layer.options.kind == 'road') {
+    e.layer.dragging.disable();
+    let latlng = e.layer.getLatLng();
+    return loadNearbyRoads(latlng.lat, latlng.lng);
+  }
   $('.leaflet-control.leaflet-bar.queryBtn').css('display', 'block'); // Display the query button
   $('.leaflet-control-queryBtn').on('click', queryDrawing); // QUERY BUTTON LISTENER
   // drawnItems.clearLayers();

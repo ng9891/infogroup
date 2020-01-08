@@ -221,8 +221,8 @@ module.exports = {
       maxEmp = '',
       lsalvol = '',
       roadNo = null,
-      roadGid = null,
-      roadSigning = '',
+      roadId = null,
+      roadSigning = null,
       roadDist = 0.3,
       mun = '',
       mun_type = '',
@@ -280,7 +280,7 @@ module.exports = {
     }
 
     // If its a road query.
-    if (roadNo !== null || roadSigning !== '' || roadGid !== null) {
+    if (roadNo !== null || roadSigning !== null || roadId !== null) {
       from += `,(
       SELECT ST_Union(geom) as geom
       FROM roadway\n`;
@@ -293,12 +293,12 @@ module.exports = {
         AND (NULLIF($${params.length + 1}, '')::varchar(40) IS NULL OR UPPER(county_name) = UPPER($${params.length +
         1}))
         AND (NULLIF($${params.length + 2}, '')::varchar(10) IS NULL OR signing = UPPER($${params.length + 2}))
-        AND ($${params.length + 3}::varchar(10) IS NULL OR gid = $${params.length + 3}::int)
+        AND ($${params.length + 3}::varchar(10) IS NULL OR dot_id = $${params.length + 3}::int)
         AND (NULLIF($${params.length + 4}, '')::varchar(40) IS NULL OR UPPER(muni_name) = UPPER($${params.length + 4}))
         AND (NULLIF($${params.length + 5}, '')::varchar(40) IS NULL OR UPPER(mpo_desc) = UPPER($${params.length + 5}))
       ) as r\n`;
       where += addANDStatement(`ST_DWithin(r.geom, b.geom, $${params.length + 6})`);
-      params.push(county, roadSigning, roadGid, mun, mpo, utils.convertMilesToMeters(roadDist));
+      params.push(county, roadSigning, roadId, mun, mpo, utils.convertMilesToMeters(roadDist));
     } else {
       if (mun !== '') {
         from += `,(

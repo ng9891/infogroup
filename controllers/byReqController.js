@@ -70,18 +70,31 @@ exports.reqGeoBySearch = (request, response) => {
   // Copy query object.
   let query = Object.assign({}, request.query);
   // Sanitize input
-  Object.keys(query).forEach((k) => {
+  inputKeys = Object.keys(query);
+  inputKeys.forEach((k) => {
     if (!query[k]) return delete query[k];
     // Checking if valid number.
-    if (k === 'naicscd' || k === 'minEmp' || k === 'maxEmp' || k === 'roadNo' || k === 'roadGid' || k === 'roadDist') {
+    if (k === 'naicscd' || k === 'minEmp' || k === 'maxEmp' || k === 'roadNo' || k === 'roadId' || k === 'roadDist') {
       if (isNaN(parseFloat(query[k]))) return delete query[k];
     }
   });
+  if (query['roadDist'] && query['roadDist'] > 10)
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'Due to memory limit, distance cannot be larger than 10 miles.',
+    });
+  else if (query['roadDist'] <= 0) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'Distance cannot be less than 0.',
+    });
+  }
   // Empty query or only version property included. Return empty array.
-  if (Object.keys(query).length <= 1)
+  if (inputKeys.length <= 1)
     return response.status(200).json({
       data: [],
     });
+
   byQuery
     .geoBySearch(query)
     .then((data) => {

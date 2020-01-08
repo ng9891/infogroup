@@ -64,11 +64,13 @@ $(document).ready(function() {
             inputObj['mun'] = query_input;
           }
           query_input = inputObj;
-          break;
         }
+        break;
       case 'mpo':
       case 'geocoding':
         if (query_input.length < 4 || !isNaN(+query_input)) return alert('Invalid Input');
+        let conf = confirm("This query might take more than a minute. Do you want to continue?");
+        if(conf === false) return;
         break;
       default:
         return alert('Invalid Query Selection');
@@ -115,6 +117,10 @@ function loadAdvancedSearchListener() {
     let roadSigning = $('#adv_roadSigning').val().trim();
     // let roadGid = $('#adv_roadGid').val().trim();
     let roadDist = $('#adv_roadDist').val().trim();
+    roadDist = parseFloat(roadDist);
+    if (roadDist && isNaN(roadDist)) return alert('Invalid Distance.')
+    else if(roadDist > 10) return $('#search-message').text('*Please input a distance less than 10 miles.').show();
+    else if(roadDist <= 0) return $('#search-message').text('*Please input a distance greater than 0.').show();
     let minempl = $('#min-emplsize').val().trim();
     let maxempl = $('#max-emplsize').val().trim();
     let county = $('#countyName').val().trim();
@@ -163,7 +169,7 @@ function loadAdvancedSearchListener() {
     };
 
     loadEstablishments('adv', formBody, query_version);
-
+    $('#search-message').hide();
     $('.advancedSearchContainer').toggleClass('open');
   });
 

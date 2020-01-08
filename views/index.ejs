@@ -3,6 +3,28 @@
     <input class="role" type="hidden" value="<%=localUser.isadmin || true%>" />
   <%}%>
   <div class="loader"></div>
+  <div class="sideBarContainer">
+    <div id="sideBar">
+      <div class="sideBarTitle">Query Result<span class="sideBarCloseBtn" data-toggle="tooltip" data-placement="right" title="Cancel query">×</span></div>
+      <div class="sideBarContent">
+        <div id="sideBarLoader" style="display: none;">
+          <img alt="Loading..." class="loaderIcon" src="/stylesheet/images/loader.gif">
+        </div>
+        <ul class="query-result-list"></ul>
+      </div>
+    </div>
+    <div id="roadDesc">
+      <div class="roadDescTitle">
+        Description<span class="backBtn" data-toggle="tooltip" data-placement="right" title="Go Back">&#11176</span>
+      </div>
+      <div class="roadDescContent"></div>
+      <div class="row btnContainer">
+        <div class="col-sm-12"><button class="btn btn-primary btn-block queryRoadIDCounty">Query road ID on County</button></div>
+        <div class="col-sm-12"><button class="btn btn-primary btn-block queryRoadID">Query road ID</button></div>
+      </div>
+    </div>
+  </div>
+
   <div class='mapContainer'>
       <div id="mapid"></div>
       <div id="map-draw-tooltip"></div>
@@ -212,6 +234,7 @@
 <script src="/js/loadLegend.js"></script>
 <script src="/js/loadEstablishments.js"></script>
 <script src="/js/exportData.js"></script>
+<script src="/js/loadNearbyRoads.js"></script>
 <script src="/js/editing/sendBusinessEdit.js"></script>
 
 <!-- INIT -->

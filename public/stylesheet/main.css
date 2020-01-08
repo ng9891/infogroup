@@ -5,11 +5,12 @@
   --gutterLg: 1.6rem;
   --gutterXl: 2.4rem;
   --gutterXx: 7.2rem;
+  --colorPrimaryContainer: #cfcccc;
   --colorPrimary400: #e8e8e8;
   --colorPrimary600: #c8c8c8;
   --colorPrimary800: #686868;
   --fontFamily: "Dosis", sans-serif;
-  --fontSizeSm: 1.2rem;
+  --fontSizeSm: 1.0rem;
   --fontSizeMd: 1.6rem;
   --fontSizeLg: 2.1rem;
   --fontSizeXl: 2.8rem;
@@ -113,13 +114,19 @@ body {
   transform: translate3d(0, var(--labelTransformedPosY), 0) scale(var(--labelScaleFactor));
   transition: transform var(--inputTransitionDuration), visibility 0ms, z-index 0ms;
 }
-.navbar {
-  margin-bottom: 40px;
+.loginForm {
+  margin-top: 40px;
 }
 
 .mapContainer {
   overflow: hidden;
   width: 100%;
+}
+
+.mapContainer.sideBar-open #mapid {
+  left: 15%;
+  width: 85%;
+  transition: 0.3s ease-in-out;
 }
 
 #mapid {
@@ -131,6 +138,127 @@ body {
   /* height: 100%; */
   width: 100%;
   /* z-index: 700; */
+  -webkit-transition: all 400ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  -moz-transition: all 400ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  -o-transition: all 400ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  transition: all 400ms cubic-bezier(0.770, 0.000, 0.175, 1.000); /* easeInOutQuart */
+}
+.leaflet-control.leaflet-bar.queryBtn {
+  top: 30px;
+}
+
+#map-draw-tooltip {
+  display: none;
+  position: absolute;
+  background: #666;
+  color: white;
+  opacity: 0.8;
+  padding: 5px;
+  border: 1px dashed #999;
+  font-family: sans-serif;
+  font-size: 12px;
+  height: 30px;
+  line-height: 20px;
+  z-index: 650;
+}
+
+#sideBar {
+  width: 15%;
+  height: 100%;
+  padding-bottom: 5%;
+  position: fixed;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.sideBarContainer .sideBarTitle,
+.roadDescTitle {
+  padding: 10px;
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  text-align: center;
+  background: var(--colorPrimary400);
+}
+
+#sideBar .sideBarCloseBtn {
+  float: right;
+  transform: scale(1.5);
+}
+#sideBar .sideBarCloseBtn:hover {
+  color: #ac1818;
+  cursor: pointer;
+}
+
+#sideBar .loaderIcon {
+  /* center loader image */
+  display: block;
+  padding-top: 10%;
+  margin: auto;
+}
+
+#sideBar .sideBarContent ul li {
+  padding: 15px 20px;
+  border-bottom: 1px solid #ccc;
+}
+
+#sideBar li.road.selected {
+  background: #5cb85c;
+}
+
+#sideBar li.road p,
+#roadDesc .roadDescContent p {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: var(--fontSizeSm);
+}
+
+#roadDesc.roadDescContent p {
+  line-height: 40px;
+}
+
+#roadDesc {
+  width: 15%;
+  left: 15%;
+  height: 100%;
+  position: fixed;
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-bottom: 5%;
+  background: #ffffff;
+  transition: 0.3s cubic-bezier(0.47, 0, 0.745, 0.715);
+  opacity: 0;
+}
+#roadDesc.open {
+  transform: translate3d(-100%, 0, 0);
+  transition: opacity 0.2s linear, transform 0.3s cubic-bezier(0.47, 0, 0.745, 0.715);
+  opacity: 1;
+}
+
+#roadDesc .backBtn {
+  float: left;
+  transform: scale(1.8);
+}
+#roadDesc .backBtn:hover {
+  color: #ac1818;
+  cursor: pointer;
+}
+
+#roadDesc .roadDescContent {
+  padding: 20px 20px 0 20px;
+}
+
+#roadDesc .roadDescContent p:first-letter {
+  text-transform: capitalize;
+}
+
+#roadDesc .btnContainer {
+  padding: 20px;
+}
+
+#roadDesc .btnContainer button {
+  margin-bottom: 5px;
 }
 
 .advancedSearchContainer {
@@ -138,13 +266,16 @@ body {
   top: 20%;
   right: 0px;
   height: 410px;
-  background-color: #cfcccc;
+  background-color: var(--colorPrimaryContainer);
   z-index: 850;
   border-radius: 5px;
   padding: 10px;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
   width: 40%;
-  transition: transform 0.2s linear;
+  -webkit-transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  -moz-transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  -o-transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000); /* easeInOutQuart */
   transform: translate3d(99.80%, 0, 0);
 }
 .advancedSearchContainer.open {
@@ -156,14 +287,17 @@ body {
   top: 6%;
   right: 0%;
   height: 93%;
-  background-color: #e8e8e8;
+  background-color: var(--colorPrimary400);
   z-index: 800;
   border-radius: 5px;
   padding: 10px;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
   width: 60%;
   transform: translate3d(100%, 0, 0);
-  transition: transform 0.2s linear;
+  -webkit-transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  -moz-transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  -o-transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000); /* easeInOutQuart */
 }
 .statisticsContainer.open {
   transform: translate3d(0, 0, 0);
@@ -174,15 +308,18 @@ body {
   top: 30%;
   left: 0%;
   height: 50%;
-  background-color: #e8e8e8;
-  z-index: 800;
+  background-color: var(--colorPrimary400);
+  z-index: 1001;
   border-radius: 5px;
   padding: 10px;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
   width: 16%;
-  transform: translate3d(-100%, 0, 0);
-  transition: transform 0.2s linear;
   font-size: 11px;
+  transform: translate3d(-100%, 0, 0);
+  -webkit-transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  -moz-transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  -o-transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000); /* easeInOutQuart */
   /* overflow: auto; */
 }
 .legendContainer.open {
@@ -197,11 +334,14 @@ body {
   z-index: 800;
   border-radius: 5px;
   padding: 10px;
-  background-color: #e8e8e8;
+  background-color: var(--colorPrimary400);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
   width: 40%;
   transform: translate3d(0, 0, 0);
-  transition: transform 0.2s linear;
+  -webkit-transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  -moz-transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  -o-transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000); /* easeInOutQuart */
 }
 
 .infoContainer.closed {
@@ -266,10 +406,6 @@ body {
   width: auto;
 } */
 
-.leaflet-control.leaflet-bar.queryBtn {
-  top: 30px;
-}
-
 .pieContainer {
   display: inline-block;
   position: relative;
@@ -300,21 +436,6 @@ body {
 }
 .dataTables_info {
   font-size: 11px;
-}
-
-#map-draw-tooltip {
-  display: none;
-  position: absolute;
-  background: #666;
-  color: white;
-  opacity: 0.8;
-  padding: 5px;
-  border: 1px dashed #999;
-  font-family: sans-serif;
-  font-size: 12px;
-  height: 30px;
-  line-height: 20px;
-  z-index: 650;
 }
 
 .ui-autocomplete {
@@ -401,7 +522,7 @@ body {
   font-size: 12px !important;
   border: 1px dotted #000;
   border-radius: 5px;
-  background-color: #cfcccc;
+  background-color: var(--colorPrimaryContainer);
   position: fixed;
   width: 500px;
   height: 700px;
@@ -440,11 +561,11 @@ body {
   display: none !important;
 }
 
-#editModal .modal_expand_container{
+#editModal .modal_expand_container {
   display: none;
 }
 
-#editModal .modal_expand_container_editing{
+#editModal .modal_expand_container_editing {
   display: none;
 }
 
