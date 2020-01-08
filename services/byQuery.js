@@ -2,6 +2,7 @@
 let dbService = require('../utils/db_service');
 let utils = require('../utils/utils');
 
+const defaultBufferSize = 0.5; // miles
 const column = utils.columnNames;
 const table = utils.tableNames;
 
@@ -39,7 +40,7 @@ const selectStatement = `
   "${column.HIGHTECHBUSINESS}" as "HIGHTECHBUSINESS",
   "${column.LATITUDEO}" as "LATITUDEO",
   "${column.LONGITUDEO}" as "LONGITUDEO"
-\n`;
+  `;
 
 function queryDB(query, params) {
   return new Promise((resolve, reject) => {
@@ -63,7 +64,7 @@ module.exports = {
    * @param {String} v 
    * @param {Number} dist 
    */
-  geoByGeoJson: (geoJson, v = 'current', dist = 0.5) => {
+  geoByGeoJson: (geoJson, v = 'current', dist = defaultBufferSize) => {
     let json = JSON.stringify(geoJson);
     let bussinessVersion = getBusinessVersion(v);
     let withStatement = `
@@ -202,6 +203,26 @@ module.exports = {
     `;
     return queryDB(sql, [minLon, minLat, maxLon, maxLat]);
   },
+  geoByPolyline: (coordArr, dist = defaultBufferSize, v = 'current') => {
+    let bussinessVersion = getBusinessVersion(v);
+
+    function createLinestringSQLFromArr(lineCoordArr) {
+      let str = `ST_GeomFromText('LINESTRING(`;
+      for (const [index, [lat, lon]] of lineCoordArr.entries()) {
+        str += `${lat} ${lon}`;
+        if (index < lineCoordArr.length - 1) str += ',';
+      }
+      return str += `)',4326)`;
+    }
+
+    let sql = `
+      SELECT ${selectStatement}
+      FROM ${bussinessVersion} as b
+      WHERE ST_DWithin(${createLinestringSQLFromArr(coordArr)}::geography,\
+      ST_Transform(geom,4326)::geography,$1);
+    `;
+    return queryDB(sql, [utils.convertMilesToMeters(dist)]);
+  },
   geoByZip: (zipcode, v = 'current') => {
     let bussinessVersion = getBusinessVersion(v);
     let sql = `
@@ -223,7 +244,7 @@ module.exports = {
       roadNo = null,
       roadId = null,
       roadSigning = null,
-      roadDist = 0.3,
+      roadDist = defaultBufferSize,
       mun = '',
       mun_type = '',
       mun_county = '',
@@ -236,10 +257,10 @@ module.exports = {
     coname = decodeURIComponent(coname);
     naicsds = decodeURIComponent(naicsds);
     lsalvol = decodeURIComponent(lsalvol);
-    county = (county) ? decodeURIComponent(county) : '';
-    state = (state) ? decodeURIComponent(state) : null;
-    stateCode = (stateCode) ? decodeURIComponent(stateCode) : null;
-    mpo = (mpo) ? decodeURIComponent(mpo) : '';
+    county = county ? decodeURIComponent(county) : '';
+    state = state ? decodeURIComponent(state) : null;
+    stateCode = stateCode ? decodeURIComponent(stateCode) : null;
+    mpo = mpo ? decodeURIComponent(mpo) : '';
 
     let bussinessVersion = getBusinessVersion(v);
     let from = `FROM ${bussinessVersion} as b\n`;

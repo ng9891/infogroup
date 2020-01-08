@@ -83,7 +83,7 @@ exports.reqGeoBySearch = (request, response) => {
       status: 'Error',
       responseText: 'Due to memory limit, distance cannot be larger than 10 miles.',
     });
-  else if (query['roadDist'] <= 0) {
+  else if (query['roadDist'] && query['roadDist'] <= 0) {
     return response.status(400).json({
       status: 'Error',
       responseText: 'Distance cannot be less than 0.',
@@ -231,6 +231,32 @@ exports.reqGeoByRectangle = (request, response) => {
 
   byQuery
     .geoByRectangle(request.query)
+    .then((data) => {
+      return successHandler(data, response);
+    })
+    .catch((err) => {
+      return errorHandler(err, response);
+    });
+};
+
+exports.reqGeoByPolyline = (request, response) => {
+  let coord;
+  try {
+    coord = JSON.parse(request.query.coord);
+  } catch (e) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'Invalid Polyline.\n' + e,
+    });
+  }
+  if (!request.query.coord) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No Polyline specified',
+    });
+  }
+  byQuery
+    .geoByPolyline(coord, request.query.dist, request.query.v)
     .then((data) => {
       return successHandler(data, response);
     })

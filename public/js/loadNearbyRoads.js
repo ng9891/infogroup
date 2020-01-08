@@ -1,6 +1,6 @@
 (() => {
-  let defaultMarkerRadius = 0.1; // Default 0.1mi.
-  let defaultRoadBufferSize = 0.3; // Default 0.3mi.
+  let defaultMarkerRadius; // Default 0.1mi.
+  let defaultRoadBufferSize; // Default 0.3mi.
   /**
    * Global variable.
    * Driver for query related to road query feature.
@@ -9,6 +9,8 @@
    * @param {integer} lon 
    */
   loadNearbyRoads = (lat, lon) => {
+    defaultMarkerRadius = window.defaultMarkerRadius;
+    defaultRoadBufferSize = window.defaultRoadBufferSize;
     toggleLoadingIcon();
     loadSideBarEventListener();
     openSideBar();

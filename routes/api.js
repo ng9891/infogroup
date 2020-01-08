@@ -7,6 +7,8 @@ let byCtrl = require('../controllers/byReqController');
 let getCtrl = require('../controllers/getReqController');
 
 // BY QUERY Routes
+
+router.get('/bypolyline', byCtrl.reqGeoByPolyline);
 router.get('/bygeocode/:q', byCtrl.reqGeoByGeocode);
 router.get('/search', byCtrl.reqGeoBySearch);
 router.get('/bycounty/:county', byCtrl.reqGeoByCounty);

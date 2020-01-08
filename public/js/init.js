@@ -4,6 +4,8 @@
 //  Parse URL and call API accordingly
 // authors note: is this the only way to go? or use templating
 var url = new URL(window.location.href);
+window.defaultMarkerRadius = 0.1; // Default 0.1mi.
+window.defaultRoadBufferSize = 0.5; // Default 0.5mi.
 
 //locate the middle occurrence of the / character in your URL and cut it.
 var path = url.pathname.substr(url.pathname.indexOf('/') + 1, url.pathname.lastIndexOf('/') - 1);

@@ -96,12 +96,15 @@ L.EditControl = L.Control.extend({
   onAdd: function(map) {
     let container = '';
     let link;
+    let measurementOptions = {
+      imperial: true,
+    };
     switch (this.options.type) {
       case 'draw':
         container = L.DomUtil.create('div', 'leaflet-control leaflet-bar');
         link = L.DomUtil.create('a', '', container);
         link.href = '#';
-        let drawingOptions = {kind: this.options.kind};
+        let drawingOptions = {kind: this.options.kind, showMeasurements: true, measurementOptions: measurementOptions};
         if (drawingOptions.kind === 'road') {
           link.title = 'Find nearby road';
           let redIcon = new L.Icon({
@@ -182,6 +185,16 @@ L.NewCircleControl = L.EditControl.extend({
   },
 });
 
+L.NewLineControl = L.EditControl.extend({
+  options: {
+    position: 'topleft',
+    callback: mymap.editTools.startPolyline,
+    kind: 'line',
+    html: '\\/\\',
+    type: 'draw',
+  },
+});
+
 L.RoadSelectControl = L.EditControl.extend({
   options: {
     position: 'topleft',
@@ -206,6 +219,7 @@ L.NewQueryControl = L.EditControl.extend({
 mymap.addControl(new L.NewRectangleControl());
 mymap.addControl(new L.NewCircleControl());
 mymap.addControl(new L.NewMarkerControl());
+mymap.addControl(new L.NewLineControl());
 mymap.addControl(new L.RoadSelectControl());
 mymap.addControl(new L.NewQueryControl());
 //---
@@ -233,13 +247,38 @@ function printRadius(e) {
   tooltip.style.display = 'block';
 }
 
+// Called when drawing and moving.
+function printTotalLength(e) {
+  e.layer.updateMeasurements();
+  if (!e.layer._measurementLayer) return;
+  let segments = e.layer._measurementLayer._layers;
+  let totalLen = 0;
+  let segmentKeys = Object.keys(segments);
+  if (segmentKeys.length > 1) {
+    // Gets total lenght. Usually at last index.
+    totalLen = segments[segmentKeys[segmentKeys.length - 1]]._measurement;
+    let unit = totalLen.slice(totalLen.indexOf(' ') + 1);
+    totalLen = parseFloat(totalLen.slice(0, totalLen.indexOf(' ')));
+    if (unit === 'ft') totalLen *= 0.000189394; // Converts feet to miles.
+  }
+  let segLen = lastVertex.latlng.distanceTo(e.latlng) * 0.00062137; // var lastVertex is changed on new vertex.
+  totalLen = totalLen + segLen;
+  e.layer.totalLen = totalLen.toFixed(4);
+  segLen = segLen.toFixed(2);
+  tooltip.innerHTML = `Segment:${segLen}mi Total:${e.layer.totalLen}mi</br>Click on last point to finish.`;
+  tooltip.style.display = 'block';
+}
+
 function addTooltip(e) {
-  removeTooltip(); //Get rid of old drawing tooltip
+  removeTooltip(); // Get rid of old drawing tooltip
   if (!e) return;
   //Draw radius if its circle query
   if (e.layer instanceof L.Circle) {
     mymap.on('editable:drawing:move', printRadius); // To print radius
     L.DomEvent.on(document, 'mousemove', moveTooltip); // To update div position
+  } else if (e.layer instanceof L.Polyline) {
+    mymap.on('editable:drawing:move', printTotalLength);
+    L.DomEvent.on(document, 'mousemove', moveTooltip);
   }
 }
 
@@ -248,9 +287,11 @@ function removeTooltip() {
   tooltip.style.display = 'none';
   L.DomEvent.off(document, 'mousemove', moveTooltip);
   mymap.off('editable:drawing:move', printRadius);
+  mymap.off('editable:drawing:move', printTotalLength);
 }
 
 function moveTooltip(e) {
+  if (!e) return;
   tooltip.style.left = e.clientX + 20 + 'px';
   tooltip.style.top = e.clientY - 10 + 'px';
 }
@@ -264,6 +305,8 @@ function addUsrMarker(e) {
     e.layer.dragging.disable();
     let latlng = e.layer.getLatLng();
     return loadNearbyRoads(latlng.lat, latlng.lng);
+  } else if (e.layer.options.kind && e.layer.options.kind == 'line') {
+    removeTooltip();
   }
   $('.leaflet-control.leaflet-bar.queryBtn').css('display', 'block'); // Display the query button
   $('.leaflet-control-queryBtn').on('click', queryDrawing); // QUERY BUTTON LISTENER
@@ -281,19 +324,30 @@ function clearUsrMarker(e) {
 
 mymap.on('editable:drawing:start', clearUsrMarker);
 mymap.on('editable:drawing:commit', addUsrMarker);
+mymap.on('editable:vertex:drag editable:vertex:deleted', function(e) {
+  e.layer.updateMeasurements();
+  moveTooltip(e.originalEvent);
+});
+let lastVertex;
+mymap.on('editable:vertex:new', function(e) {
+  lastVertex = e;
+});
+mymap.on('editable:vertex:dragend editable:drawing:cancel', () => {
+  removeTooltip();
+});
 
 //Event listeners key down during drawing
 let onKeyDown = function(e) {
-  //ESC button to stop drawing.
+  // ESC button to stop drawing.
   if (e.keyCode == 27) {
     if (!this.editTools._drawingEditor) return;
-    //TODO: Circle not working correctly with ESC
-    let test = this.editTools._drawingEditor.pop();
-    this.editTools._drawingEditor.disable();
-    //drawnItems.clearLayers();
+    for (key in this.editTools.featuresLayer._layers) mymap.removeLayer(this.editTools.featuresLayer._layers[key]);
+    // this.editTools._drawingEditor.editLayer.clearLayers();
+    // this.editTools._drawingEditor.pop();
+    // this.editTools._drawingEditor.disable();
     this.editTools.stopDrawing();
   }
-  //UNDO button CTRL + Z.
+  // UNDO button CTRL + Z.
   if (e.keyCode === 90 && e.ctrlKey) {
     if (!this.editTools._drawingEditor) {
       //IF not drawing. Remove last feature.

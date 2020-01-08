@@ -118,7 +118,8 @@ function loadAdvancedSearchListener() {
     // let roadGid = $('#adv_roadGid').val().trim();
     let roadDist = $('#adv_roadDist').val().trim();
     roadDist = parseFloat(roadDist);
-    if (roadDist && isNaN(roadDist)) return alert('Invalid Distance.')
+    if(!roadDist) roadDist = window.defaultRoadBufferSize;
+    else if(isNaN(roadDist)) return alert('Invalid Distance.')
     else if(roadDist > 10) return $('#search-message').text('*Please input a distance less than 10 miles.').show();
     else if(roadDist <= 0) return $('#search-message').text('*Please input a distance greater than 0.').show();
     let minempl = $('#min-emplsize').val().trim();

@@ -124,6 +124,9 @@
   */
   let loadOverlay = (data, overlayURL) => {
     return new Promise(async (resolve, reject) => {
+      let measurementOptions = {
+        imperial: true,
+      };
       if (!overlayURL) return resolve('Overlay not specified');
       let overlay;
       if (overlayURL === 'marker') {
@@ -135,10 +138,26 @@
       } else if (overlayURL === 'circle') {
         // Create new circle / rectangle with different leafletid.
         let layer = usrMarkers[usrMarkers.length - 1];
-        overlay = L.circle([layer.getLatLng().lat, layer.getLatLng().lng], {radius: layer.getRadius()}); // 1609.34m = 1 mile
+        overlay = L.circle([layer.getLatLng().lat, layer.getLatLng().lng], {
+          radius: layer.getRadius(),
+          showMeasurements: true,
+          measurementOptions: measurementOptions,
+        }); // 1609.34m = 1 mile
       } else if (overlayURL === 'rectangle') {
         let layer = usrMarkers[usrMarkers.length - 1];
-        overlay = L.rectangle(layer.getBounds());
+        overlay = L.rectangle(layer.getBounds(), {showMeasurements: true, measurementOptions: measurementOptions});
+      } else if (overlayURL === 'polyline') {
+        // Create Polyline from coordinate.
+        let layer = usrMarkers[usrMarkers.length - 1].getLatLngs();
+        let coordArr = [];
+        for (const coord of layer) {
+          coordArr.push([coord.lat, coord.lng]);
+        }
+        overlay = L.polyline(coordArr, {
+          color: 'green',
+          showMeasurements: true,
+          measurementOptions: measurementOptions,
+        });
       } else if (overlayURL === 'geocode') {
         // Build JSON to match the app format.
         let builtGeoJsonToMatchFormat = {data: []};
@@ -333,7 +352,7 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
       MunCounty: queryInput.mun_county || '',
     };
     let secondRow = {
-      Dist: (queryInput.roadDist) ? queryInput.roadDist+'mi' : '',
+      Dist: queryInput.roadDist ? queryInput.roadDist + 'mi' : '',
       NAICS: queryInput.naicsds || '',
       Code: queryInput.naicscd || '',
       EmpMin: queryInput.minEmp || '',
@@ -356,6 +375,7 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
       if (layer instanceof L.Marker) return 'marker';
       if (layer instanceof L.Circle) return 'circle';
       if (layer instanceof L.Rectangle) return 'rectangle';
+      if (layer instanceof L.Polyline) return 'polyline';
       if (layer instanceof L.Polygon) return 'polygon';
     }
 
@@ -395,19 +415,26 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
     }
     // Helper functions that creates the URL for rectangle query
     function rectangleQuery(layer) {
-      var rectangle = layer.getLatLngs();
-
-      var maxLon = rectangle[0][0].lng;
-      var maxLat = rectangle[0][0].lat;
-
-      var minLon = rectangle[0][2].lng;
-      var minLat = rectangle[0][2].lat;
-
+      let rectangle = layer.getLatLngs();
+      let maxLon = rectangle[0][0].lng;
+      let maxLat = rectangle[0][0].lat;
+      let minLon = rectangle[0][2].lng;
+      let minLat = rectangle[0][2].lat;
       // Creates a request URL for the API
       reqURL = '/api/byrectangle';
       if (rectangle) {
         reqURL += '?minLon=' + minLon + '&minLat=' + minLat + '&maxLon=' + maxLon + '&maxLat=' + maxLat;
       }
+      return reqURL;
+    }
+
+    function polylineQuery(lineCoord) {
+      let params = 'coord=[';
+      for (const [lat, lon] of lineCoord) {
+        params += `[${lat},${lon}],`;
+      }
+      params = params.slice(0, -1); // Take out last comma.
+      reqURL = '/api/bypolyline?' + params + ']';
       return reqURL;
     }
 
@@ -435,7 +462,13 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
         searchValue = '';
         overlayURL = 'rectangle';
         break;
-      case 'polygon':
+      case 'polyline':
+        let lineCoord = layer.toGeoJSON().geometry.coordinates;
+        if (lineCoord.length <= 0) return console.log('No line.');
+        reqURL = polylineQuery(lineCoord);
+        searchType = 'Polyline Query';
+        searchValue = [`${layer.totalLen || ''}mi`, `Dist:${window.defaultRoadBufferSize}mi`];
+        overlayURL = 'polyline';
         break;
       default:
         console.log('Error. Shape is not recognizable');
