@@ -22,7 +22,7 @@ exports.reqGetRailroad = (request, response) => {
   }
 
   getQuery
-    .geoGetRailroad(request.params.station)
+    .geoGetRailroad(request.params.station, request.query.route)
     .then((data) => {
       return successHandler(data, response);
     })

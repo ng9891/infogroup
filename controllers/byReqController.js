@@ -23,7 +23,7 @@ exports.reqGeoByRailroad = (request, response) => {
   }
 
   byQuery
-    .geoByRailroad(request.params.station, request.query.dist, request.query.v)
+    .geoByRailroad(request.params.station, request.query.route, request.query.dist, request.query.v)
     .then((data) => {
       return successHandler(data, response);
     })

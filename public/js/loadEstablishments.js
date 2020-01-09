@@ -16,15 +16,11 @@
     if (!queryType) return;
 
     let reqURL, overlayURL, searchInfo, searchValue;
-    if (queryType === 'zip' || queryType === 'mpo' || queryType === 'railroad') {
+    if (queryType === 'zip' || queryType === 'mpo') {
       reqURL = `/api/by${queryType}/${queryInput}?`;
       overlayURL = `/api/get${queryType}/${queryInput}`;
       searchInfo = queryType.toUpperCase();
       searchValue = queryInput;
-      if (queryType === 'railroad'){
-        searchValue = [queryInput, `Dist: ${window.defaultRoadBufferSize}mi`];
-        reqURL += `&dist=${window.defaultRoadBufferSize}`;
-      }
     } else if (queryType === 'county') {
       searchInfo = queryType.toUpperCase();
       [reqURL, overlayURL, searchValue] = getCountyInfo(queryInput);
@@ -39,7 +35,16 @@
       reqURL = `/api/bygeocode/${queryInput}?dist=${window.defaultRoadBufferSize}`;
       overlayURL = 'geocode';
       searchInfo = 'Geocode';
-      searchValue = [null, queryInput+` Dist: ${window.defaultRoadBufferSize}mi`];
+      searchValue = [null, queryInput + ` Dist: ${window.defaultRoadBufferSize}mi`];
+    } else if (queryType === 'railroad') {
+      reqURL = `/api/by${queryType}/${queryInput['station']}?dist=${window.defaultRoadBufferSize}`;
+      overlayURL = `/api/get${queryType}/${queryInput['station']}?`;
+      if (queryInput['route']) {
+        reqURL += `&route=${queryInput['route']}`;
+        overlayURL += `&route=${queryInput['route']}`;
+      }
+      searchInfo = queryType.toUpperCase();
+      searchValue = [queryInput['input'], `Dist: ${window.defaultRoadBufferSize}mi`];
     } else {
       console.log('Invalid query type');
       return;
@@ -49,7 +54,8 @@
     // Add versioning.
     reqURL += `&v=${version}`;
     reqURL = encodeURI(reqURL);
-    // console.log(reqURL,overlayURL);
+    overlayURL = encodeURI(overlayURL);
+    // console.log(reqURL, overlayURL);
     clearUiComponents(queryType);
     d3.select('.loader').classed('hidden', false);
     d3

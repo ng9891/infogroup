@@ -57,20 +57,25 @@ function getBusinessVersion(version) {
 }
 
 module.exports = {
-  geoByRailroad: (station, dist = defaultBufferSize, v = 'current') => {
+  geoByRailroad: (station, route = null, dist = defaultBufferSize, v = 'current') => {
+    station = decodeURI(station);
     let bussinessVersion = getBusinessVersion(v);
     let withStatement = `
       WITH station AS(
         SELECT *
         FROM (
-          SELECT *, 'MN' as mta
+          SELECT stop_name, 'MN' as mta, geom
           FROM mta_mn
           UNION ALL
-          SELECT *, 'LI' as mta
+          SELECT stop_name, 'LI' as mta, geom
           FROM mta_li
-          ) as railroads
+          UNION ALL
+          SELECT stop_name, daytime_routes as mta, geom
+          FROM mta_nyc
+        ) as railroads
         WHERE UPPER(stop_name) LIKE UPPER($1)
-        LIMIT 1
+        AND ($2::char IS NULL OR UPPER(mta) LIKE UPPER($2))
+        LIMIT 10
       )
     `;
     let sql = `
@@ -78,9 +83,13 @@ module.exports = {
       SELECT ${selectStatement}
       FROM ${bussinessVersion} as b
       INNER JOIN station as s
-      ON ST_DWithin(s.geom::geography, ST_Transform(b.geom,4326)::geography, $2)
+      ON ST_DWithin(s.geom::geography, ST_Transform(b.geom,4326)::geography, $3)
     `;
-    return queryDB(sql, [`${station}%`, utils.convertMilesToMeters(dist)]);
+    let params = [`${station}%`];
+    if(route) params.push(`%${decodeURI(route)}%`)
+    else params.push(null)
+    params.push(utils.convertMilesToMeters(dist))
+    return queryDB(sql, params);
   },
   /**
    * Creates a geometry from GeoJSON and query points around a buffer of 'dist' value.

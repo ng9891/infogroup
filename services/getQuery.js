@@ -16,21 +16,32 @@ const table = utils.tableNames;
 const bussinessVersion = table.business;
 
 module.exports = {
-  geoGetRailroad: (station) => {
+  geoGetRailroad: (station, route = null) => {
+    station = decodeURI(station);
     let sql = `
-      SELECT stop_name as name, mta, ST_ASGeoJSON(ST_Transform(geom, 4326)) AS geom
+      SELECT 
+      concat(stop_name,' (',REPLACE(mta,' ', ','),')') as name,
+      mta, 
+      ST_ASGeoJSON(ST_Transform(geom, 4326)) AS geom
       FROM (
-        SELECT *, 'MN' as mta
+        SELECT stop_name, 'MN' as mta, geom
         FROM mta_mn
         UNION ALL
-        SELECT *, 'LI' as mta
+        SELECT stop_name, 'LI' as mta, geom
         FROM mta_li
-        ) as railroads
+        UNION ALL
+        SELECT stop_name, daytime_routes as mta, geom
+        FROM mta_nyc
+      ) as railroads
       WHERE UPPER(stop_name) LIKE UPPER($1)
+      AND ($2::char IS NULL OR UPPER(mta) LIKE UPPER($2))
     `;
-    return queryDB(sql, [`${station}%`]);
+    let params = [`${station}%`];
+    if(route) params.push(`%${decodeURI(route)}%`)
+    else params.push(null)
+    return queryDB(sql, params);
   },
-  geoGetRoadListFromPoint: (lat = null, lon = null, dist=0.1) => {
+  geoGetRoadListFromPoint: (lat = null, lon = null, dist = 0.1) => {
     let withStatement = `
     WITH roadwaysFromP AS (
       SELECT ST_Transform(geom,4326), *
@@ -44,7 +55,7 @@ module.exports = {
     FROM roadwaysFromP as rp
     GROUP BY rp.dot_id, 3,4,5,6
     `;
-    return queryDB(sql, [lon,lat, utils.convertMilesToMeters(dist)]);
+    return queryDB(sql, [lon, lat, utils.convertMilesToMeters(dist)]);
   },
   geoGetConameList: (coname) => {
     let sql = `
