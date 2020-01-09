@@ -57,6 +57,31 @@ function getBusinessVersion(version) {
 }
 
 module.exports = {
+  geoByRailroad: (station, dist = defaultBufferSize, v = 'current') => {
+    let bussinessVersion = getBusinessVersion(v);
+    let withStatement = `
+      WITH station AS(
+        SELECT *
+        FROM (
+          SELECT *, 'MN' as mta
+          FROM mta_mn
+          UNION ALL
+          SELECT *, 'LI' as mta
+          FROM mta_li
+          ) as railroads
+        WHERE UPPER(stop_name) LIKE UPPER($1)
+        LIMIT 1
+      )
+    `;
+    let sql = `
+      ${withStatement}
+      SELECT ${selectStatement}
+      FROM ${bussinessVersion} as b
+      INNER JOIN station as s
+      ON ST_DWithin(s.geom::geography, ST_Transform(b.geom,4326)::geography, $2)
+    `;
+    return queryDB(sql, [`${station}%`, utils.convertMilesToMeters(dist)]);
+  },
   /**
    * Creates a geometry from GeoJSON and query points around a buffer of 'dist' value.
    * Input should be a valid geoJSON
@@ -64,7 +89,7 @@ module.exports = {
    * @param {String} v 
    * @param {Number} dist 
    */
-  geoByGeoJson: (geoJson, v = 'current', dist = defaultBufferSize) => {
+  geoByGeoJson: (geoJson, dist = defaultBufferSize, v = 'current') => {
     let json = JSON.stringify(geoJson);
     let bussinessVersion = getBusinessVersion(v);
     let withStatement = `
@@ -212,7 +237,7 @@ module.exports = {
         str += `${lat} ${lon}`;
         if (index < lineCoordArr.length - 1) str += ',';
       }
-      return str += `)',4326)`;
+      return (str += `)',4326)`);
     }
 
     let sql = `

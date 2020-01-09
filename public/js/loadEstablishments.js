@@ -16,11 +16,15 @@
     if (!queryType) return;
 
     let reqURL, overlayURL, searchInfo, searchValue;
-    if (queryType === 'zip' || queryType === 'mpo') {
+    if (queryType === 'zip' || queryType === 'mpo' || queryType === 'railroad') {
       reqURL = `/api/by${queryType}/${queryInput}?`;
       overlayURL = `/api/get${queryType}/${queryInput}`;
       searchInfo = queryType.toUpperCase();
       searchValue = queryInput;
+      if (queryType === 'railroad'){
+        searchValue = [queryInput, `Dist: ${window.defaultRoadBufferSize}mi`];
+        reqURL += `&dist=${window.defaultRoadBufferSize}`;
+      }
     } else if (queryType === 'county') {
       searchInfo = queryType.toUpperCase();
       [reqURL, overlayURL, searchValue] = getCountyInfo(queryInput);
@@ -32,10 +36,10 @@
     } else if (queryType === 'draw') {
       [reqURL, overlayURL, searchInfo, searchValue] = getDrawInfo(queryInput); // userMarkers is a global var
     } else if (queryType === 'geocoding') {
-      reqURL = `/api/bygeocode/${queryInput}?`;
+      reqURL = `/api/bygeocode/${queryInput}?dist=${window.defaultRoadBufferSize}`;
       overlayURL = 'geocode';
       searchInfo = 'Geocode';
-      searchValue = [null, queryInput];
+      searchValue = [null, queryInput+` Dist: ${window.defaultRoadBufferSize}mi`];
     } else {
       console.log('Invalid query type');
       return;

@@ -1,13 +1,13 @@
 const router = require('express').Router();
 const {isLoggedIn, secureAPI} = require('../middleware/middleware.js');
 
-// router.use(secureAPI);
+router.use(secureAPI);
 
 let byCtrl = require('../controllers/byReqController');
 let getCtrl = require('../controllers/getReqController');
 
 // BY QUERY Routes
-
+router.get('/byrailroad/:station', byCtrl.reqGeoByRailroad);
 router.get('/bypolyline', byCtrl.reqGeoByPolyline);
 router.get('/bygeocode/:q', byCtrl.reqGeoByGeocode);
 router.get('/search', byCtrl.reqGeoBySearch);
@@ -20,6 +20,7 @@ router.get('/byrectangle', byCtrl.reqGeoByRectangle);
 router.get('/byzip/:zipcode', byCtrl.reqGeoByZip);
 
 // GET QUERY Routes
+router.get('/getrailroad/:station', getCtrl.reqGetRailroad);
 router.get('/getnearbyroad', getCtrl.reqGetNearbyRoad);
 router.get('/getconame/:coname', getCtrl.reqGetConame);
 router.get('/getcounty/:county', getCtrl.reqGetCounty);

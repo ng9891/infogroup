@@ -66,6 +66,8 @@ $(document).ready(function() {
           query_input = inputObj;
         }
         break;
+      case 'railroad':
+        break;
       case 'mpo':
       case 'geocoding':
         if (query_input.length < 4 || !isNaN(+query_input)) return alert('Invalid Input');

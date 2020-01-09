@@ -13,6 +13,24 @@ function errorHandler(err, response) {
   });
 }
 
+exports.reqGetRailroad = (request, response) => {
+  if (!request.params.station) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No station specified',
+    });
+  }
+
+  getQuery
+    .geoGetRailroad(request.params.station)
+    .then((data) => {
+      return successHandler(data, response);
+    })
+    .catch((err) => {
+      return errorHandler(err, response);
+    });
+};
+
 exports.reqGetNearbyRoad = (request, response) => {
   if (!request.query.lat || !request.query.lon) {
     return response.status(400).json({

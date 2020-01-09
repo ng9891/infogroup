@@ -13,6 +13,25 @@ function errorHandler(err, response) {
     responseText: 'Error in query ' + err,
   });
 }
+
+exports.reqGeoByRailroad = (request, response) => {
+  if (!request.params.station) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No station specified',
+    });
+  }
+
+  byQuery
+    .geoByRailroad(request.params.station, request.query.dist, request.query.v)
+    .then((data) => {
+      return successHandler(data, response);
+    })
+    .catch((err) => {
+      return errorHandler(err, response);
+    });
+};
+
 /**
  * Endpoint will geocode with parameter 'q'.
  * Geocode API will be specified with query 'geocode'.
@@ -48,7 +67,7 @@ exports.reqGeoByGeocode = async (request, response) => {
     });
 
   byQuery
-    .geoByGeoJson(geoJson)
+    .geoByGeoJson(geoJson, request.query.dist, request.query.v)
     .then((data) => {
       return response.status(200).json({
         data: data,

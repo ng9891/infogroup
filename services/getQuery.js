@@ -16,6 +16,20 @@ const table = utils.tableNames;
 const bussinessVersion = table.business;
 
 module.exports = {
+  geoGetRailroad: (station) => {
+    let sql = `
+      SELECT stop_name as name, mta, ST_ASGeoJSON(ST_Transform(geom, 4326)) AS geom
+      FROM (
+        SELECT *, 'MN' as mta
+        FROM mta_mn
+        UNION ALL
+        SELECT *, 'LI' as mta
+        FROM mta_li
+        ) as railroads
+      WHERE UPPER(stop_name) LIKE UPPER($1)
+    `;
+    return queryDB(sql, [`${station}%`]);
+  },
   geoGetRoadListFromPoint: (lat = null, lon = null, dist=0.1) => {
     let withStatement = `
     WITH roadwaysFromP AS (

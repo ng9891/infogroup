@@ -31,7 +31,11 @@ function loadAutoComplete() {
       case 'mun':
         autoComplete_url('#query-search', 'mun');
         break;
+      case 'railroad':
+        autoComplete_url('#query-search', 'railroad');
+        break;
       default:
+        // Geocode
         if ($('#query-search').hasClass('ui-autocomplete-input')) {
           $('#query-search').autocomplete('destroy');
         }
