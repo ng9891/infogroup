@@ -37,8 +37,8 @@ module.exports = {
       AND ($2::char IS NULL OR UPPER(mta) LIKE UPPER($2))
     `;
     let params = [`${station}%`];
-    if(route) params.push(`%${decodeURI(route)}%`)
-    else params.push(null)
+    if (route) params.push(`%${decodeURI(route)}%`);
+    else params.push(null);
     return queryDB(sql, params);
   },
   geoGetRoadListFromPoint: (lat = null, lon = null, dist = 0.1) => {

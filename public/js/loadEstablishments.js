@@ -384,9 +384,11 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
     function drawingType(layer) {
       if (layer instanceof L.Marker) return 'marker';
       if (layer instanceof L.Circle) return 'circle';
-      if (layer instanceof L.Rectangle) return 'rectangle';
-      if (layer instanceof L.Polyline) return 'polyline';
-      if (layer instanceof L.Polygon) return 'polygon';
+      if (layer instanceof L.Polyline){
+        if (layer instanceof L.Rectangle) return 'rectangle';
+        if (layer instanceof L.Polygon) return 'polygon';
+        return 'polyline';
+      }
     }
 
     // Helper functions that creates the URL for marker query

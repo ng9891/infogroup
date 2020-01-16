@@ -14,51 +14,70 @@
               <div class="header">Address</div>
               <div class="content">
                 <div class="form-row">
-                  <div class="col-sm-3">
+                  <div class="form-group col-sm-6">
                     <label for="modal_PRMADDR">PRM ADDR</label>
                     <input type="text" class="form-control" id="modal_PRMADDR" disabled>
                     <div class="invalid-feedback">
                       Please provide a valid PRM ADDR.
                     </div>
                   </div>
-                  <div class="col-sm-2">
+                  <div class="form-group col-sm-6">
                     <label for="modal_PRMCITY">PRM CITY</label>
                     <input type="text" class="form-control" id="modal_PRMCITY" disabled>
                     <div class="invalid-feedback">
                       Please provide a valid PRM CITY.
                     </div>
                   </div>
-                  <div class="col-sm-1">
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-sm-2">
                     <label for="modal_PRMSTATE">STATE</label>
                     <input type="text" class="form-control" id="modal_PRMSTATE" disabled>
                     <div class="invalid-feedback">
                       Please provide a valid STATE.
                     </div>
                   </div>
-                  <div class="col-sm-2">
+                  <div class="form-group col-sm-3">
                     <label for="modal_PRMZIP">ZIP</label>
                     <input type="text" class="form-control" id="modal_PRMZIP" pattern="[0-9]*" disabled>
                     <div class="invalid-feedback">
                       Please provide a valid ZIP.
                     </div>
                   </div>
-                  <div class="col-sm-2">
+                  <div class="form-group col-sm-2">
                     <label for="modal_PRMZIP">LAT</label>
                     <input type="text" class="form-control" id="modal_LATITUDE" disabled>
                     <div class="invalid-feedback">
                       Please provide a valid latitude.
                     </div>
                   </div>
-                  <div class="col-sm-2">
+                  <div class="form-group col-sm-2">
                     <label for="modal_PRMZIP">LON</label>
                     <input type="text" class="form-control" id="modal_LONGITUDE" disabled>
                     <div class="invalid-feedback">
                       Please provide a valid latitude.
                     </div>
                   </div>
+                  <div class="form-group col-sm-3">
+                    <label for="modal_MATCHCD">MATCH LEVEL CODE</label>
+                    <div class="dropdown">
+                      <button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_MATCHCD_button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
+                        NULL
+                      </button>
+                      <ul class="dropdown-menu" id="modal_MATCHCD"></ul>
+                    </div>
+                  </div>
+                  <div class="form-group col-sm-5">
+                    <p><a href="#" class="locate_addr">Locate on Map</a> | 
+                      <a href="#" class="geocode_addr">Geocode Address</a>
+                    </p>
+                  </div>
                 </div>
                 <div class="form-row" id="modal_newaddress_container">
                   <div class="col-sm-12 checkbox" id="modal_newaddress">
+                    <!-- Here will appear a checkbox with new address after pressing "Check" 
+                      Just for showing to user and checking that it is correct -->
                   </div>
                 </div>
               </div>

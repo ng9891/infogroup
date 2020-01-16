@@ -29,6 +29,8 @@ function loadDropdown() {
   }, function(err) {
     console.log(err);
   });
+
+  loadDropdown_MatchCD();
 }
 function loadDropdown_SalesVolume(input) {
   // Edit Modal
@@ -83,4 +85,27 @@ function loadDropdown_SqFoot(input) {
       })
       .join('');
   }
+}
+
+function loadDropdown_MatchCD(){
+  let matchCDObj = {
+    '2':'ZIP2',
+    '4':'ZIP4',
+    X: 'ZIP',
+    '0': 'EXACT',
+    P: 'PARCEL',
+    NULL: 'UNKNOWN',
+  }
+
+  let modal_matchCD_dropdown = $('#modal_MATCHCD');
+  if (modal_matchCD_dropdown[0]) {
+    modal_matchCD_dropdown.empty();
+
+    let html = '';
+    for(key in matchCDObj){
+      html += `<li value=${key}><a class='dropdown-item' href='#'>${matchCDObj[key]}</a></li>`
+    }
+    modal_matchCD_dropdown[0].innerHTML = html;
+  }
+
 }

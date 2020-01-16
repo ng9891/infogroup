@@ -277,6 +277,7 @@ function addTooltip(e) {
     mymap.on('editable:drawing:move', printRadius); // To print radius
     L.DomEvent.on(document, 'mousemove', moveTooltip); // To update div position
   } else if (e.layer instanceof L.Polyline) {
+    if(e.layer instanceof L.Rectangle) return;
     mymap.on('editable:drawing:move', printTotalLength);
     L.DomEvent.on(document, 'mousemove', moveTooltip);
   }

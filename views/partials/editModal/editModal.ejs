@@ -37,7 +37,7 @@
                   </div>
                 </div>
                 <div class="form-row">
-                  <div class="form-group col-sm-3">
+                  <div class="form-group col-sm-2">
                     <label for="modal_PRMSTATE">STATE</label>
                     <input type="text" class="form-control" id="modal_PRMSTATE" required>
                     <div class="invalid-feedback">
@@ -51,18 +51,28 @@
                       Please provide a valid ZIP.
                     </div>
                   </div>
-                  <div class="form-group col-sm-3">
+                  <div class="form-group col-sm-2">
                     <label for="modal_PRMZIP">LAT</label>
                     <input type="text" class="form-control" id="modal_LATITUDE" required>
                     <div class="invalid-feedback">
                       Please provide a valid latitude.
                     </div>
                   </div>
-                  <div class="form-group col-sm-3">
+                  <div class="form-group col-sm-2">
                     <label for="modal_PRMZIP">LON</label>
                     <input type="text" class="form-control" id="modal_LONGITUDE" required>
                     <div class="invalid-feedback">
                       Please provide a valid latitude.
+                    </div>
+                  </div>
+                  <div class="form-group col-sm-3">
+                    <label for="modal_MATCHCD">MATCH LEVEL CODE</label>
+                    <div class="dropdown">
+                      <button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_MATCHCD_button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        NULL
+                      </button>
+                      <ul class="dropdown-menu" id="modal_MATCHCD"></ul>
                     </div>
                   </div>
                   <div class="form-group col-sm-5">
