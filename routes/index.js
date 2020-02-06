@@ -2,6 +2,16 @@ const router = require('express').Router();
 const {isLoggedIn} = require('../middleware/middleware.js');
 const passport = require('passport');
 
+const apiRoutes = require('./api');
+const adminRoutes = require('./admin');
+const editRoutes = require('./edit');
+const auditRoutes = require('./audit');
+
+router.use('/api', apiRoutes);
+router.use('/admin', adminRoutes);
+router.use('/edit', editRoutes);
+router.use('/audit', auditRoutes);
+
 router.get('/login', (req, res) => {
   // res.sendFile(path.join(__dirname, '../public/views/login.html'));.
   if (req.user) return res.redirect('/');

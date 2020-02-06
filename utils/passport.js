@@ -17,11 +17,10 @@ passport.use(
     })
       .then((response) => response.json())
       .then((json) => {
-        // console.log(json);
         if (json && JSON.stringify(json.error))
           return done(false, false, {message: json.error, error: 'not authenticated'});
 
-        if (JSON.stringify(json.user.id)) return done(null, JSON.stringify(json));
+        if (JSON.stringify(json.user.id)) return done(null, json.user);
 
         return done(null, {message: 'unknown error'});
       })

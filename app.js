@@ -3,9 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const bodyParser = require('body-parser');
-const apiRoutes = require('./routes/api');
 const indexRoutes = require('./routes/index');
-const editRoutes = require('./routes/edit');
 const passport = require('./utils/passport.js');
 const uuid = require('uuid/v4');
 const session = require('express-session');
@@ -27,7 +25,7 @@ app.use(
     genid: (req) => {
       return uuid(); // use UUIDs for session IDs
     },
-    store: new FileStore({logFn: function(){}}),
+    store: new FileStore({logFn: function() {}}),
     secret: process.env.SECRET,
     resave: true,
     saveUninitialized: true,
@@ -43,8 +41,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api', apiRoutes);
-app.use('/edit', editRoutes);
 app.use('/', indexRoutes);
 
 // catch 404 and forward to error handler

@@ -38,5 +38,7 @@ module.exports = {
   },
   tableNames:{
     business: 'businesses',
+    edit: 'business_edit',
+    audit: 'audit.business_audit_log'
   }
 };

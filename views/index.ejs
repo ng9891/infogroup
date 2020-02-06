@@ -1,6 +1,17 @@
 <%include ./partials/header.ejs %>
+<link rel="stylesheet" type="text/css" href="/stylesheet/histogram.css" />
+<link rel="stylesheet" type="text/css"
+  href="https://cdn.datatables.net/v/dt/dt-1.10.18/b-1.5.4/b-html5-1.5.4/datatables.min.css" />
+<link rel="stylesheet" type="text/css" href="/stylesheet/src/MarkerCluster.css" />
+<link rel="stylesheet" type="text/css" href="/stylesheet/src/MarkerCluster.Default.css" />
+<link rel="stylesheet" type="text/css" href="/stylesheet/src/SwitcherDatatable.css" />
+<link rel="stylesheet" type="text/css" href="/stylesheet/src/leaflet-measure-path.css" />
+</head>
+
+<body>
+  <%include ./partials/nav.ejs %>
   <%if(localUser){%>
-    <input class="role" type="hidden" value="<%=localUser.isadmin || true%>" />
+  <input class="role" type="hidden" value="<%=localUser.isadmin || true%>" />
   <%}%>
   <div class="loader"></div>
   <div class="sideBarContainer">
@@ -30,9 +41,9 @@
       <div id="map-draw-tooltip"></div>
   </div>
   <%if(localUser && (localUser.isadmin || true)){%>
-    <%include ./partials/editModal/editModal.ejs %>
+  <%include ./partials/editModal/editModal.ejs %>
   <%}else{%>
-    <%include ./partials/editModal/editModalView.ejs %>
+  <%include ./partials/editModal/editModalView.ejs %>
   <%}%>
   <div class='infoContainer'>
     <button class='infoContainerButton'>MAIN</button>
@@ -189,12 +200,7 @@
   </div>
 </body>
 <!-- SOURCES -->
-<script src="/js/src/jquery-3.3.1.min.js"></script>
-<script src="/js/src/jquery-ui-1.12.1/jquery-ui.min.js "></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"
-  integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-  integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<%include ./partials/sources.ejs %>
 <script type="text/javascript"
   src="https://cdn.datatables.net/v/dt/dt-1.10.18/b-1.5.4/b-html5-1.5.4/datatables.min.js"></script>
 <script type="text/javascript"
@@ -241,4 +247,3 @@
 <!-- INIT -->
 <script src="/js/init.js"></script>
 <%include ./partials/footer.ejs %>
-<!-- TODO: Add loading animation -->
