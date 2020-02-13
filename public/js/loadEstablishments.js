@@ -62,6 +62,7 @@
       .json(reqURL)
       .then(async (data) => {
         if (data.data.length === 0) {
+          await loadOverlay(data, overlayURL);
           d3.select('.loader').classed('hidden', true);
           if (queryType === 'adv') {
             $('.advancedSearchContainer').toggleClass('open');
@@ -449,6 +450,24 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
       reqURL = '/api/bypolyline?' + params + ']';
       return reqURL;
     }
+    
+    function drivingDistQuery(layer, directed = false){
+      let lat, lon, reqURL, overlayURL;
+      lat = layer.getLatLng().lat;
+      lon = layer.getLatLng().lng;
+      // Creates a request URL for the API
+      reqURL = `/api/bydrivingdist?dist=${window.defaultRoadBufferSize}&directed=${directed}`;
+      overlayURL = `/api/getdrivingdist?dist=${window.defaultRoadBufferSize}&directed=${directed}`;
+      if (lon) {
+        reqURL += '&lon=' + lon;
+        overlayURL += '&lon=' + lon;
+        if (lat) {
+          reqURL += '&lat=' + lat;
+          overlayURL += '&lat=' + lat;
+        }
+      }
+      return [reqURL, overlayURL];
+    }
 
     if (layerArray.length === 0) return;
 
@@ -456,10 +475,13 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
     let layer = layerArray[layerArray.length - 1]; // last layer
     switch (drawingType(layer)) {
       case 'marker':
-        reqURL = markerQuery(layer);
-        searchType = 'Marker Query';
-        searchValue = '1mi';
-        overlayURL = 'marker';
+        // reqURL = markerQuery(layer);
+        // searchType = 'Marker Query';
+        // searchValue = '1mi';
+        // overlayURL = 'marker';
+        [reqURL, overlayURL] = drivingDistQuery(layer);
+        searchType = 'Driving Distance Query';
+        searchValue = `${window.defaultRoadBufferSize}mi`;
         break;
       case 'circle':
         reqURL = circleQuery(layer);

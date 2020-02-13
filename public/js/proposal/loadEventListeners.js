@@ -89,14 +89,14 @@
         window.mymap.removeLayer(featureGroup);
       });
 
-    $('#proposalTable').on('click', 'tr span.dtr-data', function() {
+    $('#proposalTable').on('click', 'tr span.dtr-data .dropdown-item.reject', function() {
       let row = $(this).closest('tr');
       //Check if the current row is a child row
       if (row.hasClass('child')) row = row.prev(); //If it is, then point to the row before it (its 'parent')
       displayCommentModal('reject', row);
     });
 
-    $('#proposalTable').on('click', 'tr span.dtr-data', function() {
+    $('#proposalTable').on('click', 'tr span.dtr-data .dropdown-item.accept', function() {
       let row = $(this).closest('tr');
       // Check if the current row is a child row
       if (row.hasClass('child')) row = row.prev(); //If it is, then point to the row before it (its 'parent')

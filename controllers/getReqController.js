@@ -13,6 +13,30 @@ function errorHandler(err, response) {
   });
 }
 
+exports.reqGetDrivingDist = (request, response) => {
+  if (!request.query.lon) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No Longitude specified',
+    });
+  }
+  if (!request.query.lat) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No latitude specified',
+    });
+  }
+
+  getQuery
+    .geoGetDrivingDist(request.query)
+    .then((data) => {
+      return successHandler(data, response);
+    })
+    .catch((err) => {
+      return errorHandler(err, response);
+    });
+};
+
 exports.reqGetRailroad = (request, response) => {
   if (!request.params.station) {
     return response.status(400).json({

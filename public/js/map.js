@@ -116,7 +116,9 @@ L.EditControl = L.Control.extend({
             shadowSize: [41, 41],
           });
           drawingOptions.icon = redIcon;
-        } else {
+        } else if (drawingOptions.kind === 'drivingDist') {
+          link.title = 'Find by driving distance';
+        }else {
           link.title = 'Create a new ' + this.options.kind;
         }
         link.innerHTML = this.options.html;
@@ -158,7 +160,7 @@ L.NewMarkerControl = L.EditControl.extend({
   options: {
     position: 'topleft',
     callback: mymap.editTools.startMarker,
-    kind: 'marker',
+    kind: 'drivingDist',
     html: '&#9873',
     type: 'draw',
   },
@@ -218,10 +220,11 @@ L.NewQueryControl = L.EditControl.extend({
 // mymap.addControl(new L.NewPolygonControl());
 mymap.addControl(new L.NewRectangleControl());
 mymap.addControl(new L.NewCircleControl());
-mymap.addControl(new L.NewMarkerControl());
 mymap.addControl(new L.NewLineControl());
 mymap.addControl(new L.RoadSelectControl());
+mymap.addControl(new L.NewMarkerControl());
 mymap.addControl(new L.NewQueryControl());
+
 //---
 // END MAP CONTROL TOOLS
 //---

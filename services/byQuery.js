@@ -57,6 +57,34 @@ function getBusinessVersion(version) {
 }
 
 module.exports = {
+  geoByDrivingDist: ({lat, lon, dist = defaultBufferSize, directed = false, v = 'current'} = {}) => {
+    let bussinessVersion = getBusinessVersion(v);
+    let withStatement = `
+      WITH driving as (SELECT ST_SetSRID(ST_ConvexHull(
+        (	SELECT ST_Collect(the_geom)
+          FROM pgr_drivingDistance(
+            'SELECT id, source, target, km AS cost, (CASE WHEN reverse_cost < 1000000 THEN -(km) ELSE 1000000 END) as reverse_cost FROM public.at_2po_4pgr',
+            (SELECT source FROM public.at_2po_4pgr
+            ORDER BY ST_Distance(
+              ST_StartPoint(the_geom),
+              ST_GeomFromText('SRID=4326;POINT(' || $1 || ' ' || $2 || ')'),
+              true
+            ) ASC
+            LIMIT 1),
+            $3, $4
+          ) as pt
+          JOIN public.at_2po_4pgr rd ON pt.edge = rd.id
+        )),4326) as geom
+      )
+    `;
+    let sql = `
+      ${withStatement}
+      SELECT ${selectStatement}
+      FROM ${bussinessVersion} as b, driving as d
+      WHERE ST_Intersects(ST_Transform(b.geom, 4326), d.geom)
+    `;
+    return queryDB(sql, [lon, lat, utils.convertMilesToKmeters(dist), directed]);
+  },
   geoByRailroad: (station, route = null, dist = defaultBufferSize, v = 'current') => {
     station = decodeURI(station);
     let bussinessVersion = getBusinessVersion(v);
@@ -86,9 +114,9 @@ module.exports = {
       ON ST_DWithin(s.geom::geography, ST_Transform(b.geom,4326)::geography, $3)
     `;
     let params = [`${station}%`];
-    if(route) params.push(`%${decodeURI(route)}%`)
-    else params.push(null)
-    params.push(utils.convertMilesToMeters(dist))
+    if (route) params.push(`%${decodeURI(route)}%`);
+    else params.push(null);
+    params.push(utils.convertMilesToMeters(dist));
     return queryDB(sql, params);
   },
   /**
