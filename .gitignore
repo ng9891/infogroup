@@ -3,3 +3,4 @@ work.code-workspace
 .vscode
 *.env
 *.log
+sessions

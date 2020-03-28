@@ -88,10 +88,6 @@ var drawnItems = new L.FeatureGroup().addTo(mymap); // Array containing drawing 
 L.EditControl = L.Control.extend({
   options: {
     position: 'topleft',
-    callback: null,
-    type: '',
-    kind: '',
-    html: '',
   },
   onAdd: function(map) {
     let container = '';
@@ -118,7 +114,7 @@ L.EditControl = L.Control.extend({
           drawingOptions.icon = redIcon;
         } else if (drawingOptions.kind === 'drivingDist') {
           link.title = 'Find by driving distance';
-        }else {
+        } else {
           link.title = 'Create a new ' + this.options.kind;
         }
         link.innerHTML = this.options.html;
@@ -161,10 +157,11 @@ L.NewMarkerControl = L.EditControl.extend({
     position: 'topleft',
     callback: mymap.editTools.startMarker,
     kind: 'drivingDist',
-    html: '&#9873',
+    html: '&#128663',
     type: 'draw',
   },
   //🖈
+  // &#9873
 });
 
 L.NewRectangleControl = L.EditControl.extend({
@@ -217,13 +214,81 @@ L.NewQueryControl = L.EditControl.extend({
   },
 });
 
-// mymap.addControl(new L.NewPolygonControl());
+let distBar = L.Control.extend({
+  options: {
+    position: 'topleft',
+  },
+  onAdd: (map) => {
+    let container = L.DomUtil.create('div', 'leaflet-control leaflet-bar distContainer');
+
+    let icon = L.DomUtil.create('a', 'leaflet-control-distBtn', container);
+    icon.style = 'display:inline-block;';
+    icon.href = '#';
+    icon.title = 'Distance for Query';
+    icon.innerHTML = '&#128207';
+    // '&#128712'
+    //	&#128207;
+
+    let inputBox = L.DomUtil.create('input', 'distInputBox', container);
+    inputBox.type = 'text';
+    inputBox.style = 'display:none;';
+    inputBox.title = 'Input distance in miles';
+    inputBox.value = 0.5;
+
+    $(inputBox).on('focus', function() {
+      setTimeout(function() {
+        $(inputBox).select();
+      }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+    });
+
+    let changed = false;
+    $(inputBox).on('input', function() {
+      changed = true;
+      // console.log('chaned', changed);
+    });
+
+    container.onmouseover = function() {
+      inputBox.style = 'display:inline;';
+      $(inputBox).focus();
+      // icon.style = 'display:none;';
+    };
+
+    container.onmouseout = function() {
+      // icon.style = 'display:inline-block;';
+      inputBox.style = 'display:none;';
+      let inputDist = $('.distInputBox').val();
+      // console.log(inputDist);
+      // Range Check
+      if (!inputDist) return;
+      if (inputBox <= 0) {
+        $('.distInputBox').val(window.defaultRoadBufferSize);
+        return alert('Invalid input. Negative or 0 distance.');
+      }
+      if (inputDist >= 8) {
+        if (changed) {
+          let confirmation = confirm(
+            'Queries greater than 8 miles will take considerable amount of time. Do you still wish to continue?'
+          );
+          changed = false;
+          if (!confirmation) return $('.distInputBox').val(window.defaultRoadBufferSize);
+        }
+      }
+      if (inputDist >= 10) return alert('Please input a value lesser than 10 miles.');
+      window.defaultRoadBufferSize = inputDist;
+    };
+
+    return container;
+  },
+});
+
+mymap.addControl(new distBar());
 mymap.addControl(new L.NewRectangleControl());
 mymap.addControl(new L.NewCircleControl());
 mymap.addControl(new L.NewLineControl());
 mymap.addControl(new L.RoadSelectControl());
 mymap.addControl(new L.NewMarkerControl());
 mymap.addControl(new L.NewQueryControl());
+// mymap.addControl(new L.NewPolygonControl());
 
 //---
 // END MAP CONTROL TOOLS
@@ -236,7 +301,6 @@ let tooltip = L.DomUtil.get('map-draw-tooltip'); // Tooltip providing info of ra
 
 // Loads the establishments around the drawing area
 function queryDrawing() {
-  // loadDrawingEstablishments();
   let query_version = d3.select('#version-dropdown').property('value');
   loadEstablishments('draw', usrMarkers, query_version);
   // Clear tooltip but we don't want to get rid of the listeners for drawing edits.
@@ -273,14 +337,14 @@ function printTotalLength(e) {
 }
 
 function addTooltip(e) {
-  removeTooltip(); // Get rid of old drawing tooltip
+  // removeTooltip(); // Get rid of old drawing tooltip
   if (!e) return;
   //Draw radius if its circle query
   if (e.layer instanceof L.Circle) {
     mymap.on('editable:drawing:move', printRadius); // To print radius
     L.DomEvent.on(document, 'mousemove', moveTooltip); // To update div position
   } else if (e.layer instanceof L.Polyline) {
-    if(e.layer instanceof L.Rectangle) return;
+    if (e.layer instanceof L.Rectangle) return;
     mymap.on('editable:drawing:move', printTotalLength);
     L.DomEvent.on(document, 'mousemove', moveTooltip);
   }
@@ -305,15 +369,17 @@ function addUsrMarker(e) {
   // On drawing commit, push drawing
   usrMarkers.push(e.layer);
   drawnItems.addLayer(e.layer);
+  removeTooltip();
   if (e.layer.options.kind && e.layer.options.kind == 'road') {
     e.layer.dragging.disable();
     let latlng = e.layer.getLatLng();
     return loadNearbyRoads(latlng.lat, latlng.lng);
-  } else if (e.layer.options.kind && e.layer.options.kind == 'line') {
-    removeTooltip();
-  }
+  } 
+  // else if (e.layer.options.kind && e.layer.options.kind == 'line') {
+  //   removeTooltip();
+  // }
   $('.leaflet-control.leaflet-bar.queryBtn').css('display', 'block'); // Display the query button
-  $('.leaflet-control-queryBtn').on('click', queryDrawing); // QUERY BUTTON LISTENER
+  $('.leaflet-control-queryBtn').off('click').on('click', queryDrawing); // QUERY BUTTON LISTENER
   // drawnItems.clearLayers();
 }
 
@@ -330,14 +396,16 @@ mymap.on('editable:drawing:start', clearUsrMarker);
 mymap.on('editable:drawing:commit', addUsrMarker);
 mymap.on('editable:vertex:drag editable:vertex:deleted', function(e) {
   e.layer.updateMeasurements();
+  addTooltip(e)
   moveTooltip(e.originalEvent);
-});
-let lastVertex;
-mymap.on('editable:vertex:new', function(e) {
-  lastVertex = e;
 });
 mymap.on('editable:vertex:dragend editable:drawing:cancel', () => {
   removeTooltip();
+});
+
+let lastVertex;
+mymap.on('editable:vertex:new', function(e) {
+  lastVertex = e;
 });
 
 //Event listeners key down during drawing

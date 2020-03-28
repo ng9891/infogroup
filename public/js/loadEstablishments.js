@@ -447,7 +447,7 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
         params += `[${lat},${lon}],`;
       }
       params = params.slice(0, -1); // Take out last comma.
-      reqURL = '/api/bypolyline?' + params + ']';
+      reqURL = '/api/bypolyline?' + params + ']&dist=' + window.defaultRoadBufferSize;
       return reqURL;
     }
     
@@ -481,7 +481,7 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
         // overlayURL = 'marker';
         [reqURL, overlayURL] = drivingDistQuery(layer);
         searchType = 'Driving Distance Query';
-        searchValue = `${window.defaultRoadBufferSize}mi`;
+        searchValue = [``, `Dist:${window.defaultRoadBufferSize}mi`];;
         break;
       case 'circle':
         reqURL = circleQuery(layer);

@@ -608,3 +608,9 @@ body {
   top: 0;
   left: 0;
 }
+
+.distInputBox{
+  position:absolute;
+  width:4em;
+  height:100%;
+}
