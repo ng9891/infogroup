@@ -37,8 +37,9 @@
       searchInfo = 'Geocode';
       searchValue = [null, queryInput + ` Dist: ${window.defaultRoadBufferSize}mi`];
     } else if (queryType === 'railroad') {
-      reqURL = `/api/by${queryType}/${queryInput['station']}?dist=${window.defaultRoadBufferSize}`;
-      overlayURL = `/api/get${queryType}/${queryInput['station']}?`;
+      let station = queryInput['station'];
+      reqURL = `/api/by${queryType}?station=${station}&dist=${window.defaultRoadBufferSize}`;
+      overlayURL = `/api/get${queryType}?station=${station}`;
       if (queryInput['route']) {
         reqURL += `&route=${queryInput['route']}`;
         overlayURL += `&route=${queryInput['route']}`;
@@ -385,7 +386,7 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
     function drawingType(layer) {
       if (layer instanceof L.Marker) return 'marker';
       if (layer instanceof L.Circle) return 'circle';
-      if (layer instanceof L.Polyline){
+      if (layer instanceof L.Polyline) {
         if (layer instanceof L.Rectangle) return 'rectangle';
         if (layer instanceof L.Polygon) return 'polygon';
         return 'polyline';
@@ -450,8 +451,8 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
       reqURL = '/api/bypolyline?' + params + ']&dist=' + window.defaultRoadBufferSize;
       return reqURL;
     }
-    
-    function drivingDistQuery(layer, directed = false){
+
+    function drivingDistQuery(layer, directed = false) {
       let lat, lon, reqURL, overlayURL;
       lat = layer.getLatLng().lat;
       lon = layer.getLatLng().lng;
@@ -481,7 +482,7 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
         // overlayURL = 'marker';
         [reqURL, overlayURL] = drivingDistQuery(layer);
         searchType = 'Driving Distance Query';
-        searchValue = [``, `Dist:${window.defaultRoadBufferSize}mi`];;
+        searchValue = [``, `Dist:${window.defaultRoadBufferSize}mi`];
         break;
       case 'circle':
         reqURL = circleQuery(layer);

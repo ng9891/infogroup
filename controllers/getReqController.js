@@ -38,7 +38,7 @@ exports.reqGetDrivingDist = (request, response) => {
 };
 
 exports.reqGetRailroad = (request, response) => {
-  if (!request.params.station) {
+  if (!request.query.station) {
     return response.status(400).json({
       status: 'Error',
       responseText: 'No station specified',
@@ -46,7 +46,7 @@ exports.reqGetRailroad = (request, response) => {
   }
 
   getQuery
-    .geoGetRailroad(request.params.station, request.query.route)
+    .geoGetRailroad(request.query.station, request.query.route)
     .then((data) => {
       return successHandler(data, response);
     })

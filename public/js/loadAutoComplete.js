@@ -111,10 +111,13 @@ function autoComplete_url(inputId, column, minlen = 2) {
     sortResults: false,
     source: function(request, response) {
       let input = request.term.trim();
+      let url = `/api/get${column}/`;
+      if(column === 'railroad') url += `?station=${encodeURIComponent(input)}`; // railroad get URL is a bit different because string contains '/'
+      else url += `${encodeURIComponent(input)}`;
       $.ajax({
         type: 'GET',
         dataType: 'json',
-        url: `/api/get${column}/${encodeURIComponent(input)}`,
+        url: url,
         success: function(data) {
           if (data) {
             let arr_data = [];
@@ -122,7 +125,7 @@ function autoComplete_url(inputId, column, minlen = 2) {
               if (d.muni_type) {
                 // Municipal query formatting
                 d.name += ' - ' + capitalizeFirstLetter(d.muni_type) + '/' + capitalizeFirstLetter(d.county);
-              }else if(d.state){
+              } else if (d.state) {
                 // County formatting
                 d.name += ' - ' + capitalizeFirstLetter(d.state_code);
               }

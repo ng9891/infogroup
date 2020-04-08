@@ -18,7 +18,7 @@ const bussinessVersion = table.business;
 const defaultBufferSize = 0.5; // miles
 
 module.exports = {
-  geoGetDrivingDist: ({lat, lon, dist = defaultBufferSize, directed = false}={}) => {
+  geoGetDrivingDist: ({lat, lon, dist = defaultBufferSize, directed = false} = {}) => {
     let sql = `
       SELECT ST_ASGeoJSON(rd.the_geom) as geom
       FROM pgr_drivingDistance(
@@ -52,6 +52,10 @@ module.exports = {
         UNION ALL
         SELECT stop_name, daytime_routes as mta, geom
         FROM mta_nyc
+        UNION ALL
+        SELECT SUBSTRING(a."STNNAME" FROM 0 FOR POSITION(',' IN a."STNNAME")) as stopname, 'AMTK' as mta, geom
+        FROM amtrak as a 
+        WHERE a."STATE" = 'NY'
       ) as railroads
       WHERE UPPER(stop_name) LIKE UPPER($1)
       AND ($2::char IS NULL OR UPPER(mta) LIKE UPPER($2))
