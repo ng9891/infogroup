@@ -60,7 +60,7 @@ function loadAutoComplete() {
     _obj_naics_arr.push(obj_naics_cd);
     _obj_naics_arr.push(obj_naics_ds);
     autoComplete_text(arr_data_cd, '#modal_NAICSCD');
-    autoComplete_text(arr_data_cd, '#adv_NAICSCD');
+    // autoComplete_text(arr_data_cd, '#adv_NAICSCD');
   }, function(err) {
     console.log(err);
   });
@@ -72,7 +72,6 @@ function loadAutoComplete() {
     });
     autoComplete_text(arr_data_ds, '#modal_NAICSDS');
     autoComplete_text(arr_data_ds, '#adv_NAICSDS'); //adv search
-    // autoComplete_text(arr_data_ds, '#adv_NAICSDS');
   }, function(err) {
     console.log(err);
   });
@@ -92,6 +91,7 @@ function loadAutoComplete() {
     _obj_sic_arr.push(obj_sic_ds);
     autoComplete_text(arr_data_cd, '#modal_PRMSICCD');
     autoComplete_text(arr_data_ds, '#modal_PRMSICDS');
+    autoComplete_text(arr_data_ds, '#adv_PRMSICDS'); //adv search
   }, function(err) {
     console.log(err);
   });

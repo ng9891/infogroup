@@ -265,7 +265,7 @@ body {
   position: fixed;
   top: 20%;
   right: 0px;
-  height: 410px;
+  height: 460px;
   background-color: var(--colorPrimaryContainer);
   z-index: 850;
   border-radius: 5px;

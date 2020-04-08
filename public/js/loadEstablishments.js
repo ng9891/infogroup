@@ -366,7 +366,7 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
     let secondRow = {
       Dist: queryInput.roadDist ? queryInput.roadDist + 'mi' : '',
       NAICS: queryInput.naicsds || '',
-      Code: queryInput.naicscd || '',
+      SIC: queryInput.prmSicDs || '',
       EmpMin: queryInput.minEmp || '',
       EmpMax: queryInput.maxEmp || '',
       Sales: queryInput.lsalvol || '',

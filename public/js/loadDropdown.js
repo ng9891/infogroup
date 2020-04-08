@@ -97,15 +97,22 @@ function loadDropdown_MatchCD(){
     NULL: 'UNKNOWN',
   }
 
+  let html = '';
+  for(key in matchCDObj){
+    html += `<li value=${key}><a class='dropdown-item' href='#'>${matchCDObj[key]}</a></li>`
+  }
+
   let modal_matchCD_dropdown = $('#modal_MATCHCD');
+  let adv_matchCD_dropdown = $('#adv_MATCHCD');
   if (modal_matchCD_dropdown[0]) {
     modal_matchCD_dropdown.empty();
-
-    let html = '';
-    for(key in matchCDObj){
-      html += `<li value=${key}><a class='dropdown-item' href='#'>${matchCDObj[key]}</a></li>`
-    }
     modal_matchCD_dropdown[0].innerHTML = html;
+    
+  }
+
+  if(adv_matchCD_dropdown[0]){
+    adv_matchCD_dropdown.empty();
+    adv_matchCD_dropdown[0].innerHTML = html;
   }
 
 }

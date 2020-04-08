@@ -87,14 +87,14 @@
       </div>
       <div class="input-group col-md-12 mb-3">
         <div class="input-group-prepend">
-          <span class="input-group-text">Industry</span>
+          <span class="input-group-text">NAICS</span>
         </div>
         <input type="text" id="adv_NAICSDS" class="form-control" placeholder="e.g. Financial">
-        <div class="input-group col-md-4">
+        <div class="input-group col-md-6">
           <div class="input-group-prepend">
-            <span class="input-group-text">Code</span>
+            <span class="input-group-text">SIC</span>
           </div>
-          <input type="text" id="adv_NAICSCD" class="form-control" placeholder="OPTIONAL">
+          <input type="text" id="adv_PRMSICDS" class="form-control" placeholder="OPTIONAL">
         </div>
       </div>
       <div class="input-group col-md-12 mb-3">
@@ -143,10 +143,10 @@
         </div>
       </div>
       <div class="input-group col-md-12 mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">Municipality</span>
-          </div>
-          <input type="text" id="munId" class="form-control" placeholder="e.g. Hudson">
+        <div class="input-group-prepend">
+          <span class="input-group-text">Municipality</span>
+        </div>
+        <input type="text" id="munId" class="form-control" placeholder="e.g. Hudson">
         <div class="col-md-3 input-group">
           <div class="dropdown dropdown-btn">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownSalesVolume"
@@ -157,6 +157,17 @@
             </ul>
           </div>
         </div>
+      </div>
+      <div class="col-md-12 mb-3 dropdown">
+
+          <!-- <div class="col-md-6 dropdown"> -->
+            <button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="adv_MATCHCD_button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              MATCH LEVEL CODE
+            </button>
+            <ul class="dropdown-menu" id="adv_MATCHCD"></ul>
+          <!-- </div> -->
+
       </div>
       <div class="col-md-12">
         <button class="btn btn-primary btn-md ml-auto" id="advsearch-button" type="submit">Search</button>

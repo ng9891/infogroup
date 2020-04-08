@@ -5,7 +5,7 @@
     let proposeBtn = `<button class="btn btn-primary resubmit" type="button">Propose Again</button>`;
     switch (data.type) {
       case 'NEW':
-        html = `${withdrawBtn} ${proposeBtn}`
+        html = `${withdrawBtn} ${proposeBtn}`;
         break;
       case 'REJECTED':
         html = proposeBtn;

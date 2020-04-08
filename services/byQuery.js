@@ -303,7 +303,7 @@ module.exports = {
       v = 'current',
       coname = '',
       naicsds = '',
-      naicscd = '',
+      prmSicDs = '',
       minEmp = '',
       maxEmp = '',
       lsalvol = '',
@@ -318,10 +318,12 @@ module.exports = {
       state = null,
       stateCode = null,
       mpo = '',
+      matchCD = null,
     } = {}
   ) => {
     coname = decodeURIComponent(coname);
     naicsds = decodeURIComponent(naicsds);
+    prmSicDs = decodeURIComponent(prmSicDs);
     lsalvol = decodeURIComponent(lsalvol);
     county = county ? decodeURIComponent(county) : '';
     state = state ? decodeURIComponent(state) : null;
@@ -346,9 +348,9 @@ module.exports = {
       where += addANDStatement(`"${column.NAICSDS}" LIKE $${params.length + 1}`);
       params.push(`${naicsds}%`);
     }
-    if (naicscd !== '') {
-      where += addANDStatement(`"${column.NAICSCD}" = $${params.length + 1}`);
-      params.push(+naicscd);
+    if (prmSicDs !== '') {
+      where += addANDStatement(`"${column.PRMSICDS}" LIKE $${params.length + 1}`);
+      params.push(`${prmSicDs}%`);
     }
     if (minEmp !== '' || maxEmp !== '') {
       // TODO: INCLUDE NULL statement to search null ALEMPSZ
@@ -364,6 +366,11 @@ module.exports = {
     if (lsalvol !== '') {
       where += addANDStatement(`"${column.LSALVOLDS}" = $${params.length + 1}`);
       params.push(lsalvol);
+    }
+
+    if (matchCD) {
+      where += addANDStatement(`"${column.MATCHCD}" = $${params.length + 1}`);
+      params.push(matchCD);
     }
 
     // If its a road query.
