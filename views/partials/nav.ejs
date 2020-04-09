@@ -4,6 +4,12 @@
         <li class="nav-item active">
           <a class="nav-link active" href="/">Home</a>
         </li>
+        <li class="nav-item active">
+          <a class="nav-link active" href="/edit">Proposals</a>
+        </li>
+        <% if(typeof noSearchBar === 'undefined'){%>
+ 
+        <% } %>
       </ul>
     </div>
     <div class="col-sm-6">
@@ -36,7 +42,15 @@
           </li>
           <%}else{%>
             <li class="nav-item">
-              <a class="nav-link" href="/logout">Logout</a>
+              <!-- <a class="nav-link" href="/logout">Logout</a> -->
+              <div class="btn-group dropleft">
+                <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%-localUser.id%></button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="/admin/<%-localUser.id%>">Profile</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/logout">Logout</a>
+                </div>
+              </div>
             </li>
           <%}%>
         </ul>

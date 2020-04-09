@@ -17,63 +17,108 @@
 function sendBusinessEdit() {
   let business_id = $('#business_id').text();
   let form = getForm();
-  d3
-    .json(`/edit/${business_id}`, {
-      method: 'POST',
-      body: JSON.stringify(form),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-    .then(
-      () => {
-        alert('Sent for approval');
-        $('#byemodal').click();
-      },
-      (err) => {
-        alert('Error in submission');
-        console.log(err);
+
+  fetch(`/edit/business/${business_id}`, {
+    method: 'POST',
+    body: JSON.stringify(form),
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+  })
+    .then((res) => {
+      let json = res.json();
+      if (!res.ok) {
+        // throw Error
+        return json.then(Promise.reject.bind(Promise));
       }
-    );
+      return json;
+    })
+    .then(() => {
+      alert('Sent for approval');
+      $('#byemodal').click();
+    })
+    .catch((err) => {
+      if(err.status === 'CHECK ERROR'){
+        return alert(err.responseText);
+      }
+      alert('Error in submission');
+      console.log(err);
+    });
 }
 
+// function getForm() {
+//   let obj = {
+//     alias: parseFormInput($('#modal_alias').val()),
+//     CONAME: parseFormInput($('#modal_CONAME').val()),
+//     PRMSICCD: parseFormInput($('#modal_PRMSICCD').val()),
+//     PRMSICDS: parseFormInput($('#modal_PRMSICDS').val()),
+//     NAICSCD: parseFormInput($('#modal_NAICSCD').val()),
+//     NAICSDS: parseFormInput($('#modal_NAICSDS').val()),
+//     SQFOOTCD: parseFormInput($('#modal_SQFOOTCD_button').text()),
+//     SQFOOTDS: parseFormInput($('#modal_SQFOOTDS').val()),
+//     LEMPSZCD: parseFormInput($('#modal_LEMPSZCD_button').text()),
+//     LEMPSZDS: parseFormInput($('#modal_LEMPSZDS').val()),
+//     ALEMPSZ: parseFormInput($('#modal_ALEMPSZ').val()),
+//     LSALVOLCD: parseFormInput($('#modal_LSALVOLCD_button').text()),
+//     LSALVOLDS: parseFormInput($('#modal_LSALVOLDS').val()),
+//     ALSLSVOL: parseFormInput_salesVol($('#modal_ALSLSVOL').val()),
+//     CSALVOLCD: parseFormInput($('#modal_CSALVOLCD_button').text()),
+//     CSALVOLDS: parseFormInput($('#modal_CSALVOLDS').val()),
+//     ACSLSVOL: parseFormInput_salesVol($('#modal_ACSLSVOL').val()),
+//     PRMCITY: parseFormInput($('#modal_PRMCITY').val()),
+//     PRMSTATE: parseFormInput($('#modal_PRMSTATE').val()),
+//     PRMZIP: parseFormInput($('#modal_PRMZIP').val()),
+//     LATITUDEO: $('#modal_LATITUDE').val(),
+//     LONGITUDEO: $('#modal_LONGITUDE').val(),
+//     desc: $('#modal_comment').val(),
+//     by: null,
+//   };
+//   return obj;
+// }
+
 function getForm() {
+  // Check if CA
   let obj = {
     alias: parseFormInput($('#modal_alias').val()),
-    CONAME: parseFormInput($('#modal_CONAME').val()),
-    PRMSICCD: parseFormInput($('#modal_PRMSICCD').val()),
-    PRMSICDS: parseFormInput($('#modal_PRMSICDS').val()),
-    NAICSCD: parseFormInput($('#modal_NAICSCD').val()),
-    NAICSDS: parseFormInput($('#modal_NAICSDS').val()),
-    SQFOOTCD: parseFormInput($('#modal_SQFOOTCD_button').text()),
-    SQFOOTDS: parseFormInput($('#modal_SQFOOTDS').val()),
-    LEMPSZCD: parseFormInput($('#modal_LEMPSZCD_button').text()),
-    LEMPSZDS: parseFormInput($('#modal_LEMPSZDS').val()),
-    ALEMPSZ: parseFormInput($('#modal_ALEMPSZ').val()),
-    LSALVOLCD: parseFormInput($('#modal_LSALVOLCD_button').text()),
-    LSALVOLDS: parseFormInput($('#modal_LSALVOLDS').val()),
-    ALSLSVOL: parseFormInput_salesVol($('#modal_ALSLSVOL').val()),
-    CSALVOLCD: parseFormInput($('#modal_CSALVOLCD_button').text()),
-    CSALVOLDS: parseFormInput($('#modal_CSALVOLDS').val()),
-    ACSLSVOL: parseFormInput_salesVol($('#modal_ACSLSVOL').val()),
-    PRMCITY: parseFormInput($('#modal_PRMCITY').val()),
-    PRMSTATE: parseFormInput($('#modal_PRMSTATE').val()),
-    PRMZIP: parseFormInput($('#modal_PRMZIP').val()),
-    LATITUDEO: $('#modal_LATITUDE').val(),
-    LONGITUDEO: $('#modal_LONGITUDE').val(),
-    desc: $('#modal_comment').val(),
-    by: null,
+    COMPANY_NAME: parseFormInput($('#modal_CONAME').val()),
+    PRIMARY_SIC_CODE: parseFormInput($('#modal_PRMSICCD').val()),
+    PRIMARY_SIC_DESC: parseFormInput($('#modal_PRMSICDS').val()),
+    NAICS_CODE: parseFormInput($('#modal_NAICSCD').val()),
+    NAICS_DESC: parseFormInput($('#modal_NAICSDS').val()),
+    SQUARE_FOOTAGE_CODE: parseFormInput($('#modal_SQFOOTCD_button').text()),
+    SQUARE_FOOTAGE_DESC: parseFormInput($('#modal_SQFOOTDS').val()),
+    LOCATION_EMPLOYMENT_SIZE_CODE: parseFormInput($('#modal_LEMPSZCD_button').text()),
+    LOCATION_EMPLOYMENT_SIZE_DESC: parseFormInput($('#modal_LEMPSZDS').val()),
+    ACTUAL_LOCATION_EMPLOYMENT_SIZE: parseFormInput($('#modal_ALEMPSZ').val()),
+    LOCATION_SALES_VOLUME_CODE: parseFormInput($('#modal_LSALVOLCD_button').text()),
+    LOCATION_SALES_VOLUME_DESC: parseFormInput($('#modal_LSALVOLDS').val()),
+    ACTUAL_LOCATION_SALES_VOLUME: parseFormInput_salesVol($('#modal_ALSLSVOL').val()),
+    CORPORATE_SALES_VOLUME_CODE: parseFormInput($('#modal_CSALVOLCD_button').text()),
+    CORPORATE_SALES_VOLUME_DESC: parseFormInput($('#modal_CSALVOLDS').val()),
+    ACTUAL_CORPORATE_SALES_VOLUME: parseFormInput_salesVol($('#modal_ACSLSVOL').val()),
+    PRIMARY_CITY: parseFormInput($('#modal_PRMCITY').val()),
+    PRIMARY_STATE: parseFormInput($('#modal_PRMSTATE').val()),
+    PRIMARY_ZIP_CODE: parseFormInput($('#modal_PRMZIP').val()),
+    MATCH_LEVEL_CODE: parseFormInput($('#modal_MATCHCD').val()),
+    LATITUDE_1: $('#modal_LATITUDE').val(),
+    LONGITUDE_1: $('#modal_LONGITUDE').val(),
+    comment: $('#modal_comment').val(),
   };
   return obj;
 }
 function parseFormInput(val) {
   if (isFormInputEmpty(val)) return null;
   if (isNaN(val)) {
-    if (val === 'Corporate Sales Volume') return null;
-    if (val === 'Sales Volume') return null;
-    if (val == 'SQF Code') return null;
-    if (val == 'Emp Size') return null;
-    return val.trim().toUpperCase();
+    switch (val) {
+      case 'Corporate Sales Volume':
+      case 'Sales Volume':
+      case 'SQF Code':
+      case 'Emp Size':
+      case 'NULL':
+        return null;
+      default:
+        return val.trim().toUpperCase();
+    }
   }
   return val;
 }

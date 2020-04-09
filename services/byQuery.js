@@ -57,8 +57,36 @@ function getBusinessVersion(version) {
 }
 
 module.exports = {
+  geoByDrivingDist: ({lat, lon, dist = defaultBufferSize, directed = false, v = 'current'} = {}) => {
+    let bussinessVersion = getBusinessVersion(v);
+    let withStatement = `
+      WITH driving as (SELECT ST_SetSRID(ST_ConvexHull(
+        (	SELECT ST_Collect(the_geom)
+          FROM pgr_drivingDistance(
+            'SELECT id, source, target, km AS cost, (CASE WHEN reverse_cost < 1000000 THEN -(km) ELSE 1000000 END) as reverse_cost FROM public.at_2po_4pgr',
+            (SELECT source FROM public.at_2po_4pgr
+            ORDER BY ST_Distance(
+              ST_StartPoint(the_geom),
+              ST_GeomFromText('SRID=4326;POINT(' || $1 || ' ' || $2 || ')'),
+              true
+            ) ASC
+            LIMIT 1),
+            $3, $4
+          ) as pt
+          JOIN public.at_2po_4pgr rd ON pt.edge = rd.id
+        )),4326) as geom
+      )
+    `;
+    let sql = `
+      ${withStatement}
+      SELECT ${selectStatement}
+      FROM ${bussinessVersion} as b, driving as d
+      WHERE ST_Intersects(ST_Transform(b.geom, 4326), d.geom)
+    `;
+    return queryDB(sql, [lon, lat, utils.convertMilesToKmeters(dist), directed]);
+  },
   geoByRailroad: (station, route = null, dist = defaultBufferSize, v = 'current') => {
-    station = decodeURI(station);
+    // station = decodeURI(station);
     let bussinessVersion = getBusinessVersion(v);
     let withStatement = `
       WITH station AS(
@@ -72,6 +100,10 @@ module.exports = {
           UNION ALL
           SELECT stop_name, daytime_routes as mta, geom
           FROM mta_nyc
+          UNION ALL
+          SELECT SUBSTRING(a."STNNAME" FROM 0 FOR POSITION(',' IN a."STNNAME")) as stopname, 'AMTK' as mta, geom
+          FROM amtrak as a 
+          WHERE a."STATE" = 'NY'
         ) as railroads
         WHERE UPPER(stop_name) LIKE UPPER($1)
         AND ($2::char IS NULL OR UPPER(mta) LIKE UPPER($2))
@@ -86,9 +118,9 @@ module.exports = {
       ON ST_DWithin(s.geom::geography, ST_Transform(b.geom,4326)::geography, $3)
     `;
     let params = [`${station}%`];
-    if(route) params.push(`%${decodeURI(route)}%`)
-    else params.push(null)
-    params.push(utils.convertMilesToMeters(dist))
+    if (route) params.push(`%${decodeURI(route)}%`);
+    else params.push(null);
+    params.push(utils.convertMilesToMeters(dist));
     return queryDB(sql, params);
   },
   /**
@@ -271,7 +303,7 @@ module.exports = {
       v = 'current',
       coname = '',
       naicsds = '',
-      naicscd = '',
+      prmSicDs = '',
       minEmp = '',
       maxEmp = '',
       lsalvol = '',
@@ -286,10 +318,12 @@ module.exports = {
       state = null,
       stateCode = null,
       mpo = '',
+      matchCD = null,
     } = {}
   ) => {
     coname = decodeURIComponent(coname);
     naicsds = decodeURIComponent(naicsds);
+    prmSicDs = decodeURIComponent(prmSicDs);
     lsalvol = decodeURIComponent(lsalvol);
     county = county ? decodeURIComponent(county) : '';
     state = state ? decodeURIComponent(state) : null;
@@ -314,9 +348,9 @@ module.exports = {
       where += addANDStatement(`"${column.NAICSDS}" LIKE $${params.length + 1}`);
       params.push(`${naicsds}%`);
     }
-    if (naicscd !== '') {
-      where += addANDStatement(`"${column.NAICSCD}" = $${params.length + 1}`);
-      params.push(+naicscd);
+    if (prmSicDs !== '') {
+      where += addANDStatement(`"${column.PRMSICDS}" LIKE $${params.length + 1}`);
+      params.push(`${prmSicDs}%`);
     }
     if (minEmp !== '' || maxEmp !== '') {
       // TODO: INCLUDE NULL statement to search null ALEMPSZ
@@ -332,6 +366,11 @@ module.exports = {
     if (lsalvol !== '') {
       where += addANDStatement(`"${column.LSALVOLDS}" = $${params.length + 1}`);
       params.push(lsalvol);
+    }
+
+    if (matchCD) {
+      where += addANDStatement(`"${column.MATCHCD}" = $${params.length + 1}`);
+      params.push(matchCD);
     }
 
     // If its a road query.

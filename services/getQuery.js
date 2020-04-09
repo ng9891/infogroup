@@ -15,7 +15,27 @@ const column = utils.columnNames;
 const table = utils.tableNames;
 const bussinessVersion = table.business;
 
+const defaultBufferSize = 0.5; // miles
+
 module.exports = {
+  geoGetDrivingDist: ({lat, lon, dist = defaultBufferSize, directed = false} = {}) => {
+    let sql = `
+      SELECT ST_ASGeoJSON(rd.the_geom) as geom
+      FROM pgr_drivingDistance(
+        'SELECT id, source, target, km AS cost, (CASE WHEN reverse_cost < 1000000 THEN -(km) ELSE 1000000 END) as reverse_cost FROM public.at_2po_4pgr',
+        (SELECT source FROM public.at_2po_4pgr
+        ORDER BY ST_Distance(
+          ST_StartPoint(the_geom),
+          ST_GeomFromText('SRID=4326;POINT(' || $1 || ' ' || $2 || ')'),
+          true
+        ) ASC
+        LIMIT 1),
+        $3, $4
+      ) as pt
+      JOIN public.at_2po_4pgr rd ON pt.edge = rd.id
+    `;
+    return queryDB(sql, [lon, lat, utils.convertMilesToKmeters(dist), directed]);
+  },
   geoGetRailroad: (station, route = null) => {
     station = decodeURI(station);
     let sql = `
@@ -32,6 +52,10 @@ module.exports = {
         UNION ALL
         SELECT stop_name, daytime_routes as mta, geom
         FROM mta_nyc
+        UNION ALL
+        SELECT SUBSTRING(a."STNNAME" FROM 0 FOR POSITION(',' IN a."STNNAME")) as stopname, 'AMTK' as mta, geom
+        FROM amtrak as a 
+        WHERE a."STATE" = 'NY'
       ) as railroads
       WHERE UPPER(stop_name) LIKE UPPER($1)
       AND ($2::char IS NULL OR UPPER(mta) LIKE UPPER($2))

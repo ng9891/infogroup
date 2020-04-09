@@ -43,8 +43,6 @@ function loadEditModal(business_id, version = 'current') {
     $('#modal_title').html(title);
     $('#modal_CONAME').val(est.CONAME);
     $('#modal_alias').val(!est.alias ? '' : est.alias);
-    $('#modal_LEMPSZCD_button').text(est.LEMPSZCD !== null ? est.LEMPSZCD : 'Emp Size');
-    $('#modal_LEMPSZDS').val(est.LEMPSZDS);
     $('#modal_ALEMPSZ').val(est.ALEMPSZ);
     $('#modal_NAICSCD').val(est.NAICSCD);
     $('#modal_NAICSDS').val(est.NAICSDS);
@@ -57,10 +55,16 @@ function loadEditModal(business_id, version = 'current') {
     $('#modal_LATITUDE').val(est.LATITUDEO);
     $('#modal_LONGITUDE').val(est.LONGITUDEO);
 
+    $('#modal_LEMPSZCD_button').text(est.LEMPSZCD !== null ? est.LEMPSZCD : 'Emp Size');
+    $('#modal_LEMPSZCD').val(est.LEMPSZCD);
+    $('#modal_LEMPSZDS').val(est.LEMPSZDS);
+
     $('#modal_SQFOOTCD_button').text(est.SQFOOTCD !== null ? est.SQFOOTCD : 'SQF Code');
+    $('#modal_SQFOOTCD').val(est.SQFOOTCD);
     $('#modal_SQFOOTDS').val(est.SQFOOTDS);
 
     $('#modal_LSALVOLCD_button').text(est.LSALVOLCD !== null ? est.LSALVOLCD : 'Sales Volume');
+    $('#modal_LSALVOLCD').val(est.LSALVOLCD);
     $('#modal_LSALVOLDS').val(est.LSALVOLDS);
     $('#modal_ALSLSVOL').val(convertToMillionFromThousand(est.ALSLSVOL));
 
@@ -69,7 +73,9 @@ function loadEditModal(business_id, version = 'current') {
     $('#modal_ACSLSVOL').val(convertToMillionFromThousand(est.ACSLSVOL));
 
     $('#modal_MATCHCD').val(est.MATCHCD !== null ? est.MATCHCD : 'NULL');
-    $('#modal_MATCHCD_button').text(est.MATCHCD !== null ? $(`#modal_MATCHCD li[value="${est.MATCHCD}"]`).text() : 'UNKNOWN');
+    $('#modal_MATCHCD_button').text(
+      est.MATCHCD !== null ? $(`#modal_MATCHCD li[value="${est.MATCHCD}"]`).text() : 'UNKNOWN'
+    );
 
     // Sets the location container text to the address
     let address = `${est.PRMADDR}, ${est.PRMCITY}, ${est.PRMSTATE} ${est.PRMZIP} `;
@@ -99,8 +105,8 @@ function loadEditModal_eventListeners() {
     e.stopPropagation();
     form[0].classList.add('was-validated');
     if (form[0].checkValidity() === true) {
-      alert('Sorry. Feature still in development.');
-      // sendBusinessEdit(); // Submit
+      // alert('Sorry. Feature still in development.');
+      sendBusinessEdit(); // Submit
     }
   });
 
@@ -187,7 +193,7 @@ function loadEditModal_eventListeners() {
   $('#modal_MATCHCD li').unbind('click').click(function() {
     let str = $(this).text();
     $(this).parents('.dropdown').find('.btn').html(str + ' <span class="caret"></span>');
-    $('#modal_MATCHCD').val($(this).attr("value"));
+    $('#modal_MATCHCD').val($(this).attr('value'));
   });
 
   // Bind listeners for automatic range selection and autofilling based on user input.
@@ -259,6 +265,8 @@ function loadEditModal_eventListeners() {
     // Set lon and lat
     $('#modal_LATITUDE').val(coord.lat);
     $('#modal_LONGITUDE').val(coord.lng);
+    $('#modal_MATCHCD').parents('.dropdown').find('.btn').html('EXACT' + ' <span class="caret"></span>');
+    $('#modal_MATCHCD').val('0');
   });
 }
 

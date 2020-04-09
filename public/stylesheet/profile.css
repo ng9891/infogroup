@@ -1,0 +1,15 @@
+.mainContainer {
+  margin-top: 40px;
+}
+
+#submittedTable {
+  width: 100%;
+}
+
+#submittedTable tr, th{
+  font-size:14px;
+}
+
+.modal-backdrop {
+  display: block !important;
+}

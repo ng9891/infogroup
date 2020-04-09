@@ -196,8 +196,7 @@
     // Delete county in the input object so, it is not included in the requestURL
     if (type === 'id') if (queryInput['county']) delete queryInput['county'];
 
-    // TODO: add user input dist here with key 'roadDist'. Should be <= 10miles
-    queryInput['roadDist'] = defaultRoadBufferSize;
+    queryInput['roadDist'] = window.defaultRoadBufferSize;
     return queryInput;
   };
 

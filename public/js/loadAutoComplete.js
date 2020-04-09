@@ -60,7 +60,7 @@ function loadAutoComplete() {
     _obj_naics_arr.push(obj_naics_cd);
     _obj_naics_arr.push(obj_naics_ds);
     autoComplete_text(arr_data_cd, '#modal_NAICSCD');
-    autoComplete_text(arr_data_cd, '#adv_NAICSCD');
+    // autoComplete_text(arr_data_cd, '#adv_NAICSCD');
   }, function(err) {
     console.log(err);
   });
@@ -72,7 +72,6 @@ function loadAutoComplete() {
     });
     autoComplete_text(arr_data_ds, '#modal_NAICSDS');
     autoComplete_text(arr_data_ds, '#adv_NAICSDS'); //adv search
-    // autoComplete_text(arr_data_ds, '#adv_NAICSDS');
   }, function(err) {
     console.log(err);
   });
@@ -92,6 +91,7 @@ function loadAutoComplete() {
     _obj_sic_arr.push(obj_sic_ds);
     autoComplete_text(arr_data_cd, '#modal_PRMSICCD');
     autoComplete_text(arr_data_ds, '#modal_PRMSICDS');
+    autoComplete_text(arr_data_ds, '#adv_PRMSICDS'); //adv search
   }, function(err) {
     console.log(err);
   });
@@ -111,10 +111,13 @@ function autoComplete_url(inputId, column, minlen = 2) {
     sortResults: false,
     source: function(request, response) {
       let input = request.term.trim();
+      let url = `/api/get${column}/`;
+      if(column === 'railroad') url += `?station=${encodeURIComponent(input)}`; // railroad get URL is a bit different because string contains '/'
+      else url += `${encodeURIComponent(input)}`;
       $.ajax({
         type: 'GET',
         dataType: 'json',
-        url: `/api/get${column}/${encodeURIComponent(input)}`,
+        url: url,
         success: function(data) {
           if (data) {
             let arr_data = [];
@@ -122,7 +125,7 @@ function autoComplete_url(inputId, column, minlen = 2) {
               if (d.muni_type) {
                 // Municipal query formatting
                 d.name += ' - ' + capitalizeFirstLetter(d.muni_type) + '/' + capitalizeFirstLetter(d.county);
-              }else if(d.state){
+              } else if (d.state) {
                 // County formatting
                 d.name += ' - ' + capitalizeFirstLetter(d.state_code);
               }

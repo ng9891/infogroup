@@ -2,6 +2,9 @@ module.exports = {
   convertMilesToMeters: (val) => {
     return val / 0.00062137;
   },
+  convertMilesToKmeters: (val) => {
+    return (val / 0.00062137)/1000;
+  },
   columnNames: {
     id: 'id',
     geom: 'geom',
@@ -38,5 +41,7 @@ module.exports = {
   },
   tableNames:{
     business: 'businesses',
+    edit: 'business_edit',
+    audit: 'audit.business_audit_log'
   }
 };

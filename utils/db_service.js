@@ -55,4 +55,5 @@ const transQuery = async (query, values, cb) => {
 module.exports = {
   runQuery,
   transQuery,
+  pool,
 };

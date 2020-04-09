@@ -124,24 +124,33 @@ function loadAdvancedSearchListener() {
     $(this).parents('.dropdown').find('.btn').val($(this).data('value'));
   });
 
+  $('#adv_MATCHCD li').unbind('click').click(function() {
+    let str = $(this).text();
+    $(this).parents('.dropdown').find('.btn').html(str + ' <span class="caret"></span>');
+    $('#adv_MATCHCD').val($(this).attr('value'));
+  });
+
   d3.select('#advsearch-button').on('click', (e) => {
     let coname = $('#adv_CONAME').val().trim();
     let industry = $('#adv_NAICSDS').val().trim();
-    let naicscode = $('#adv_NAICSCD').val().trim();
+    let prmSicDs = $('#adv_PRMSICDS').val().trim();
+    let roadDist = '';
+    let roadSigning = '';
     let roadNo = $('#adv_roadNo').val().trim();
-    let roadSigning = $('#adv_roadSigning').val().trim();
-    // let roadGid = $('#adv_roadGid').val().trim();
-    let roadDist = $('#adv_roadDist').val().trim();
-    roadDist = parseFloat(roadDist);
-    if (!roadDist) roadDist = window.defaultRoadBufferSize;
-    else if (isNaN(roadDist)) return alert('Invalid Distance.');
-    else if (roadDist > 10) return $('#search-message').text('*Please input a distance less than 10 miles.').show();
-    else if (roadDist <= 0) return $('#search-message').text('*Please input a distance greater than 0.').show();
+    if (roadNo){
+      roadSigning = $('#adv_roadSigning').val().trim();
+      roadDist = $('#adv_roadDist').val().trim();
+      roadDist = parseFloat(roadDist);
+      if (!roadDist) roadDist = window.defaultRoadBufferSize;
+      else if (isNaN(roadDist)) return alert('Invalid Distance.');
+      else if (roadDist > 10) return $('#search-message').text('*Please input a distance less than 10 miles.').show();
+      else if (roadDist <= 0) return $('#search-message').text('*Please input a distance greater than 0.').show();
+    }
     let minempl = $('#min-emplsize').val().trim();
     let maxempl = $('#max-emplsize').val().trim();
     let county = $('#countyName').val().trim();
     let indexOfDash = county.lastIndexOf('-');
-    let state, stateCode;
+    let stateCode;
     if (indexOfDash !== -1) {
       stateCode = county.slice(indexOfDash + 2);
       county = county.slice(0, indexOfDash - 1);
@@ -162,12 +171,14 @@ function loadAdvancedSearchListener() {
     let lsalvol = $('#dropdownSalesVolume').text().trim();
     if (lsalvol == 'Sales Volume') lsalvol = '';
 
+    let matchCD = $('#adv_MATCHCD').val();
+
     let query_version = d3.select('#version-dropdown').property('value');
 
     let formBody = {
       coname: coname,
       naicsds: industry,
-      naicscd: naicscode,
+      prmSicDs: prmSicDs,
       roadNo: roadNo,
       roadSigning: roadSigning,
       // roadGid: roadGid,
@@ -176,7 +187,6 @@ function loadAdvancedSearchListener() {
       maxEmp: maxempl,
       lsalvol: lsalvol,
       county: county,
-      state: state,
       stateCode: stateCode,
       mpo: mpo_name,
       mun: mun_name,
@@ -184,6 +194,9 @@ function loadAdvancedSearchListener() {
       mun_county: mun_county,
     };
 
+    if(matchCD) formBody.matchCD = matchCD;
+
+    // TODO: Check if no changes before loading.
     loadEstablishments('adv', formBody, query_version);
     $('#search-message').hide();
     $('.advancedSearchContainer').toggleClass('open');
@@ -192,7 +205,7 @@ function loadAdvancedSearchListener() {
   d3.select('#advsearch-resetBtn').on('click', (e) => {
     $('#adv_CONAME').val('');
     $('#adv_NAICSDS').val('');
-    $('#adv_NAICSCD').val('');
+    $('#adv_PRMSICDS').val('');
     $('#adv_roadNo').val('');
     $('#adv_roadSigning').val('');
     // $('#adv_roadGid').val('');
@@ -202,7 +215,9 @@ function loadAdvancedSearchListener() {
     $('#countyName').val('');
     $('#mpoId').val('');
     $('#munId').val('');
-    $('#dropdownSalesVolume').text('Sales Volume');
+    $('#dropdownSalesVolume').text('Sales Volume ');  
+    $('#adv_MATCHCD').val('');
+    $('#adv_MATCHCD_button').text('MATCH LEVEL CODE ');
   });
 }
 

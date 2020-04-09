@@ -98,7 +98,8 @@ function loadMarkers(establishments) {
               Match_Code: ${est.MATCHCD}<br>
               Date_of_SIC : ${est.YEAR_SIC_ADDED}<br>
               Big_Business : ${est.BIG_BUSINESS}<br>
-              High_Tech : ${est.HIGHTECHBUSINESS}
+              High_Tech : ${est.HIGHTECHBUSINESS}<br>
+              <a href="javascript:void(0)" onclick="openEditModal(${est.id})">more info...</a>
 		    	  `
           )
           .openPopup();
@@ -144,4 +145,11 @@ function loadMarkers(establishments) {
     mymap.fitBounds(bbox);
     resolve('Map Loaded');
   });
+}
+
+
+function openEditModal(id){
+  let query_version = d3.select('#version-dropdown').property('value');
+  loadEditModal(id, query_version);
+  $('#editModal').modal('show');
 }
