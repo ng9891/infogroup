@@ -134,20 +134,23 @@ function loadAdvancedSearchListener() {
     let coname = $('#adv_CONAME').val().trim();
     let industry = $('#adv_NAICSDS').val().trim();
     let prmSicDs = $('#adv_PRMSICDS').val().trim();
+    let roadDist = '';
+    let roadSigning = '';
     let roadNo = $('#adv_roadNo').val().trim();
-    let roadSigning = $('#adv_roadSigning').val().trim();
-    // let roadGid = $('#adv_roadGid').val().trim();
-    let roadDist = $('#adv_roadDist').val().trim();
-    roadDist = parseFloat(roadDist);
-    if (!roadDist) roadDist = window.defaultRoadBufferSize;
-    else if (isNaN(roadDist)) return alert('Invalid Distance.');
-    else if (roadDist > 10) return $('#search-message').text('*Please input a distance less than 10 miles.').show();
-    else if (roadDist <= 0) return $('#search-message').text('*Please input a distance greater than 0.').show();
+    if (roadNo){
+      roadSigning = $('#adv_roadSigning').val().trim();
+      roadDist = $('#adv_roadDist').val().trim();
+      roadDist = parseFloat(roadDist);
+      if (!roadDist) roadDist = window.defaultRoadBufferSize;
+      else if (isNaN(roadDist)) return alert('Invalid Distance.');
+      else if (roadDist > 10) return $('#search-message').text('*Please input a distance less than 10 miles.').show();
+      else if (roadDist <= 0) return $('#search-message').text('*Please input a distance greater than 0.').show();
+    }
     let minempl = $('#min-emplsize').val().trim();
     let maxempl = $('#max-emplsize').val().trim();
     let county = $('#countyName').val().trim();
     let indexOfDash = county.lastIndexOf('-');
-    let state, stateCode;
+    let stateCode;
     if (indexOfDash !== -1) {
       stateCode = county.slice(indexOfDash + 2);
       county = county.slice(0, indexOfDash - 1);
@@ -184,7 +187,6 @@ function loadAdvancedSearchListener() {
       maxEmp: maxempl,
       lsalvol: lsalvol,
       county: county,
-      state: state,
       stateCode: stateCode,
       mpo: mpo_name,
       mun: mun_name,

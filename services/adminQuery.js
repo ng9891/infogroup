@@ -71,7 +71,23 @@ function queryDB(query, params) {
   });
 }
 
-exports.editListDatatable = (record_status = null, status = null, limit = null, offset = 0, orderCol = null, orderDir = null) => {
+function transDB(query, params) {
+  return new Promise((resolve, reject) => {
+    dbService.transQuery(query, params, (err, data) => {
+      if (err) return reject(err);
+      resolve(data.rows);
+    });
+  });
+}
+
+exports.editListDatatable = (
+  record_status = null,
+  status = null,
+  limit = null,
+  offset = 0,
+  orderCol = null,
+  orderDir = null
+) => {
   let sql = `
     SELECT ${editSelectStatement},
     (SELECT COUNT(*) FROM ${table.edit} WHERE record_status = 0) as recordsTotal
@@ -235,3 +251,40 @@ exports.proposeBusinessChange = (id, form, originalForm, user) => {
   let [sql, params] = build_query(id, form, originalForm, user);
   return queryDB(sql, params);
 };
+
+exports.acceptProposalById = (edit_id, comment = '') => {
+  let sql = `
+    UPDATE business_edit
+    SET record_status = 4,
+      status = 1,
+      last_modified_comment = $1
+    WHERE
+      id = $2
+  `;
+  return transDB(sql, [comment, edit_id]);
+};
+
+exports.rejectProposalById = (edit_id, comment = '') => {
+  let sql = `
+    UPDATE business_edit
+    SET record_status = 2,
+      status = 0,
+      last_modified_comment = $1
+    WHERE
+      id = $2
+  `;
+  return transDB(sql, [comment, edit_id]);
+};
+
+exports.withdrawProposalById = (edit_id, comment = '') => {
+  let sql = `
+    UPDATE business_edit
+    SET record_status = 1,
+      status = 0,
+      last_modified_comment = $1
+    WHERE
+      id = $2
+  `;
+  return transDB(sql, [comment, edit_id]);
+};
+

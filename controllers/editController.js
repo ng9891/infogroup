@@ -9,6 +9,24 @@ function successHandler(data, response) {
 }
 function errorHandler(err, response) {
   console.error(err.stack);
+  console.log(err.code);
+  // Raise Exception
+  if (err.code === 'P0001') {
+    return response.status(500).json({
+      status: 'invalid',
+      responseText: err,
+    });
+  }
+
+  if (err.code === '23514') {
+    // specific for reqProposeBusinessChange()
+    // Check fails on field 'changed_fields'. There were no changes found to the original data.
+    return response.status(400).json({
+      status: 'CHECK ERROR',
+      responseText: 'No changes made',
+    });
+  }
+
   return response.status(500).json({
     status: 'Error',
     responseText: 'Error in query ' + err,
@@ -20,6 +38,7 @@ exports.reqEditPage = async (request, response) => {
   return response.render('../views/proposal.ejs', {noSearchBar: true});
 };
 
+// This gives a pagination option for the datatable. In case loading time optimization is needed.
 exports.reqEditListDatatable = (request, response) => {
   // console.log(request.query);
   let orderColIndex = request.query.order[0].column;
@@ -61,10 +80,6 @@ exports.reqEditList = (request, response) => {
     });
 };
 
-
-//**************************************** */
-// TEST
-let dbService = require('../utils/db_service');
 exports.reqAcceptEdit = (request, response) => {
   if (!request.params.edit_id) {
     return response.status(400).json({
@@ -72,48 +87,19 @@ exports.reqAcceptEdit = (request, response) => {
       responseText: 'No edit id specified',
     });
   }
-  // TODO: Change previous accepted to replaced.
-  let sql = `
-    UPDATE business_edit
-    SET record_status = 4,
-      status = 1,
-      last_modified_comment = $1
-    WHERE
-      id = $2
-  `;
-  // console.log(sql);
-  function queryDB(query, params) {
-    return new Promise((resolve, reject) => {
-      dbService.transQuery(query, params, (err, data) => {
-        if (err) return reject(err);
-        resolve(data.rows);
-      });
-    });
-  }
-  queryDB(sql, [request.query.comment, request.params.edit_id])
+
+  adminQuery
+    .acceptProposalById(request.params.edit_id, request.query.comment)
     .then(() => {
       return response.status(200).json({
         status: 'success',
-        responseText: 'Successfully rejected',
+        responseText: 'Successfully accepted',
       });
     })
-    .catch((err) => {
-      console.log(err);
-            // 42702
-      // Raise Exception
-      if(err.code === 'P0001'){
-        return response.status(500).json({
-          status: 'invalid',
-          responseText: err.stack,
-        });
-      }
-      return response.status(500).json({
-        status: 'Error',
-        responseText: 'Error in query ' + err,
-      });
+    .catch((e) => {
+      errorHandler(e, response);
     });
 };
-
 
 exports.reqRejectEdit = (request, response) => {
   if (!request.params.edit_id) {
@@ -123,46 +109,18 @@ exports.reqRejectEdit = (request, response) => {
     });
   }
 
-  let sql = `
-    UPDATE business_edit
-    SET record_status = 2,
-      status = 0,
-      last_modified_comment = $1
-    WHERE
-      id = $2
-  `;
-  // console.log(sql);
-  function queryDB(query, params) {
-    return new Promise((resolve, reject) => {
-      dbService.transQuery(query, params, (err, data) => {
-        if (err) return reject(err);
-        resolve(data.rows);
-      });
-    });
-  }
-  queryDB(sql, [request.query.comment, request.params.edit_id])
+  adminQuery
+    .rejectProposalById(request.params.edit_id, request.query.comment)
     .then(() => {
       return response.status(200).json({
         status: 'success',
         responseText: 'Successfully rejected',
       });
     })
-    .catch((err) => {
-        console.log(err.code);
-        // Raise Exception
-        if(err.code === 'P0001'){
-          return response.status(500).json({
-            status: 'invalid',
-            responseText: err,
-          });
-        }
-        return response.status(500).json({
-          status: 'Error',
-          responseText: 'Error in query ' + err,
-        });
+    .catch((e) => {
+      errorHandler(e, response);
     });
 };
-
 
 exports.reqWithdrawEdit = (request, response) => {
   if (!request.params.edit_id) {
@@ -172,50 +130,20 @@ exports.reqWithdrawEdit = (request, response) => {
     });
   }
 
-  let sql = `
-    UPDATE business_edit
-    SET record_status = 1,
-      status = 0,
-      last_modified_comment = $1
-    WHERE
-      id = $2
-  `;
-  // console.log(sql);
-  function queryDB(query, params) {
-    return new Promise((resolve, reject) => {
-      dbService.transQuery(query, params, (err, data) => {
-        if (err) return reject(err);
-        resolve(data.rows);
-      });
-    });
-  }
-  queryDB(sql, [request.query.comment, request.params.edit_id])
+  adminQuery
+    .withdrawProposalById(request.params.edit_id, request.query.comment)
     .then(() => {
       return response.status(200).json({
         status: 'success',
         responseText: 'Successfully withdrawn',
       });
     })
-    .catch((err) => {
-        console.log(err.code);
-        // Raise Exception
-        if(err.code === 'P0001'){
-          return response.status(500).json({
-            status: 'invalid',
-            responseText: err,
-          });
-        }
-        return response.status(500).json({
-          status: 'Error',
-          responseText: 'Error in query ' + err,
-        });
+    .catch((e) => {
+      errorHandler(e, response);
     });
 };
-// END OF TEST
-//**************************************** */
 
-
-
+// Get a specific edit with an ID.
 exports.reqEditListById = (request, response) => {
   if (!request.params.edit_id) {
     return response.status(400).json({
@@ -234,24 +162,7 @@ exports.reqEditListById = (request, response) => {
     });
 };
 
-exports.reqEditListByBusId = (request, response) => {
-  if (!request.params.bus_id) {
-    return response.status(400).json({
-      status: 'Error',
-      responseText: 'No business id specified',
-    });
-  }
-  // TODO: sanitize for param?
-  adminQuery
-    .editListByBusId(request.params.bus_id, request.query.limit, request.query.offset)
-    .then((data) => {
-      successHandler(data, response);
-    })
-    .catch((e) => {
-      errorHandler(e, response);
-    });
-};
-
+// Get the list of proposal/edit done by an user id.
 exports.reqEditListByUserId = (request, response) => {
   if (!request.params.user_id) {
     return response.status(400).json({
@@ -270,6 +181,26 @@ exports.reqEditListByUserId = (request, response) => {
     });
 };
 
+// Get the list of proposal/edit done on a business id.
+exports.reqEditListByBusId = (request, response) => {
+  if (!request.params.bus_id) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No business id specified',
+    });
+  }
+  // TODO: sanitize for param?
+  adminQuery
+    .editListByBusId(request.params.bus_id, request.query.limit, request.query.offset)
+    .then((data) => {
+      successHandler(data, response);
+    })
+    .catch((e) => {
+      errorHandler(e, response);
+    });
+};
+
+// Create a new edit proposal.
 exports.reqProposeBusinessChange = async (request, response) => {
   if (!request.params.bus_id || isNaN(parseInt(request.params.bus_id, 10))) {
     return response.status(400).json({
@@ -305,27 +236,18 @@ exports.reqProposeBusinessChange = async (request, response) => {
     LONGITUDE_1: originalData['LONGITUDEO'],
   };
 
-  adminQuery.proposeBusinessChange(request.params.bus_id, request.body, originalForm, request.user).then(
-    (data) => {
+  adminQuery
+    .proposeBusinessChange(request.params.bus_id, request.body, originalForm, request.user)
+    .then((data) => {
       return response.status(200).json({
         data: data,
       });
-    },
-    (err) => {
-      if (err.code === '23514') {
-        // Check fails on field 'changed_fields'. There were no changes found to the original data.
-        return response.status(400).json({
-          status: 'CHECK ERROR',
-          responseText: 'No changes made',
-        });
-      }
-      return response.status(500).json({
-        status: 'Error',
-        responseText: 'Error in query ' + err,
-      });
-    }
-  );
-  /*
+    })
+    .catch((e) => {
+      errorHandler(e, response);
+    });
+};
+/*
   Record Status:
       0 - PROPOSED
       1 - WITHDRAWN
@@ -336,4 +258,3 @@ exports.reqProposeBusinessChange = async (request, response) => {
       0 - INACTIVE / RETIRED
       1 - ACTIVE
  */
-};
