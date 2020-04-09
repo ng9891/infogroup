@@ -369,8 +369,12 @@ module.exports = {
     }
 
     if (matchCD) {
-      where += addANDStatement(`"${column.MATCHCD}" = $${params.length + 1}`);
-      params.push(matchCD);
+      if (matchCD === 'NULL') {
+        where += addANDStatement(`"${column.MATCHCD}" IS NULL`);
+      } else {
+        where += addANDStatement(`"${column.MATCHCD}" = $${params.length + 1}`);
+        params.push(matchCD);
+      }
     }
 
     // If its a road query.
@@ -445,13 +449,18 @@ module.exports = {
     // If its only Employee size query, limit result
     if (params.length <= 2) {
       // If only range query.
-      if (minEmp !== '' && maxEmp !== '') {
+      if (minEmp && maxEmp) {
         where += 'LIMIT 5000';
       } else if (params.length === 1) {
         // if only min or max is input.
-        if (minEmp !== '' || maxEmp !== '') {
+        if (minEmp || maxEmp) {
           where += 'LIMIT 5000';
         }
+      }
+
+      // If only match code is selected and it is parcel.
+      if (matchCD && matchCD === 'P'){
+        where += 'LIMIT 200000';
       }
     }
 

@@ -87,19 +87,19 @@ function loadDropdown_SqFoot(input) {
   }
 }
 
-function loadDropdown_MatchCD(){
+function loadDropdown_MatchCD() {
   let matchCDObj = {
-    '2':'ZIP2',
-    '4':'ZIP4',
+    '2': 'ZIP2',
+    '4': 'ZIP4',
     X: 'ZIP',
     '0': 'EXACT',
     P: 'PARCEL',
     NULL: 'UNKNOWN',
-  }
+  };
 
   let html = '';
-  for(key in matchCDObj){
-    html += `<li value=${key}><a class='dropdown-item' href='#'>${matchCDObj[key]}</a></li>`
+  for (key in matchCDObj) {
+    html += `<li value=${key}><a class='dropdown-item' href='#'>${matchCDObj[key]}</a></li>`;
   }
 
   let modal_matchCD_dropdown = $('#modal_MATCHCD');
@@ -107,12 +107,10 @@ function loadDropdown_MatchCD(){
   if (modal_matchCD_dropdown[0]) {
     modal_matchCD_dropdown.empty();
     modal_matchCD_dropdown[0].innerHTML = html;
-    
   }
 
-  if(adv_matchCD_dropdown[0]){
+  if (adv_matchCD_dropdown[0]) {
     adv_matchCD_dropdown.empty();
     adv_matchCD_dropdown[0].innerHTML = html;
   }
-
 }

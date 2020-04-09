@@ -134,13 +134,11 @@ function loadAdvancedSearchListener() {
     let coname = $('#adv_CONAME').val().trim();
     let industry = $('#adv_NAICSDS').val().trim();
     let prmSicDs = $('#adv_PRMSICDS').val().trim();
-    let roadDist = '';
-    let roadSigning = '';
+    let roadDist = parseFloat($('#adv_roadDist').val().trim());
+    let roadSigning = $('#adv_roadSigning').val().trim();
     let roadNo = $('#adv_roadNo').val().trim();
-    if (roadNo){
-      roadSigning = $('#adv_roadSigning').val().trim();
-      roadDist = $('#adv_roadDist').val().trim();
-      roadDist = parseFloat(roadDist);
+    if (roadNo) {
+      if (!roadSigning) return $('#search-message').text('*Please input a road signing.').show();
       if (!roadDist) roadDist = window.defaultRoadBufferSize;
       else if (isNaN(roadDist)) return alert('Invalid Distance.');
       else if (roadDist > 10) return $('#search-message').text('*Please input a distance less than 10 miles.').show();
@@ -181,7 +179,6 @@ function loadAdvancedSearchListener() {
       prmSicDs: prmSicDs,
       roadNo: roadNo,
       roadSigning: roadSigning,
-      // roadGid: roadGid,
       roadDist: roadDist,
       minEmp: minempl,
       maxEmp: maxempl,
@@ -194,7 +191,9 @@ function loadAdvancedSearchListener() {
       mun_county: mun_county,
     };
 
-    if(matchCD) formBody.matchCD = matchCD;
+    if (matchCD) formBody.matchCD = matchCD;
+
+    console.log(formBody);
 
     // TODO: Check if no changes before loading.
     loadEstablishments('adv', formBody, query_version);
@@ -215,7 +214,7 @@ function loadAdvancedSearchListener() {
     $('#countyName').val('');
     $('#mpoId').val('');
     $('#munId').val('');
-    $('#dropdownSalesVolume').text('Sales Volume ');  
+    $('#dropdownSalesVolume').text('Sales Volume ');
     $('#adv_MATCHCD').val('');
     $('#adv_MATCHCD_button').text('MATCH LEVEL CODE ');
   });

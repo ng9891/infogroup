@@ -1,3 +1,7 @@
+/**
+ * NOTE: Still in process.
+ * GET audit's done (accept, reject) by a certain admin/user.
+ */
 const adminQuery = require('../services/adminQuery');
 function successHandler(data, response) {
   return response.status(200).json({

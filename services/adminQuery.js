@@ -143,7 +143,7 @@ exports.editListByUserId = (id, limit = null, offset = 0) => {
     FROM ${table.edit} as e
       JOIN (
         SELECT DISTINCT ON (business_edit_id) *
-		    FROM audit.business_audit_log
+		    FROM ${table.audit}
 		    ORDER BY business_edit_id, timestamp desc
       ) as a  
 	    ON e.id = a.business_edit_id
@@ -243,7 +243,7 @@ exports.proposeBusinessChange = (id, form, originalForm, user) => {
     value_str = value_str.slice(0, -1);
 
     sql += `
-        INSERT INTO business_edit(geom,row_data,changed_fields,${insert_str})
+        INSERT INTO ${table.edit}(geom,row_data,changed_fields,${insert_str})
         VALUES (${geom},${row_data},${changed_fields},${value_str});
         `;
     return [sql, values];
@@ -254,7 +254,7 @@ exports.proposeBusinessChange = (id, form, originalForm, user) => {
 
 exports.acceptProposalById = (edit_id, comment = '') => {
   let sql = `
-    UPDATE business_edit
+    UPDATE ${table.edit}
     SET record_status = 4,
       status = 1,
       last_modified_comment = $1
@@ -266,7 +266,7 @@ exports.acceptProposalById = (edit_id, comment = '') => {
 
 exports.rejectProposalById = (edit_id, comment = '') => {
   let sql = `
-    UPDATE business_edit
+    UPDATE ${table.edit}
     SET record_status = 2,
       status = 0,
       last_modified_comment = $1
@@ -278,7 +278,7 @@ exports.rejectProposalById = (edit_id, comment = '') => {
 
 exports.withdrawProposalById = (edit_id, comment = '') => {
   let sql = `
-    UPDATE business_edit
+    UPDATE ${table.edit}
     SET record_status = 1,
       status = 0,
       last_modified_comment = $1
@@ -287,4 +287,3 @@ exports.withdrawProposalById = (edit_id, comment = '') => {
   `;
   return transDB(sql, [comment, edit_id]);
 };
-
