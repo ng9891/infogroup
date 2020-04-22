@@ -3,12 +3,12 @@ const {isLoggedIn} = require('../middleware/middleware.js');
 const passport = require('passport');
 
 const apiRoutes = require('./api');
-const adminRoutes = require('./admin');
+const userRoutes = require('./user');
 const editRoutes = require('./edit');
 const auditRoutes = require('./audit');
 
 router.use('/api', apiRoutes);
-router.use('/admin', adminRoutes);
+router.use('/user', userRoutes);
 router.use('/edit', editRoutes);
 router.use('/audit', auditRoutes);
 

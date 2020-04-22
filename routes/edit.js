@@ -12,6 +12,7 @@ let editCtrl = require('../controllers/editController');
 
 router.get('/datatable', editCtrl.reqEditListDatatable);
 router.get('/', editCtrl.reqEditPage);
+router.get('/list', editCtrl.reqEditList);
 
 // Get business log by id.
 router.get('/:edit_id', editCtrl.reqEditListById);

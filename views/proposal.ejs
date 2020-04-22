@@ -1,6 +1,7 @@
 <%include ./partials/header.ejs %>
 <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.20/b-1.6.1/b-html5-1.6.1/r-2.2.3/sc-2.0.1/sp-1.0.1/datatables.min.css"/> -->
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.20/r-2.2.3/datatables.min.css"/>
+<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.20/r-2.2.3/datatables.min.css"/> -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.20/b-1.6.1/r-2.2.3/sl-1.3.1/datatables.min.css"/>
 
 <link rel="stylesheet" type="text/css" href="/stylesheet/proposal.css" />
 </head>
@@ -16,7 +17,7 @@
         <div id="mymap"></div>
       </div>
       <div class="col-sm-12 col-md-8 col-lg-9">
-        <table id="proposalTable" class="display dt-responsive compact"></table>
+        <table id="proposalTable" class="display compact"></table>
       </div>
     </div>
   </div>
@@ -31,6 +32,7 @@
           </button>
         </div>
         <div class="modal-body">
+          <div class="desc"></div>
           <div class="form-group">
             <label for="comment">Comment</label>
             <textarea class="form-control" id="comment" rows="3"></textarea>
@@ -46,8 +48,9 @@
 </body>
 <!-- SOURCES -->
 <%include ./partials/sources.ejs %>
-<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/r-2.2.3/datatables.min.js"></script>
+<!-- <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/r-2.2.3/datatables.min.js"></script> -->
 <!-- <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.20/b-1.6.1/b-html5-1.6.1/r-2.2.3/sc-2.0.1/sp-1.0.1/datatables.min.js"></script> -->
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/b-1.6.1/r-2.2.3/sl-1.3.1/datatables.min.js"></script>
 
 <script src="/js/proposal/loadEventListeners.js"></script>
 <script src="/js/proposal/loadMap.js"></script>

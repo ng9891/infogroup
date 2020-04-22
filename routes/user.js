@@ -3,7 +3,7 @@ const {isLoggedIn, secureAPI} = require('../middleware/middleware.js');
 
 router.use(secureAPI);
 
-// Get admin overview page
+// Get user overview page
 router.get('/:user_id', (request, response) => {
   // get user info.
   if (!request.params.user_id) request.params.user_id = req.user.id;

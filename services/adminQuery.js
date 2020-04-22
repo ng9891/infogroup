@@ -102,18 +102,19 @@ exports.editListDatatable = (
   return queryDB(sql, [record_status, status, limit, offset]);
 };
 
-exports.editList = (limit = null, offset = 0) => {
+exports.editList = (record_status = null, status = null, limit = null, offset = 0) => {
   let sql = `
     SELECT ${editSelectStatement}
     FROM ${table.edit} as e
-    LIMIT $1
-    OFFSET $2;
+    WHERE ($1::int IS NULL OR e.record_status = $1::int)
+    AND ($2::int IS NULL OR e.status = $2::int)
+    LIMIT $3
+    OFFSET $4;
   `;
-  console.log(sql);
-  return queryDB(sql, [limit, offset]);
+  return queryDB(sql, [record_status, status, limit, offset]);
 };
 
-exports.editListById = (id, limit = null, offset = 0) => {
+exports.editListByEditId = (id, record_status = null, status = null, limit = null, offset = 0) => {
   let sql = `
     SELECT ${editSelectStatement}
     FROM ${table.edit} as e
@@ -135,7 +136,7 @@ exports.editListByBusId = (id, limit = null, offset = 0) => {
   return queryDB(sql, [id, limit, offset]);
 };
 
-exports.editListByUserId = (id, limit = null, offset = 0) => {
+exports.editListByUserId = (id, type = null, limit = null, offset = 0) => {
   let sql = `
     SELECT ${editSelectStatement},
     (SELECT COUNT(*) FROM ${table.edit} WHERE record_status = 0) as recordsTotal,
@@ -148,20 +149,11 @@ exports.editListByUserId = (id, limit = null, offset = 0) => {
       ) as a  
 	    ON e.id = a.business_edit_id
     WHERE e.by_id = $1::int
-    LIMIT $2
-    OFFSET $3;
+    AND ($2::char IS NULL OR UPPER(a.type) = UPPER($2))
+    LIMIT $3
+    OFFSET $4;
   `;
-  return queryDB(sql, [id, limit, offset]);
-};
-
-exports.editList = (limit = null, offset = 0) => {
-  let sql = `
-    SELECT ${editSelectStatement}
-    FROM ${table.edit} as e
-    LIMIT $1
-    OFFSET $2;
-  `;
-  return queryDB(sql, [limit, offset]);
+  return queryDB(sql, [id, type, limit, offset]);
 };
 
 exports.auditList = (limit = null, offset = 0) => {
@@ -233,6 +225,7 @@ exports.proposeBusinessChange = (id, form, originalForm, user) => {
     let j = values.length + 1;
     for (let i = 0; i < key_arr.length; i++) {
       let k = key_arr[i];
+      if (k === 'id') continue;
       if (form[k]) {
         insert_str += `"${k}",`;
         value_str += `$${j++},`;

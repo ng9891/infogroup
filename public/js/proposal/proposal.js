@@ -1,11 +1,9 @@
 (() => {
-  $(document).ready(function() {
+  $(document).ready(async function() {
     // console.log(JSON.parse(window.dataTableContent));
     // console.log(window.dataTableContent);
-    window.loadDatatable();
+    await window.loadDatatable();
     window.loadMap();
     window.loadEventListeners();
   });
-
-  
 })();
