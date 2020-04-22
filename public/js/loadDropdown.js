@@ -88,18 +88,18 @@ function loadDropdown_SqFoot(input) {
 }
 
 function loadDropdown_MatchCD() {
-  let matchCDObj = {
-    '2': 'ZIP2',
-    '4': 'ZIP4',
-    X: 'ZIP',
-    '0': 'EXACT',
-    P: 'PARCEL',
-    NULL: 'UNKNOWN',
-  };
+  // let matchCDObj = {
+  //   '2': 'ZIP2',
+  //   '4': 'ZIP4',
+  //   X: 'ZIP',
+  //   '0': 'EXACT',
+  //   P: 'PARCEL',
+  //   NULL: 'UNKNOWN',
+  // };
 
   let html = '';
-  for (key in matchCDObj) {
-    html += `<li value=${key}><a class='dropdown-item' href='#'>${matchCDObj[key]}</a></li>`;
+  for (key in _matchCDObj) {
+    html += `<li value=${key}><a class='dropdown-item' href='#'>${_matchCDObj[key]}</a></li>`;
   }
 
   let modal_matchCD_dropdown = $('#modal_MATCHCD');

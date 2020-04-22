@@ -1962,7 +1962,7 @@ var tt = {
 	};
 
 	d3pie.prototype.closeSegment = function() {
-        segments.maybeCloseOpenSegment(pie);
+        segments.maybeCloseOpenSegment(this);
 	};
 
 	// this let's the user dynamically update aspects of the pie chart without causing a complete redraw. It

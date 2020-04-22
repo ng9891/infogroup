@@ -4,11 +4,6 @@
       d3.select('.legendContainer').classed('open', false);
     });
 
-    d3.select('.legendButton').on('click', () => {
-      toggle = d3.select('.legendContainer').classed('open');
-      d3.select('.legendContainer').classed('open', toggle ? false : true);
-    });
-
     let data = getLegendData();
 
     let margin = 5;

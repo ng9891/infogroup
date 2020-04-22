@@ -70,14 +70,25 @@ exports.reqEditListDatatable = (request, response) => {
 };
 
 exports.reqEditList = (request, response) => {
-  adminQuery
-    .editList(request.query.limit, request.query.offset)
-    .then((data) => {
-      successHandler(data, response);
-    })
-    .catch((e) => {
-      errorHandler(e, response);
-    });
+  if (request.query.user_id) {
+    adminQuery
+      .editListByUserId(request.query.user_id, request.query.type, request.query.limit, request.query.offset)
+      .then((data) => {
+        successHandler(data, response);
+      })
+      .catch((e) => {
+        errorHandler(e, response);
+      });
+  } else {
+    adminQuery
+      .editList(request.query.record_status, request.query.status, request.query.limit, request.query.offset)
+      .then((data) => {
+        successHandler(data, response);
+      })
+      .catch((e) => {
+        errorHandler(e, response);
+      });
+  }
 };
 
 exports.reqAcceptEdit = (request, response) => {
@@ -172,7 +183,7 @@ exports.reqEditListByUserId = (request, response) => {
   }
   // TODO: sanitize for param?
   adminQuery
-    .editListByUserId(request.params.user_id, request.query.limit, request.query.offset)
+    .editListByUserId(request.params.user_id, request.query.type, request.query.limit, request.query.offset)
     .then((data) => {
       successHandler(data, response);
     })

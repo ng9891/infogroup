@@ -1,45 +1,92 @@
+let _pie_naics;
+let _pie_matchcd;
 function loadPieChart(establishments) {
   return new Promise((resolve) => {
-    let obj = {};
+    let naicsObj = {};
+    let matchCDObj = {};
     establishments.data.map((est) => {
       // arr_data.push(est.NAICSDS);
+      // Setting up data for the pie chart. eg. Count and section color.
       if (est.NAICSCD) {
         let twoDigitCode = est.NAICSCD.toString().slice(0, 2);
         let color = naicsKeys[twoDigitCode] ? naicsKeys[twoDigitCode].color : 'black';
 
-        if (obj[twoDigitCode]) obj[twoDigitCode].count += 1;
+        if (naicsObj[twoDigitCode]) naicsObj[twoDigitCode].count += 1;
         else {
           let tmp = {
             count: 1,
             label: twoDigitNaics[twoDigitCode] ? twoDigitNaics[twoDigitCode].toUpperCase() : est.NAICSDS,
             color: color,
           };
-          obj[twoDigitCode] = tmp;
+          naicsObj[twoDigitCode] = tmp;
         }
+      }
+
+      let matchCDKey = est.MATCHCD;
+      if (!est.MATCHCD) {
+        matchCDKey = 'NULL';
+      }
+      if (matchCDObj[matchCDKey]) matchCDObj[matchCDKey].count += 1;
+      else {
+        let tmp = {
+          count: 1,
+          color: _matchCDColorScheme[matchCDKey] ? _matchCDColorScheme[matchCDKey] : 'black',
+          label: _matchCDObj[matchCDKey] ? _matchCDObj[matchCDKey] : 'UNKOWN',
+        };
+        matchCDObj[matchCDKey] = tmp;
       }
     });
 
     // Shortening some labels
-    if (obj[56]) obj[56].label = 'ADM & SUP & Waste MGT & Remediation Services'.toUpperCase();
+    if (naicsObj[56]) naicsObj[56].label = 'ADM & SUP & Waste MGT & Remediation Services'.toUpperCase();
 
-    let pie_content = [];
+    let pie_content_naics = [];
+    let pie_content_matchcd = [];
 
-    Object.keys(obj).map((key) => {
+    Object.keys(naicsObj).map((key) => {
       let tmp = {
-        label: `${key} - ${obj[key].label} `,
-        value: obj[key].count,
-        color: obj[key].color,
+        label: `${naicsObj[key].label}`,
+        value: naicsObj[key].count,
+        color: naicsObj[key].color,
+        search: key,
       };
-      pie_content.push(tmp);
+      pie_content_naics.push(tmp);
     });
-    
+
+    Object.keys(matchCDObj).map((key) => {
+      let tmp = {
+        label: `${matchCDObj[key].label}`,
+        value: matchCDObj[key].count,
+        color: matchCDObj[key].color,
+        search: key,
+      };
+      pie_content_matchcd.push(tmp);
+    });
+
     let pie_h = 290;
     let pie_w = 700;
-    let industries = [];
-    let lastChosenSegment;
 
-    // var colorScale = d3.scale.ordinal().domain(arr_data).range(arr_naicscd);
-    let pie_c = new d3pie('pieChart', {
+    _pie_matchcd = new d3pie(
+      'pieChartMatchCD',
+      getOptions(pie_content_matchcd, pie_w, pie_h, 10, () => {
+        addResponsiveViewbox('pieChartMatchCD', w, h);
+      })
+    );
+
+    _pie_naics = new d3pie(
+      'pieChart',
+      getOptions(pie_content_naics, pie_w, pie_h, 9, () => {
+        $('.pieChart-loader').fadeOut('slow');
+        resolve('PieChart Loaded');
+        addResponsiveViewbox('pieChart', w, h);
+      })
+    );
+  });
+
+  function getOptions(content, w, h, searchCol, cb) {
+    let searches = [];
+    let lastChosenSegment;
+    return {
       header: {
         title: {
           fontSize: 24,
@@ -59,20 +106,20 @@ function loadPieChart(establishments) {
         location: 'bottom-left',
       },
       size: {
-        canvasHeight: pie_h, //380
-        canvasWidth: pie_w, //750
+        canvasHeight: h, //380
+        canvasWidth: w, //750
         pieOuterRadius: '70%',
       },
       data: {
         sortOrder: 'value-desc',
-        content: pie_content,
+        content: content,
       },
       labels: {
-        formatter: function(context) {
-          let label = context.label;
-          if (context.section === 'outer') return label.slice(5);
-          return label;
-        },
+        // formatter: function(context) {
+        //   let label = context.label;
+        //   if (context.section === 'outer') return label.slice(5);
+        //   return label;
+        // },
         outer: {
           pieDistance: 32,
         },
@@ -85,7 +132,7 @@ function loadPieChart(establishments) {
         },
         percentage: {
           color: '#ffffff',
-          decimalPlaces: 0,
+          decimalPlaces: 2,
         },
         value: {
           color: '#adadad',
@@ -104,10 +151,14 @@ function loadPieChart(establishments) {
         string: '{label}: {percentage}%',
       },
       effects: {
+        highlightSegmentOnMouseover: false,
         pullOutSegmentOnClick: {
           effect: 'linear',
-          speed: 400,
+          speed: 300,
           size: 8,
+        },
+        load: {
+          speed: 350,
         },
       },
       misc: {
@@ -119,29 +170,70 @@ function loadPieChart(establishments) {
       callbacks: {
         onClickSegment: function(a) {
           // Filter Datatable on PieChart Segment Click
-          let industry = a.data.label.slice(0, 2);
+          let search = a.data.search;
+          let graph = $(a.segment).attr("id").slice(0,2);
+          refreshSegmentsColors(graph ,content.length);
+          grayoutSegments(graph, a.index, content.length);
+          if (searchCol === 10) {
+            // Matchcode Pie
+            mymap.removeLayer(matchCDClustermarkers);
+            if (lastChosenSegment) mymap.removeLayer(_matchcdLayers[lastChosenSegment].layer);
+            mymap.addLayer(_matchcdLayers[search].layer);
+          } else {
+            // NAICS Pie
+            mymap.removeLayer(naicsClustermarkers);
+            if (lastChosenSegment) mymap.removeLayer(_naicsLayers[lastChosenSegment].layer);
+            mymap.addLayer(_naicsLayers[search].layer);
+          }
+
           let dtable = $('#jq_datatable').DataTable();
-          industries.push(industry);
-          dtable.columns(9).search(industry, false, true, true).draw(); // Column 9 is twoDigitNAICSCD
+          searches.push(search);
+          dtable.columns(searchCol).search(search, false, true, true).draw();
 
           // On clicking twice to the same segment filter clears
-          if (lastChosenSegment == industry) {
+          if (lastChosenSegment === search) {
             dtable.search('').columns().search('').draw();
-            industries = [];
+            searches = [];
+            if (searchCol === 10) {
+              // Matchcode Pie
+              // Reset to all
+              mymap.addLayer(matchCDClustermarkers);
+              mymap.removeLayer(_matchcdLayers[lastChosenSegment].layer);
+            } else {
+              // NAICS Pie
+              // Reset to all
+              mymap.addLayer(naicsClustermarkers);
+              mymap.removeLayer(_naicsLayers[lastChosenSegment].layer);
+            }
+            refreshSegmentsColors(graph, content.length);
           }
-          lastChosenSegment = industries.slice(-1)[0];
+          // console.log(lastChosenSegment);
+          // console.log(searches);
+          lastChosenSegment = searches.pop();
         },
-        onload: function() {
-          $('.pieChart-loader').fadeOut('slow');
-          addResponsiveViewbox(pie_w, pie_h);
-          resolve('PieChart Loaded');
-        },
+        onload: cb,
       },
-    });
-  });
-  function addResponsiveViewbox(width, height) {
+    };
+  }
+
+  function grayoutSegments(graph, currIndex, totalSegments) {
+    for (let i = 0; i < totalSegments; i++) {
+      if (i != currIndex) {
+        $(`#${graph}_segment${i}`).css({fill: 'gray'});
+      }
+    }
+  }
+
+  function refreshSegmentsColors(graph, totalSegments) {
+    for (let i = 0; i < totalSegments; i++) {
+      $(`#${graph}_segment${i}`).css({fill: `url(#${graph}_grad${i})`});
+    }
+  }
+
+  function addResponsiveViewbox(id, width, height) {
     d3
-      .select('#pieChart')
+      // .select('#pieChart')
+      .select('#' + id)
       // Make Responsive
       .classed('pieContainer', true)
       .select('svg')
@@ -153,4 +245,5 @@ function loadPieChart(establishments) {
       .attr('preserveAspectRatio', 'xMinYMin meet')
       .classed('svg-content-responsive', true);
   }
+  return;
 }

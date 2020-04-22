@@ -56,13 +56,19 @@
         <div class="col-sm-12 col-md-12">
           <div class="pieChart-loader"></div>
           <div id="pieChart"></div>
+          <div id="pieChartMatchCD" style="display:none"></div>
         </div>
-        <div class="col-sm-6 col-md-6">
+        <div class="col-sm-4 col-md-4">
           <div class="text-sm-left">
-            <a href="javascript:void(0)" class="legendButton">Legend</a>
+            <a href="javascript:void(0)" class="btn btn-link legendButton">Legend</a>
+          </div>
+        </div> 
+        <div class="col-sm-4 col-md-4">
+          <div class="text-sm-center">
+            <a href="javascript:void(0)" class="btn btn-link togglePieBtn">MatchCD</a>
           </div>
         </div>
-        <div class="col-sm-6 col-md-6">
+        <div class="col-sm-4 col-md-4">
           <div class="text-sm-right">
             <a href="javascript:void(0)" class="btn btn-link statisticsContainerButton">More statistics...</a>
           </div>
@@ -246,6 +252,7 @@
 <script src="/js/infogroup.js"></script>
 <script src="/js/map.js"></script>
 <script src="/meta/naicsKeys.js"></script>
+<script src="/meta/matchCDKeys.js"></script>
 <script src="/js/loadDropdown.js"></script>
 <script src="/js/loadAutoComplete.js"></script>
 <script src="/js/loadEditModal.js"></script>

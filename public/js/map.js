@@ -2,12 +2,17 @@
 //Setup Leaflet Map
 
 //markers will contain the markers for the plugin markerClusterGroup
-const markers = L.markerClusterGroup({
+const naicsClustermarkers = L.markerClusterGroup({
   spiderfyOnMaxZoom: true,
   disableClusteringAtZoom: 20,
   chunkedLoading: true,
 });
-let markerList = []; //contains all the points from query
+const matchCDClustermarkers = L.markerClusterGroup({
+  spiderfyOnMaxZoom: true,
+  disableClusteringAtZoom: 20,
+  chunkedLoading: true,
+});
+// let markerList = []; //contains all the points from query
 let queryLayer = []; //contains the query layer or bounding box of query
 let usrMarkers = []; //contains all the marker drawn by user
 let featureSelected;
@@ -76,10 +81,6 @@ var baseMaps = {
 };
 
 var layerControl = L.control.layers(baseMaps, null, {position: 'bottomleft'}).addTo(mymap);
-// mapBox.addTo(mymap);
-// OpenStreetMap_Mapnik.addTo(mymap);
-// OpenMapSurfer_Roads.addTo(mymap);
-
 var drawnItems = new L.FeatureGroup().addTo(mymap); // Array containing drawing objects
 
 //---

@@ -93,6 +93,45 @@ $(document).ready(function() {
     loadEstablishments(query_type, query_input, query_version);
   });
 
+  // Button listener to show legend
+  d3.select('.legendButton').on('click', () => {
+    toggle = d3.select('.legendContainer').classed('open');
+    d3.select('.legendContainer').classed('open', toggle ? false : true);
+  });
+
+  // Button listener to change pie chart type
+  $('.togglePieBtn').click(() => {
+    let dtable = $('#jq_datatable').DataTable();
+    dtable.search('').columns().search('').draw();
+    if ($('.togglePieBtn').text() === 'MatchCD') {
+      let lastSegment = _pie_naics.getOpenSegment();
+      if (lastSegment) {
+        mymap.removeLayer(_naicsLayers[lastSegment.data.search].layer);
+      }
+      $('.infoContainer #pieChart').css('display', 'none');
+      $('.infoContainer #pieChartMatchCD').css('display', 'block');
+      $('.togglePieBtn').text('NAICS');
+      $('.infoContainer #pieChartMatchCD').promise().done(function() {
+        _pie_matchcd.redraw();
+        mymap.addLayer(matchCDClustermarkers);
+        mymap.removeLayer(naicsClustermarkers); // Deselect naics in layer control
+      });
+    } else {
+      let lastSegment = _pie_matchcd.getOpenSegment();
+      if (lastSegment) {
+        mymap.removeLayer(_matchcdLayers[lastSegment.data.search].layer);
+      }
+      $('.infoContainer #pieChartMatchCD').css('display', 'none');
+      $('.infoContainer #pieChart').css('display', 'block');
+      $('.togglePieBtn').text('MatchCD');
+      $('.infoContainer #pieChart').promise().done(function() {
+        _pie_naics.redraw();
+        mymap.addLayer(naicsClustermarkers);
+        mymap.removeLayer(matchCDClustermarkers); // Deselect matchCD in layer control
+      });
+    }
+  });
+
   // Button listener to show statisticsContainer
   $('.statisticsContainerButton').click(() => {
     $('.statisticsContainer').toggleClass('open');
@@ -193,7 +232,7 @@ function loadAdvancedSearchListener() {
 
     if (matchCD) formBody.matchCD = matchCD;
 
-    console.log(formBody);
+    // console.log(formBody);
 
     // TODO: Check if no changes before loading.
     loadEstablishments('adv', formBody, query_version);

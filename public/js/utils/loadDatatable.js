@@ -106,11 +106,19 @@ function loadDatatable(est) {
               return data.toString().slice(0, 2);
             },
           },
+          {
+            title: 'matchCD',
+            data: 'MATCHCD',
+            render: function(data) {
+              if (!data) return 'NULL';
+              return data;
+            },
+          },
         ],
         columnDefs: [
           {
             visible: false,
-            targets: [0, 7, 8, 9], //Invisible. id, Latitude, Longitude, two digit
+            targets: [0, 7, 8, 9, 10], //Invisible. id, Latitude, Longitude, two digit, matchcd
           },
           {
             width: 34,

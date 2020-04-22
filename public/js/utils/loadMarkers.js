@@ -6,29 +6,112 @@
 *				- variable 'layerControl' of type L.control.layers
 *       - variable 'mymap'
 *       - variable 'querylayer' from Drawing Queries.
-*       - variable 'markerList'
 *       - variable 'markers' from ClusterPlugin
 * Expected input: an object with an array of JSON object called 'data'
 * Output: Markers will be added into mymap and markerList array 
 */
-function loadMarkers(establishments) {
-  return new Promise((resolve) => {
-    // ---
-    // remove all previous markers from map
-    // ---
+// Building map filtering layer for NAICS and MatchCD
+let _matchcdLayers = {};
+let _naicsLayers = {};
+(() => {
+  let clusterOptions = {
+    spiderfyOnMaxZoom: true,
+    disableClusteringAtZoom: 20,
+    chunkedLoading: true,
+  };
+  function buildNaicsLayerObj(twoDigitNaics) {
+    let codes = Object.keys(twoDigitNaics);
+    let tmp = {};
+    for (let twoDigit of codes) {
+      tmp[twoDigit] = {
+        layer: L.markerClusterGroup(clusterOptions),
+        markers: [],
+      };
+    }
+    tmp[99] = {
+      layer: L.markerClusterGroup(clusterOptions),
+      markers: [],
+    };
+    return tmp;
+  }
+  function buildMatchCDLayerObj() {
+    // let codes = Object.keys(_matchCDObj);
+    let tmp = {};
+    for (let k in _matchCDObj) {
+      tmp[k] = {
+        layer: L.markerClusterGroup(clusterOptions),
+        markers: [],
+      };
+    }
+    return tmp;
+  }
 
-    // while (markers.length > 0) {
-    // 	mymap.removeLayer(markers.pop());
-    // }
+  loadMarkers = (establishments) => {
+    return new Promise((resolve) => {
+      let matchCDMarker = [];
+      let naicsCDMarker = [];
 
-    let lats = [];
-    let lngs = [];
+      // Variable to calculate bounding box
+      let lats = [];
+      let lngs = [];
 
-    // if(establishments.data.geopoly){
-    // 	//add polygon to map for county
-    // 	console.log("YESSS")
-    // }
+      _naicsLayers = buildNaicsLayerObj(twoDigitNaics);
+      _matchcdLayers = buildMatchCDLayerObj();
 
+      establishments = establishments.data.map((est) => {
+        est.geopoint = JSON.parse(est.geopoint);
+        // get two digit code
+        let twoDigitCode = null;
+        if (est.NAICSCD) {
+          twoDigitCode = est.NAICSCD.toString().slice(0, 2);
+        }
+        // check if coordinate exist
+        if (est.geopoint.coordinates[1] && est.geopoint.coordinates[0]) {
+          // add to array for bounding box
+          lats.push(est.geopoint.coordinates[1]);
+          lngs.push(est.geopoint.coordinates[0]);
+          let naicsColor = naicsKeys[twoDigitCode] ? naicsKeys[twoDigitCode].color : 'black';
+          let matchCDColor = _matchCDColorScheme[est.MATCHCD] ? _matchCDColorScheme[est.MATCHCD] : 'black';
+
+          _naicsLayers[twoDigitCode].markers.push(styleMarker(est, naicsColor));
+          _matchcdLayers[est.MATCHCD].markers.push(styleMarker(est, matchCDColor));
+
+          naicsCDMarker.push(styleMarker(est, naicsColor));
+          matchCDMarker.push(styleMarker(est, matchCDColor));
+        }
+      });
+
+      // Add markers to respective layers.
+      for (let code in _naicsLayers) {
+        _naicsLayers[code].layer.addLayers(_naicsLayers[code].markers);
+      }
+
+      for (let code in _matchcdLayers) {
+        _matchcdLayers[code].layer.addLayers(_matchcdLayers[code].markers);
+      }
+
+      naicsClustermarkers.addLayers(naicsCDMarker);
+      matchCDClustermarkers.addLayers(matchCDMarker);
+      mymap.addLayer(naicsClustermarkers); // Show on map
+      // mymap.addLayer(matchCDClustermarkers );
+      layerControl.addOverlay(naicsClustermarkers, 'Establishments - NAICS');
+      layerControl.addOverlay(matchCDClustermarkers, 'Establishments - MatchCD');
+      // calculate the bounding Box
+      bbox = [[d3.min(lats), d3.min(lngs)], [d3.max(lats), d3.max(lngs)]];
+
+      // zoom to bounds
+      //values for paddingBottomRight are weird.... need further research
+      //[1000,400]
+      // mymap.fitBounds(bbox, {
+      // 	paddingBottomRight: [1000, 400]
+      // });
+
+      mymap.fitBounds(bbox);
+      resolve('Map Loaded');
+    });
+  };
+
+  function styleMarker(est, color, filter) {
     // --
     // employee scale
     // 1 - 1000 employees
@@ -36,119 +119,59 @@ function loadMarkers(establishments) {
     // --
     let employmentScale = d3.scaleLinear().domain([1, 999]).range([7, 15]);
 
-    establishments = establishments.data.map((est) => {
-      est.geopoint = JSON.parse(est.geopoint);
-
-      // get two digit code
-      let twoDigitCode = null;
-      if (est.NAICSCD) {
-        twoDigitCode = est.NAICSCD.toString().slice(0, 2);
-      }
-
-      // get markerRadius
-      let circleRadius = est.ALEMPSZ ? employmentScale(+est.ALEMPSZ) : 7;
-      circleRadius = circleRadius.toFixed(2);
-
-      // get color by NAICS industry
-      let color = naicsKeys[twoDigitCode] ? naicsKeys[twoDigitCode].color : 'black';
-
-      // --
-      // Create divIcon
-      // http://leafletjs.com/reference-1.3.0.html#divicon
-      // --
-      let myIcon = L.divIcon({
-        className: 'current-location-icon',
-        html: `
-				<div id="${encodeURIComponent(est.CONAME)}" 
-					class = "NAICS" 
-	        		style="
-	        			width:${circleRadius}px;
-	        			height:${circleRadius}px;
-	        			background-color:${color};
-	        			border-radius:500px;"
-	        	></div>`,
-        iconAnchor: [0, 0],
-        iconSize: null,
-        popupAnchor: [0, 0],
-        id: encodeURIComponent(est.CONAME),
-      });
-      // check if coordinate exist
-      if (est.geopoint.coordinates[1] && est.geopoint.coordinates[0]) {
-        // add to array for bounding box
-        lats.push(est.geopoint.coordinates[1]);
-        lngs.push(est.geopoint.coordinates[0]);
-
-        // create marker
-        let marker = L.marker([est.geopoint.coordinates[1], est.geopoint.coordinates[0]], {
-          icon: myIcon,
-        });
-
-        // create Pop Up
-        marker
-          .bindPopup(
-            `
-              <b>ID: ${est.id} </b></br>
-              <b>Company : ${est.CONAME}</b><br>
-              County : ${est.COUNTY}, ${est.PRMSTATE}<br>
-              Actual_Emp_Size : ${est.ALEMPSZ ? est.ALEMPSZ.toLocaleString() : ''}<br>
-              NAICS_Code :  ${est.NAICSCD}<br>
-              NAICS_Desc : ${est.NAICSDS}<br>
-              INDFIRM_Code : ${est.INDIVIDUAL_FIRM_CODE}<br>
-              INDFIRM_Desc : ${est.INDIVIDUAL_FIRM_DESC}<br>
-              Match_Code: ${est.MATCHCD}<br>
-              Date_of_SIC : ${est.YEAR_SIC_ADDED}<br>
-              Big_Business : ${est.BIG_BUSINESS}<br>
-              High_Tech : ${est.HIGHTECHBUSINESS}<br>
-              <a href="javascript:void(0)" onclick="openEditModal(${est.id})">more info...</a>
-		    	  `
-          )
-          .openPopup();
-
-        /*
-			marker.on('click', function(){
-				//Does it also accepts ReactJs innerHTML? Needs to check.
-				$("div.Object-desc").empty();
-				$("div.Object-desc").html(
-					`
-					<b>Company : ${est.CONAME}</b><br>
-					Employees : ${est.ALEMPSZ ? est.ALEMPSZ.toLocaleString() : ''}<br>
-					Payroll : ${est.BE_Payroll_Expense_Description}<br>
-					NAICS :  ${est.NAICSCD}<br>
-					Industry : ${est.NAICSDS}
-					`
-				);
-			});
-			*/
-
-        markerList.push(marker);
-        // markers.addLayer(marker);
-        // mymap.addLayer(markers);
-        // marker.addTo(mymap);
-        // mymap.addLayer(markerList);
-      }
+    // get markerRadius
+    let circleRadius = est.ALEMPSZ ? employmentScale(+est.ALEMPSZ) : 7;
+    circleRadius = circleRadius.toFixed(2);
+    
+    // --
+    // Create divIcon
+    // http://leafletjs.com/reference-1.3.0.html#divicon
+    // --
+    let myIcon = L.divIcon({
+      className: 'current-location-icon',
+      html: `
+      <div id="${encodeURIComponent(est.id)}" 
+        class = "NAICS" 
+            style="
+              width:${circleRadius}px;
+              height:${circleRadius}px;
+              background-color:${color};
+              border-radius:500px;"
+          ></div>`,
+      iconAnchor: [0, 0],
+      iconSize: null,
+      popupAnchor: [0, 0],
+      id: encodeURIComponent(est.id),
     });
-    markers.addLayers(markerList);
-    mymap.addLayer(markers);
-    layerControl.addOverlay(markers, 'Establishments');
 
-    // mymap.setZoom(15);
-    // calculate the bounding Box
-    bbox = [[d3.min(lats), d3.min(lngs)], [d3.max(lats), d3.max(lngs)]];
+    let marker = L.marker([est.geopoint.coordinates[1], est.geopoint.coordinates[0]], {
+      icon: myIcon,
+    })
+      .bindPopup(
+        `
+        <b>ID: ${est.id} </b></br>
+        <b>Company : ${est.CONAME}</b><br>
+        County : ${est.COUNTY}, ${est.PRMSTATE}<br>
+        Actual_Emp_Size : ${est.ALEMPSZ ? est.ALEMPSZ.toLocaleString() : ''}<br>
+        NAICS_Code :  ${est.NAICSCD}<br>
+        NAICS_Desc : ${est.NAICSDS}<br>
+        INDFIRM_Code : ${est.INDIVIDUAL_FIRM_CODE}<br>
+        INDFIRM_Desc : ${est.INDIVIDUAL_FIRM_DESC}<br>
+        Match_Code: ${est.MATCHCD}<br>
+        Date_of_SIC : ${est.YEAR_SIC_ADDED}<br>
+        Big_Business : ${est.BIG_BUSINESS}<br>
+        High_Tech : ${est.HIGHTECHBUSINESS}<br>
+        <a href="javascript:void(0)" onclick="openEditModal(${est.id})">more info...</a>
+      `
+      )
+      .openPopup();
 
-    // zoom to bounds
-    //values for paddingBottomRight are weird.... need further research
-    //[1000,400]
-    // mymap.fitBounds(bbox, {
-    // 	paddingBottomRight: [1000, 400]
-    // });
+    return marker;
+  }
+})();
 
-    mymap.fitBounds(bbox);
-    resolve('Map Loaded');
-  });
-}
-
-
-function openEditModal(id){
+// Open modal for the bubble popup
+function openEditModal(id) {
   let query_version = d3.select('#version-dropdown').property('value');
   loadEditModal(id, query_version);
   $('#editModal').modal('show');

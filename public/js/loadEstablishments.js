@@ -103,8 +103,13 @@
    * @param {String} queryType 
    */
   let clearUiComponents = (queryType) => {
+    // Reset pie chart logic to default.
+    $('.togglePieBtn').text('MatchCD');
+    $('.infoContainer #pieChartMatchCD').css('display', 'none');
+    $('.infoContainer #pieChart').css('display', 'block');
+
     $('#pieChart').empty(); // Piechart
-    window.clearDatatable(); // loadDatatable.js
+    $('#pieChartMatchCD').empty(); // Piechart
     d3.select('.hist').select('.svg').remove(); // Histogram
 
     // If its a drawing query, do not clear the drawings. Needed to draw overlay.
@@ -122,11 +127,35 @@
       layerControl.removeLayer(cLayer);
     }
     // Clearing est markers
-    if (markerList.length > 0) {
-      layerControl.removeLayer(markers);
-      markers.clearLayers();
-      markerList = [];
+    mymap.removeLayer(matchCDClustermarkers); // Deselect matchCD
+    layerControl.removeLayer(naicsClustermarkers);
+    layerControl.removeLayer(matchCDClustermarkers);
+
+    // Clearing markers in marker cluster.
+    naicsClustermarkers.clearLayers();
+    matchCDClustermarkers.clearLayers();
+
+    //TODO: Tentative to change with new pie chart.
+    // Clear marker if map was filtered. 
+    const dataTable = $('#jq_datatable');
+    if ($.fn.DataTable.isDataTable(dataTable)) {
+      let currentDatatableFilter = $('#jq_datatable').DataTable().column(9).search();
+      if (currentDatatableFilter) {
+        _naicsLayers[currentDatatableFilter].layer.clearLayers();
+      } else {
+        currentDatatableFilter = $('#jq_datatable').DataTable().column(10).search();
+        if (currentDatatableFilter) _matchcdLayers[currentDatatableFilter].layer.clearLayers();
+      }
     }
+
+    // Clear datatable
+    window.clearDatatable(); // loadDatatable.js
+
+    // if (markerList.length > 0) {
+    //   layerControl.removeLayer(markers);
+    //   markers.clearLayers();
+    //   markerList = [];
+    // }
   };
 
   /**
