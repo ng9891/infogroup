@@ -52,29 +52,54 @@ function loadAutoComplete() {
     let obj_naics_cd = {};
     let obj_naics_ds = {};
     let arr_data_cd = [];
+    let arr_data_ds = new Set();
     data.data.map((est) => {
       obj_naics_cd[est.NAICSCD.toString()] = est.NAICSDS;
       obj_naics_ds[est.NAICSDS] = est.NAICSCD.toString();
       arr_data_cd.push(est.NAICSCD.toString());
+      arr_data_ds.add(est.NAICSDS);
     });
     _obj_naics_arr.push(obj_naics_cd);
     _obj_naics_arr.push(obj_naics_ds);
     autoComplete_text(arr_data_cd, '#modal_NAICSCD');
+    autoComplete_text([...arr_data_ds], '#modal_NAICSDS');
     // autoComplete_text(arr_data_cd, '#adv_NAICSCD');
   }, function(err) {
     console.log(err);
   });
-  // No repetition of 'industries description' purposes
-  d3.json(`/api/getindustries?type='ds'`).then((data) => {
-    let arr_data_ds = [];
-    data.data.map((est) => {
-      arr_data_ds.push(est.NAICSDS);
-    });
-    autoComplete_text(arr_data_ds, '#modal_NAICSDS');
-    autoComplete_text(arr_data_ds, '#adv_NAICSDS'); //adv search
-  }, function(err) {
-    console.log(err);
+
+  // Advanced Search autocomplete for 2 and 4 digits NAICS code.
+  let twoAndFourDigitNaics = [];
+  let twoDigitSet = new Set(); // twoDigitNaics has some repeated titles. EG. 31-33 Manufacturing.
+  for (let key in twoDigitNaics) {
+    if (naicsKeys[key].title) {
+      if (twoDigitSet.has(naicsKeys[key].title)) continue;
+      twoAndFourDigitNaics.push({
+        label: naicsKeys[key].title.toUpperCase(),
+        value: key,
+      });
+      twoDigitSet.add(naicsKeys[key].title);
+    } else {
+      if (twoDigitSet.has(naicsKeys[naicsKeys[key].part_of_range].title)) continue;
+      twoDigitSet.add(naicsKeys[naicsKeys[key].part_of_range].title);
+      twoAndFourDigitNaics.push({
+        label: naicsKeys[naicsKeys[key].part_of_range].title.toUpperCase(),
+        value: naicsKeys[key].part_of_range,
+      });
+    }
+  }
+  twoAndFourDigitNaics.push({
+    label: 'Unclassified Establishments'.toUpperCase(),
+    value: 99,
   });
+
+  for (let key in fourDigitNaics) {
+    twoAndFourDigitNaics.push({
+      label: fourDigitNaics[key].toUpperCase(),
+      value: key,
+    });
+  }
+  autoComplete_text(twoAndFourDigitNaics, '#adv_NAICSDS');
 
   d3.json(`/api/getsic`).then((data) => {
     let obj_sic_cd = {};
@@ -112,7 +137,8 @@ function autoComplete_url(inputId, column, minlen = 2) {
     source: function(request, response) {
       let input = request.term.trim();
       let url = `/api/get${column}/`;
-      if(column === 'railroad') url += `?station=${encodeURIComponent(input)}`; // railroad get URL is a bit different because string contains '/'
+      if (column === 'railroad')
+        url += `?station=${encodeURIComponent(input)}`; // railroad get URL is a bit different because string contains '/'
       else url += `${encodeURIComponent(input)}`;
       $.ajax({
         type: 'GET',
@@ -154,14 +180,17 @@ function autoComplete_text(data, inputId) {
     minLength: 2,
     sortResults: false,
     source: function(request, response) {
-      setTimeout(() => {
-        var results = $.ui.autocomplete.filter(data, request.term);
-        response(results.slice(0, 15));
-      }, 500);
+      let results = $.ui.autocomplete.filter(data, request.term);
+      response(results.slice(0, 15));
     },
     messages: {
       noResults: '',
       results: function() {},
+    },
+    select: function(event, ui) {
+      event.preventDefault();
+      $(this).val(ui.item.label);
+      $(this).data().value = ui.item.value;
     },
   });
 }

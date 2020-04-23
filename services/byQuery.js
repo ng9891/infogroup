@@ -302,7 +302,8 @@ module.exports = {
     {
       v = 'current',
       coname = '',
-      naicsds = '',
+      naicsDS = null,
+      naicsCD = null,
       prmSicDs = '',
       minEmp = '',
       maxEmp = '',
@@ -322,7 +323,6 @@ module.exports = {
     } = {}
   ) => {
     coname = decodeURIComponent(coname);
-    naicsds = decodeURIComponent(naicsds);
     prmSicDs = decodeURIComponent(prmSicDs);
     lsalvol = decodeURIComponent(lsalvol);
     county = county ? decodeURIComponent(county) : '';
@@ -344,9 +344,32 @@ module.exports = {
       where += addANDStatement(`UPPER("${column.CONAME}") LIKE UPPER($${params.length + 1})`);
       params.push(`${coname}%`);
     }
-    if (naicsds !== '') {
+    if (naicsCD) {
+      let andStatement = ``;
+      let separation = naicsCD.indexOf('-');
+      if (separation !== -1) {
+        let left = naicsCD.slice(0, separation);
+        let right = naicsCD.slice(separation + 1);
+        let diff = +right - +left;
+        for (let i = 0; i <= diff; i++) {
+          if (i === 0) {
+            andStatement += `"${column.NAICSCD}"::TEXT LIKE $${params.length + 1}`;
+            params.push(`${+left + i}%`);
+          } else {
+            andStatement += ` OR "${column.NAICSCD}"::TEXT LIKE $${params.length + 1}`;
+            params.push(`${+left + i}%`);
+          }
+        }
+        where += addANDStatement(`(${andStatement})`);
+      } else {
+        andStatement = `"${column.NAICSCD}"::TEXT LIKE $${params.length + 1}`;
+        where += addANDStatement(andStatement);
+        params.push(`${naicsCD}%`);
+      }
+    }
+    if (naicsDS) {
       where += addANDStatement(`"${column.NAICSDS}" LIKE $${params.length + 1}`);
-      params.push(`${naicsds}%`);
+      params.push(`${naicsDS}%`);
     }
     if (prmSicDs !== '') {
       where += addANDStatement(`"${column.PRMSICDS}" LIKE $${params.length + 1}`);
@@ -459,12 +482,13 @@ module.exports = {
       }
 
       // If only match code is selected and it is parcel.
-      if (matchCD && matchCD === 'P'){
+      if (matchCD && matchCD === 'P') {
         where += 'LIMIT 200000';
       }
     }
 
     let sql = 'SELECT' + selectStatement + from + where;
+    // console.log(sql);
     return queryDB(sql, params);
   },
 };

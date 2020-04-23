@@ -62218,6 +62218,17 @@ let naicsKeys = {
 
 let colorScheme = ['#aee39a', '#821f48', '#34f199', '#f0348f', '#20d8fd', '#e72525', '#21a645', '#e748f3', '#2cf52b', '#8301bd', '#a7e831', '#49388e', '#c1c2f5', '#214a65', '#fe8f06', '#285d28', '#f49dd5', '#7e9b3d', '#1a86e3', '#ead624', '#7574f5', '#683c00', '#f8cca6', '#7f848c']
 
+let fourDigitNaics = Object.keys(naicsKeys)
+  .reduce((out,current,index) =>{
+    if( /^\d{4}$/.test(current) ){
+      out[current] = 
+        naicsKeys[current].title 
+        ? naicsKeys[current].title 
+        : naicsKeys[naicsKeys[current].part_of_range].title
+    }
+    return out
+  }, {})
+
 let twoDigitNaics = Object.keys(naicsKeys)
   .reduce((out,current,index) =>{
     if( +current < 100 ){
@@ -62225,7 +62236,6 @@ let twoDigitNaics = Object.keys(naicsKeys)
         naicsKeys[current].title 
         ? naicsKeys[current].title 
         : naicsKeys[naicsKeys[current].part_of_range].title
-      
     }
     return out
   }, {})

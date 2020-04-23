@@ -74,6 +74,8 @@ let _naicsLayers = {};
           let matchCDColor = _matchCDColorScheme[est.MATCHCD] ? _matchCDColorScheme[est.MATCHCD] : 'black';
 
           _naicsLayers[twoDigitCode].markers.push(styleMarker(est, naicsColor));
+
+          if (!est.MATCHCD) est.MATCHCD = 'NULL';
           _matchcdLayers[est.MATCHCD].markers.push(styleMarker(est, matchCDColor));
 
           naicsCDMarker.push(styleMarker(est, naicsColor));
@@ -122,7 +124,7 @@ let _naicsLayers = {};
     // get markerRadius
     let circleRadius = est.ALEMPSZ ? employmentScale(+est.ALEMPSZ) : 7;
     circleRadius = circleRadius.toFixed(2);
-    
+
     // --
     // Create divIcon
     // http://leafletjs.com/reference-1.3.0.html#divicon

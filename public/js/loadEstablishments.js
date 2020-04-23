@@ -136,7 +136,7 @@
     matchCDClustermarkers.clearLayers();
 
     //TODO: Tentative to change with new pie chart.
-    // Clear marker if map was filtered. 
+    // Clear marker if map was filtered.
     const dataTable = $('#jq_datatable');
     if ($.fn.DataTable.isDataTable(dataTable)) {
       let currentDatatableFilter = $('#jq_datatable').DataTable().column(9).search();
@@ -358,6 +358,8 @@
    */
   let getAdvSearchInfo = (queryInput) => {
     if (typeof queryInput !== 'object') return;
+    let naicsDS = queryInput.naicsDS;
+    queryInput.naicsDS = '';
     let query = $.param(queryInput);
     let reqURL = '/api/search?' + query;
     let overlayURL = '';
@@ -395,7 +397,8 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
     let secondRow = {
       Dist: queryInput.roadDist ? queryInput.roadDist + 'mi' : '',
       MatchCD: queryInput.matchCD || '',
-      NAICS: queryInput.naicsds || '',
+      NAICS: naicsDS,
+      // NAICS: queryInput.naicsds || '',
       SIC: queryInput.prmSicDs || '',
       EmpMin: queryInput.minEmp || '',
       EmpMax: queryInput.maxEmp || '',

@@ -31,7 +31,7 @@ function loadPieChart(establishments) {
         let tmp = {
           count: 1,
           color: _matchCDColorScheme[matchCDKey] ? _matchCDColorScheme[matchCDKey] : 'black',
-          label: _matchCDObj[matchCDKey] ? _matchCDObj[matchCDKey] : 'UNKOWN',
+          label: _matchCDObj[matchCDKey] ? _matchCDObj[matchCDKey] : 'UNKNOWN',
         };
         matchCDObj[matchCDKey] = tmp;
       }
@@ -171,8 +171,8 @@ function loadPieChart(establishments) {
         onClickSegment: function(a) {
           // Filter Datatable on PieChart Segment Click
           let search = a.data.search;
-          let graph = $(a.segment).attr("id").slice(0,2);
-          refreshSegmentsColors(graph ,content.length);
+          let graph = $(a.segment).attr('id').slice(0, 2);
+          refreshSegmentsColors(graph, content.length);
           grayoutSegments(graph, a.index, content.length);
           if (searchCol === 10) {
             // Matchcode Pie

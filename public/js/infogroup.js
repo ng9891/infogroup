@@ -169,9 +169,17 @@ function loadAdvancedSearchListener() {
     $('#adv_MATCHCD').val($(this).attr('value'));
   });
 
+  $('#adv_NAICSDS').on('autocompleteresponse', function(event, ui) {
+    if (ui.content.length === 0) {
+      $(this).data().value = 9999999999;
+    }
+  });
+
   d3.select('#advsearch-button').on('click', (e) => {
     let coname = $('#adv_CONAME').val().trim();
-    let industry = $('#adv_NAICSDS').val().trim();
+    let naicsDS = $('#adv_NAICSDS').val().trim();
+    let naicsCD = $('#adv_NAICSDS').data().value;
+    if (naicsCD && !naicsDS) naicsCD = undefined;
     let prmSicDs = $('#adv_PRMSICDS').val().trim();
     let roadDist = parseFloat($('#adv_roadDist').val().trim());
     let roadSigning = $('#adv_roadSigning').val().trim();
@@ -214,7 +222,8 @@ function loadAdvancedSearchListener() {
 
     let formBody = {
       coname: coname,
-      naicsds: industry,
+      naicsDS: naicsDS,
+      naicsCD: naicsCD,
       prmSicDs: prmSicDs,
       roadNo: roadNo,
       roadSigning: roadSigning,
@@ -243,6 +252,7 @@ function loadAdvancedSearchListener() {
   d3.select('#advsearch-resetBtn').on('click', (e) => {
     $('#adv_CONAME').val('');
     $('#adv_NAICSDS').val('');
+    $('#adv_NAICSDS').data().value = undefined;
     $('#adv_PRMSICDS').val('');
     $('#adv_roadNo').val('');
     $('#adv_roadSigning').val('');
