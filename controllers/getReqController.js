@@ -1,5 +1,6 @@
 // const getQuery = require('../services/2014/getQuery');
 const getQuery = require('../services/getQuery');
+const geocode = require('../utils/geocode');
 function successHandler(data, response) {
   return response.status(200).json({
     data: data,
@@ -12,6 +13,43 @@ function errorHandler(err, response) {
     responseText: 'Error in query ' + err,
   });
 }
+
+exports.reqGetGeocodeReverse = async (request, response) => {
+  if (!request.query.lon) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No Longitude specified',
+    });
+  }
+  if (!request.query.lat) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No latitude specified',
+    });
+  }
+  let json = await geocode.mqGeocodeReverse(request.query.lat, request.query.lon).catch((err) => {
+    console.log(err);
+    return response.status(500).json({
+      status: 'Error',
+      responseText: 'MapQuest service not responding correctly. Please contact dev.',
+    });
+  });
+  // Status check.
+  if(!json){
+    return response.status(500).json({
+      status: 'Error',
+      responseText: 'MapQuest service not responding correctly. Please contact dev.',
+    });
+  }
+  if(json.info.statuscode === 0){
+    return successHandler(json, response);
+  }else{
+    return response.status(500).json({
+      status: 'Error',
+      responseText: `MapQuest responded with status code ${json.info.statuscode}. ${json.info.messages}`,
+    });
+  }
+};
 
 exports.reqGetDrivingDist = (request, response) => {
   if (!request.query.lon) {

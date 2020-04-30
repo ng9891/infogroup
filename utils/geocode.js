@@ -28,9 +28,34 @@ exports.nomGeocode = (input) => {
     };
 
     let geoJson = await request(options).catch((err) => {
-      console.log(err);
+      reject(err);
     });
 
     return resolve(geoJson);
+  });
+};
+
+exports.mqGeocode = (input) => {
+  return new Promise(async (resolve, reject) => {
+    return resolve();
+  });
+};
+
+/**
+ * Using the Mapquest API to reverse geocode.
+ * @param {String} lat 
+ * @param {String} lon 
+ */
+exports.mqGeocodeReverse = (lat,lon) => {
+  return new Promise(async (resolve, reject) => {
+    let URL = `http://www.mapquestapi.com/geocoding/v1/reverse?key=${process.env.MAPQUEST_KEY}&location=${lat},${lon}`
+    // console.log(process.env.MAPQUEST_KEY);
+    let options = {
+      uri: URL
+    };
+    let geoJson = await request(URL).catch((err) => {
+      reject(err);
+    });
+    return resolve(JSON.parse(geoJson));
   });
 };

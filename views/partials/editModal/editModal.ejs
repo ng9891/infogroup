@@ -17,22 +17,22 @@
         </div>
         <div class="modal-body">
           <form id="modal-form" novalidate>
-            <div class="modal_location_edit_container mb-2">
+            <div class="modal_location_edit_container mb-4">
               <div class="header">Address</div>
               <div class="content">
                 <div class="form-row">
                   <div class="form-group col-sm-6">
-                    <label for="modal_PRMADDR">PRM ADDR</label>
+                    <label for="modal_PRMADDR">ADDRESS</label>
                     <input type="text" class="form-control" id="modal_PRMADDR" required>
                     <div class="invalid-feedback">
-                      Please provide a valid PRM ADDR.
+                      Please provide a valid ADDRESS.
                     </div>
                   </div>
                   <div class="form-group col-sm-6">
-                    <label for="modal_PRMCITY">PRM CITY</label>
+                    <label for="modal_PRMCITY">CITY</label>
                     <input type="text" class="form-control" id="modal_PRMCITY" required>
                     <div class="invalid-feedback">
-                      Please provide a valid PRM CITY.
+                      Please provide a valid CITY.
                     </div>
                   </div>
                 </div>
@@ -46,7 +46,7 @@
                   </div>
                   <div class="form-group col-sm-3">
                     <label for="modal_PRMZIP">ZIP</label>
-                    <input type="text" class="form-control" id="modal_PRMZIP" pattern="[0-9]*" required>
+                    <input type="text" class="form-control" id="modal_PRMZIP" pattern="^\d{5}(?:[-\s]\d{4})?$" required>
                     <div class="invalid-feedback">
                       Please provide a valid ZIP.
                     </div>
@@ -75,17 +75,16 @@
                       <ul class="dropdown-menu" id="modal_MATCHCD"></ul>
                     </div>
                   </div>
-                  <div class="form-group col-sm-5">
-                    <p><a href="#" class="locate_addr">Locate on Map</a> | 
-                      <a href="#" class="geocode_addr">Geocode Address</a>
-                    </p>
+                  <div class="form-group col-sm-5">    
+                    <a href="#" class="locate_addr">Locate on Map</a> 
+                    <span class="rgeocode_addr" style="display:none;"> | <a href="#">Reverse Geocode</a></span> 
                   </div>
                 </div>
-                <div class="form-row" id="modal_newaddress_container">
-                  <div class="col-sm-12 checkbox" id="modal_newaddress">
-                    <!-- Here will appear a checkbox with new address after pressing "Check" 
-                      Just for showing to user and checking that it is correct -->
-                  </div>
+                <span class="newaddress_loading" style="display:none">
+                  <img alt="Loading..." src="/stylesheet/images/ui-anim_basic_16x16.gif">
+                </span>
+                <div class="form-row" id="modal_newaddress_container" style="display:none">
+                  <select class="form-control form-control-sm" id="modal_newaddress"></select>
                 </div>
               </div>
             </div>

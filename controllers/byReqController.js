@@ -74,6 +74,9 @@ exports.reqGeoByGeocode = async (request, response) => {
   let geoJson;
   try {
     switch (request.query.geocoder) {
+      case "mapquest":
+        // geoJson = await geocode.mqGeocode(query);
+        break;
       default:
         geoJson = await geocode.nomGeocode(query);
     }

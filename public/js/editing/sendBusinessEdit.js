@@ -96,6 +96,7 @@ function getForm() {
     CORPORATE_SALES_VOLUME_CODE: parseFormInput($('#modal_CSALVOLCD_button').text()),
     CORPORATE_SALES_VOLUME_DESC: parseFormInput($('#modal_CSALVOLDS').val()),
     ACTUAL_CORPORATE_SALES_VOLUME: parseFormInput_salesVol($('#modal_ACSLSVOL').val()),
+    PRIMARY_ADDRESS: parseFormInput($('#modal_PRMADDR').val()),
     PRIMARY_CITY: parseFormInput($('#modal_PRMCITY').val()),
     PRIMARY_STATE: parseFormInput($('#modal_PRMSTATE').val()),
     PRIMARY_ZIP_CODE: parseFormInput($('#modal_PRMZIP').val()),

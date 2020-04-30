@@ -584,15 +584,6 @@ body {
   /* padding : 5px; */
 }
 
-#modal_newaddress_container {
-  display: none;
-}
-
-#modal_newaddress {
-  font-size: 12px !important;
-  color: darkgreen;
-}
-
 .svg-container {
   display: inline-block;
   position: relative;

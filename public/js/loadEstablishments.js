@@ -200,14 +200,18 @@
           measurementOptions: measurementOptions,
         });
       } else if (overlayURL === 'geocode') {
+        console.log('geocode');
         // Build JSON to match the app format.
         let builtGeoJsonToMatchFormat = {data: []};
-        let overlayFeatures = JSON.parse(data.overlayJson).features;
-        for (let feature of overlayFeatures) {
-          builtGeoJsonToMatchFormat.data.push({
-            geom: feature.geometry,
-            properties: feature.properties,
-          });
+        if(data.overlayJson){
+          console.log(JSON.parse(data.overlayJson).features);
+          let overlayFeatures = JSON.parse(data.overlayJson).features;
+          for (let feature of overlayFeatures) {
+            builtGeoJsonToMatchFormat.data.push({
+              geom: feature.geometry,
+              properties: feature.properties,
+            });
+          }
         }
         overlay = createGeoJsonOverlay(builtGeoJsonToMatchFormat);
       } else {
@@ -219,6 +223,7 @@
         });
         overlay = createGeoJsonOverlay(jsonOverlay);
       }
+      if(!overlay) return resolve('Empty Overlay.');
       window.addOverlayToMap(overlay); // Function in map.js
       resolve('Overlay Loaded');
     });
@@ -257,6 +262,10 @@
   let createGeoJsonOverlay = (data) => {
     let l = [];
     let overlayType;
+    if(data.data.length < 1){
+      console.log('GeoJSON overlay is empty. - createGeoJsonOverlay()');
+      return;
+    }
     data.data.map((d) => {
       let dataObject = d.geom;
       if (typeof d.geom === 'string') dataObject = JSON.parse(d.geom);

@@ -88,9 +88,10 @@
             title: 'created_at',
             data: 'created_at',
             defaultContent: '',
-            render: function(data) {
+            render: function(data, type) {
               if (!data) return '';
-              return moment(data).format('MM/DD/YYYY, h:mma');
+              if (type === 'display') return moment(data).format('MM/DD/YYYY, h:mma');
+              return data;
             },
           },
           {title: 'comment', data: 'comment'},

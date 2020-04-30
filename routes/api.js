@@ -37,4 +37,6 @@ router.get('/getsic', getCtrl.reqGetSic);
 router.get('/getsqfoot', getCtrl.reqGetSqFoot);
 router.get('/getzip/:zip', getCtrl.reqGeoGetZip);
 
+router.get('/get/geocode/reverse', getCtrl.reqGetGeocodeReverse);
+
 module.exports = router;

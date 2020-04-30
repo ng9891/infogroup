@@ -124,10 +124,13 @@ function loadEditModal_eventListeners() {
     removeMarker(editMarker);
     $('.modal_location_edit_container .content').hide();
     $('#modal_newaddress').html('');
-    $('#modal_newaddress_container').hide();
     $('#modal_ALEMPSZ')[0].setCustomValidity('');
     $('#modal_ALSLSVOL')[0].setCustomValidity('');
     $('#modal_ACSLSVOL')[0].setCustomValidity('');
+    // Hide Reverse Geocode Button
+    $('.rgeocode_addr').hide();
+    // Hide Reverse Geocode List
+    $('#modal_newaddress_container').hide();
     form[0].classList.remove('was-validated');
     form[0].reset();
   });
@@ -207,6 +210,13 @@ function loadEditModal_eventListeners() {
   $('#modal_PRMSICCD').unbind('change').change(autoFillText_modal);
   $('#modal_PRMSICDS').unbind('change').change(autoFillText_modal);
 
+  $('#modal_LATITUDE').unbind('change').change(() => {
+    $('.rgeocode_addr').show();
+  });
+  $('#modal_LONGITUDE').unbind('change').change(() => {
+    $('.rgeocode_addr').show();
+  });
+
   // Location Container Event Listener
   // Listener to expand the content inside location edit container
   $('.modal_location_edit_container .header .expand_header').unbind('click').click(() => {
@@ -222,8 +232,76 @@ function loadEditModal_eventListeners() {
     modalShrink();
   });
 
-  $('#editModal .modal_location_edit_container .geocode_addr').unbind('click').click(() => {
-    console.log('clicked geocode_addr');
+  // Logic behind the reverse geocoding button
+  $('#editModal .modal_location_edit_container .rgeocode_addr').unbind('click').click(() => {
+    // Show loading
+    $('.newaddress_loading').show();
+    // Call reverse geocode API.
+    let lat = $('#modal_LATITUDE').val();
+    let lon = $('#modal_LONGITUDE').val();
+
+    // http://localhost:3000/api/get/geocode/reverse?lat=40.74399953661601&lon=-73.98570209741594
+    fetch(`/api/get/geocode/reverse?lat=${lat}&lon=${lon}`)
+      .then((response) => {
+        if (!response.ok) {
+          return Promise.resolve(response.json()).then((responseInJson) => {
+            // This will end up in ERROR part
+            return Promise.reject(responseInJson.responseText); //  responseInJson.message = "Some nasty error message!"
+          });
+        }
+        // The API call was successful!
+        return response.json();
+      })
+      .then((data) => {
+        // This is the JSON from our response
+        let originalLoc = {
+          addr: $('#modal_PRMADDR').val(),
+          city: $('#modal_PRMCITY').val(),
+          state: $('#modal_PRMSTATE').val(),
+          zip: $('#modal_PRMZIP').val(),
+        };
+        // Load select options.
+        $('#modal_newaddress').append(
+          $('<option>', {
+            text: `(CURRENT) ${originalLoc.addr}, ${originalLoc.city}, ${originalLoc.state}, ${originalLoc.zip}`,
+            'data-value': JSON.stringify(originalLoc),
+          })
+        );
+        for (let location of data.data.results[0].locations) {
+          let newLocation = {
+            addr: location.street.toUpperCase(),
+            city: location.adminArea5.toUpperCase(),
+            state: location.adminArea3.toUpperCase(),
+            zip: location.postalCode,
+          };
+          $('#modal_newaddress').append(
+            $('<option>', {
+              text: `${newLocation.addr}, ${newLocation.city}, ${newLocation.state}, ${newLocation.zip}`,
+              'data-value': JSON.stringify(newLocation),
+            })
+          );
+        }
+        // Hide loading when done.
+        $('.newaddress_loading').hide();
+        // Show list
+        $('#modal_newaddress_container').show();
+      })
+      .catch((err) => {
+        // Hide loading when done.
+        $('.newaddress_loading').hide();
+        console.warn(err);
+        alert(err);
+      });
+  });
+
+  $('#editModal .modal_location_edit_container #modal_newaddress').unbind('change').change(function() {
+    let selected = $(this).find(':selected').data('value');
+    $('#modal_PRMADDR').val(selected.addr);
+    $('#modal_PRMCITY').val(selected.city);
+    $('#modal_PRMSTATE').val(selected.state);
+    let zip4Index = selected.zip.indexOf('-');
+    if (zip4Index === -1) zip4Index = selected.zip.length;
+    $('#modal_PRMZIP').val(selected.zip.slice(0, zip4Index));
   });
 
   $('#editModal .modal_expand').unbind('click').click(() => {
@@ -263,8 +341,8 @@ function loadEditModal_eventListeners() {
     removeMarker(editMarker);
     locatePointByCoordinate(coord.lat, coord.lng);
     // Set lon and lat
-    $('#modal_LATITUDE').val(coord.lat);
-    $('#modal_LONGITUDE').val(coord.lng);
+    $('#modal_LATITUDE').val(coord.lat).change();
+    $('#modal_LONGITUDE').val(coord.lng).change();
     $('#modal_MATCHCD').parents('.dropdown').find('.btn').html('EXACT' + ' <span class="caret"></span>');
     $('#modal_MATCHCD').val('0');
   });
