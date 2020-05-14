@@ -118,53 +118,28 @@ function loadDatatable(est) {
         columnDefs: [
           {
             visible: false,
-            targets: [0, 7, 8, 9, 10], //Invisible. id, Latitude, Longitude, two digit, matchcd
+            targets: [0, 5, 7, 8, 9, 10], //Invisible. id, Latitude, Longitude, two digit, matchcd
           },
           {
-            width: 34,
+            width: 30,
             targets: 2, //Empl column
           },
           {
-            width: 50,
-            targets: 5, //PRM column
-          },
-          {
-            width: 34,
-            targets: 6, //ED column
+            responsivePriority: 1,
+            targets: 6,
           },
         ],
         initComplete: function() {
           return resolve('Datatable loaded');
         },
+        // pagingType: 'full_numbers',
         dom: 'Bfrtip',
-        fixedColumns: true,
-        bLengthChange: false,
-        pageResize: true,
         destroy: true,
-        scrollY: '0px',
-        scrollCollapse: true,
         scrollResize: true,
-        deferRender: true,
+        scrollY: 300,
+        scrollCollapse: true,
+        responsive: true,
       });
-      /*
-      dom: 'Bftir',
-        deferRender: true,
-        scrollY: 350,
-        scrollCollapse: true,
-        scroller: true,
-        bDestroy: true,
-      *******
-      dom: 'Bfrtip',
-      fixedColumns: true,
-        bLengthChange: false,
-        pageResize: true,
-        destroy: true,
-        scrollY: '0px',
-        scrollCollapse: true,
-        scrollResize: true,
-        scroller: true,
-        deferRender: true,
-      */
 
       if (isAdmin === 'false') {
         table.column(5).visible(false);
@@ -172,7 +147,6 @@ function loadDatatable(est) {
       // Edit button event listener
       $('#jq_datatable tbody').unbind('click').on('click', 'td a', function() {
         let data_row = table.row($(this).parents('tr')).data();
-        // console.log(data_row);
         query_version = d3.select('#version-dropdown').property('value');
         loadEditModal(data_row['id'], query_version);
       });

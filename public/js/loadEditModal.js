@@ -236,6 +236,7 @@ function loadEditModal_eventListeners() {
   $('#editModal .modal_location_edit_container .rgeocode_addr').unbind('click').click(() => {
     // Show loading
     $('.newaddress_loading').show();
+    $('#modal_newaddress').empty();
     // Call reverse geocode API.
     let lat = $('#modal_LATITUDE').val();
     let lon = $('#modal_LONGITUDE').val();
@@ -294,6 +295,7 @@ function loadEditModal_eventListeners() {
       });
   });
 
+  // Change address to the selected option in dropdown.
   $('#editModal .modal_location_edit_container #modal_newaddress').unbind('change').change(function() {
     let selected = $(this).find(':selected').data('value');
     $('#modal_PRMADDR').val(selected.addr);

@@ -239,6 +239,7 @@ exports.reqProposeBusinessChange = async (request, response) => {
     CORPORATE_SALES_VOLUME_CODE: originalData['CSALVOLCD'],
     CORPORATE_SALES_VOLUME_DESC: originalData['CSALVOLDS'],
     ACTUAL_CORPORATE_SALES_VOLUME: originalData['ACSLSVOL'],
+    PRIMARY_ADDRESS: originalData['PRMADDR'],
     PRIMARY_CITY: originalData['PRMCITY'],
     PRIMARY_STATE: originalData['PRMSTATE'],
     PRIMARY_ZIP_CODE: originalData['PRMZIP'],

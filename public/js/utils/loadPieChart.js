@@ -69,18 +69,20 @@ function loadPieChart(establishments) {
     _pie_matchcd = new d3pie(
       'pieChartMatchCD',
       getOptions(pie_content_matchcd, pie_w, pie_h, 10, () => {
-        addResponsiveViewbox('pieChartMatchCD', w, h);
+        addResponsiveViewbox('pieChartContainer', pie_w, pie_h);
+        return;
       })
     );
 
     _pie_naics = new d3pie(
       'pieChart',
       getOptions(pie_content_naics, pie_w, pie_h, 9, () => {
+        addResponsiveViewbox('pieChartContainer', pie_w, pie_h);
         $('.pieChart-loader').fadeOut('slow');
-        resolve('PieChart Loaded');
-        addResponsiveViewbox('pieChart', w, h);
+        return resolve('PieChart Loaded');
       })
     );
+    // addResponsiveViewbox(null,pie_w,pie_h)
   });
 
   function getOptions(content, w, h, searchCol, cb) {
@@ -232,18 +234,12 @@ function loadPieChart(establishments) {
 
   function addResponsiveViewbox(id, width, height) {
     d3
-      // .select('#pieChart')
-      .select('#' + id)
-      // Make Responsive
-      .classed('pieContainer', true)
-      .select('svg')
-      // Delete old attributes
+      .select('.' + id)
+      .selectAll('svg')
       .attr('width', null)
       .attr('height', null)
       // Replace with viewbox
       .attr('viewBox', `0 0 ${width} ${height}`)
-      .attr('preserveAspectRatio', 'xMinYMin meet')
-      .classed('svg-content-responsive', true);
+      .attr('preserveAspectRatio', 'xMinYMin meet');
   }
-  return;
 }

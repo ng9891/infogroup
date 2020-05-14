@@ -421,7 +421,7 @@
     let cardBody = cardContainer
       .append('div')
       .merge(cardContainer)
-      .classed('col-sm-6 col-md-4 col-lg-3 pb-2', true)
+      .classed('col-sm-12 col-md-12 col-lg-4 pb-2', true)
       .append('div')
       .attr('class', function(d) {
         return 'card' + ' ' + d.title.toLowerCase().split(' ').join('');
