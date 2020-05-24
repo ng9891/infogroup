@@ -30,7 +30,7 @@
 
   function exportDataTable() {
     // Convert datatable export into CSV string
-    let columnsToExport = [0, 1, 2, 3, 4, 5, 7, 8, 9];
+    let columnsToExport = [0, 1, 2, 3, 4, 7, 8, 9, 10];
 
     let table = $('#jq_datatable').DataTable();
     let data = table.buttons.exportData({
@@ -40,10 +40,11 @@
       columns: columnsToExport,
     });
     let csvArray = [];
-    let header = data.header.join(',');
+    let delimeter = ';';
+    let header = data.header.join(delimeter);
     csvArray.push(header);
     data.body.forEach((entry) => {
-      let line = entry.join(',');
+      let line = entry.join(delimeter);
       csvArray.push(line);
     });
     let csvString = csvArray.join('\n');
@@ -65,8 +66,11 @@
       .then((content) => {
         //FileSaver.js
         // Get only search desc as title
-        let filename = document.getElementsByClassName('search-description')[0].getElementsByTagName('h4')[0]
-          .textContent.split(' ').join('');
+        let filename = document
+          .getElementsByClassName('search-description')[0]
+          .getElementsByTagName('h4')[0]
+          .textContent.split(' ')
+          .join('');
         let date = new Date().toLocaleDateString();
         saveAs(content, `${filename}-${date}.zip`);
       });
@@ -133,7 +137,7 @@
       if (hist) {
         doc.addPage('a4');
         doc.addImage(hist[0].imgUrl, 'PNG', xMargin, yMargin, hist[0].width, hist[0].height);
-        doc.addImage(hist[1].imgUrl, 'PNG', xMargin, hist[0].height + 25, hist[1].width, hist[1].height);
+        doc.addImage(hist[1].imgUrl, 'PNG', xMargin, hist[0].height, hist[1].width, hist[1].height);
       }
       if (map) {
         doc.addPage('a4', 'l');

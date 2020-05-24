@@ -320,6 +320,8 @@ module.exports = {
       stateCode = null,
       mpo = '',
       matchCD = null,
+      geom = null,
+      dist = defaultBufferSize,
     } = {}
   ) => {
     coname = decodeURIComponent(coname);
@@ -400,8 +402,38 @@ module.exports = {
       }
     }
 
-    // If its a road query.
-    if (roadNo !== null || roadSigning !== null || roadId !== null) {
+    if (geom) {
+      if (!geom.features)
+        geom = {
+          type: 'FeatureCollection',
+          features: [geom],
+        };
+      from += `,(
+        SELECT ST_Transform(ST_Collect(ST_SetSRID(geojson.geom,4326)),26918) AS geom, ST_ASGeoJSON(ST_Collect(ST_SetSRID(geojson.geom,4326))) as geom2
+        FROM (
+          SELECT ST_GeomFromGeoJSON(json_array_elements(gdata.gj->'features')->>'geometry') as geom
+          FROM (
+            SELECT $${params.length + 1}::json as gj
+          ) as gdata
+        ) as geojson
+      ) as geoCollection\n`;
+      // Check if its a point/ linestring.
+      let tmpGeom = geom.features[0];
+      if (
+        tmpGeom.geometry.type &&
+        (tmpGeom.geometry.type === 'LineString' ||
+          tmpGeom.geometry.type === 'MultiLineString' ||
+          tmpGeom.geometry.type === 'Point')
+      ) {
+        if (dist > 10 || dist < 0) dist = defaultBufferSize;
+        where += addANDStatement(`ST_DWithin(geoCollection.geom, b.geom, $${params.length + 2})`);
+        params.push(geom, utils.convertMilesToMeters(dist));
+      } else {
+        where += addANDStatement(`ST_Contains(geoCollection.geom, b.geom)`);
+        params.push(geom);
+      }
+    } else if (roadNo !== null || roadSigning !== null || roadId !== null) {
+      // If its a road query.
       from += `,(
       SELECT ST_Union(geom) as geom
       FROM roadway\n`;
@@ -419,6 +451,7 @@ module.exports = {
         AND (NULLIF($${params.length + 5}, '')::varchar(40) IS NULL OR UPPER(mpo_desc) = UPPER($${params.length + 5}))
       ) as r\n`;
       where += addANDStatement(`ST_DWithin(r.geom, b.geom, $${params.length + 6})`);
+      if (roadDist > 10 || roadDist < 0) roadDist = defaultBufferSize;
       params.push(county, roadSigning, roadId, mun, mpo, utils.convertMilesToMeters(roadDist));
     } else {
       if (mun !== '') {
@@ -488,6 +521,7 @@ module.exports = {
     }
 
     let sql = 'SELECT' + selectStatement + from + where;
+    // if(geom) sql = 'SELECT geoCollection.geom2 as overlayJson,\n' + selectStatement + from + where;
     // console.log(sql);
     return queryDB(sql, params);
   },

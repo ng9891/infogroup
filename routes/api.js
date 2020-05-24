@@ -12,6 +12,7 @@ router.get('/byrailroad', byCtrl.reqGeoByRailroad);
 router.get('/bypolyline', byCtrl.reqGeoByPolyline);
 router.get('/bygeocode/:q', byCtrl.reqGeoByGeocode);
 router.get('/search', byCtrl.reqGeoBySearch);
+router.post('/search', byCtrl.reqGeoBySearch);
 router.get('/bycounty/:county', byCtrl.reqGeoByCounty);
 router.get('/bydistance', byCtrl.reqGeoByDistance);
 router.get('/byid/:id', byCtrl.reqGeoById);

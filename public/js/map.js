@@ -215,6 +215,7 @@ L.NewQueryControl = L.EditControl.extend({
   },
 });
 
+// Adds a dist textbox to control query distances.
 let distBar = L.Control.extend({
   options: {
     position: 'topleft',
@@ -274,7 +275,10 @@ let distBar = L.Control.extend({
           if (!confirmation) return $('.distInputBox').val(window.defaultRoadBufferSize);
         }
       }
-      if (inputDist >= 10) return alert('Please input a value lesser than 10 miles.');
+      if (inputDist > 10) {
+        $('.distInputBox').val(10);
+        return alert('Please input a value lesser than 10 miles.');
+      }
       window.defaultRoadBufferSize = inputDist;
     };
 
@@ -375,7 +379,7 @@ function addUsrMarker(e) {
     e.layer.dragging.disable();
     let latlng = e.layer.getLatLng();
     return loadNearbyRoads(latlng.lat, latlng.lng);
-  } 
+  }
   // else if (e.layer.options.kind && e.layer.options.kind == 'line') {
   //   removeTooltip();
   // }
@@ -397,7 +401,7 @@ mymap.on('editable:drawing:start', clearUsrMarker);
 mymap.on('editable:drawing:commit', addUsrMarker);
 mymap.on('editable:vertex:drag editable:vertex:deleted', function(e) {
   e.layer.updateMeasurements();
-  addTooltip(e)
+  addTooltip(e);
   moveTooltip(e.originalEvent);
 });
 mymap.on('editable:vertex:dragend editable:drawing:cancel', () => {

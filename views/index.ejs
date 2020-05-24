@@ -99,7 +99,7 @@
           <div class="input-group-prepend">
             <span class="input-group-text">SIC</span>
           </div>
-          <input type="text" id="adv_PRMSICDS" class="form-control" placeholder="OPTIONAL">
+          <input type="text" id="adv_PRMSICDS" class="form-control" placeholder="e.g. Warehouses">
         </div>
       </div>
       <div class="input-group col-md-12 mb-3">
@@ -178,9 +178,11 @@
       </div>
       <div class="col-md-12">
         <button class="btn btn-primary btn-md ml-auto" id="advsearch-button" type="submit">Search</button>
-        <button class="btn btn-secondary btn-md ml-auto" id="advsearch-resetBtn">Reset</button>&nbsp;<label
-          id="search-message">*No
-          match found</label>
+        <button type="button" class="btn btn-success ml-auto" id="advsearch-btn-currLayer">Search On Current Layer</button>
+        <button class="btn btn-secondary btn-md ml-auto" id="advsearch-resetBtn">Reset</button>
+      </div>
+      <div class="col-md-12">
+        <label id="search-message">*No match found</label>
       </div>
     </div>
   </div>
@@ -228,12 +230,13 @@
 <script src="/js/src/d3pie.js"></script>
 <script src="/js/src/leaflet.markercluster.js"></script>
 <script src="/js/src/leaflet.editable.min.js"></script>
+<script src="/js/src/leaflet-measure-path.js"></script>
 <script src="/js/src/jszip.min.js"></script>
 <script src="/js/src/FileSaver.min.js"></script>
 <script type="text/javascript"
   src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
 <script src="/js/src/html2canvas.min.js"></script>
-<script src="/js/src/leaflet-measure-path.js"></script>
+
 
 <!-- UTILS -->
 <script src="/js/utils/convertDomToImage.js"></script>

@@ -108,7 +108,7 @@ module.exports = {
       AND ($3::char IS NULL OR UPPER(state_code) = UPPER($3))
       ORDER BY name;
     `;
-    return queryDB(sql, [`${county}%`, state, stateCode]);
+    return queryDB(sql, [`${decodeURIComponent(county)}%`, state, stateCode]);
   },
   getEmpSizeList: () => {
     let sql = `
@@ -152,7 +152,7 @@ module.exports = {
       WHERE UPPER(mpo.mpo) LIKE UPPER($1)
       OR UPPER(mpo.mpo_name) LIKE UPPER($1);
     `;
-    return queryDB(sql, [`${mpo}%`]);
+    return queryDB(sql, [`${decodeURIComponent(mpo)}%`]);
   },
   geoGetMun: (mun, munType, county, exact = 0) => {
     let params = [];

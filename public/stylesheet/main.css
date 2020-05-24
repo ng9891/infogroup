@@ -111,10 +111,23 @@ body {
 .Input-text:focus:not(:placeholder-shown) + .Input-label {
   visibility: visible;
   z-index: 1;
-  opacity: 1;
+  opacity: 0.5;
   transform: translate3d(0, var(--labelTransformedPosY), 0) scale(var(--labelScaleFactor));
   transition: transform var(--inputTransitionDuration), visibility 0ms, z-index 0ms;
 }
+
+::-webkit-input-placeholder {
+  opacity: 0.4 !important; /* for older chrome versions. may no longer apply. */
+}
+
+:-moz-placeholder { /* Firefox 18- */
+  opacity: 0.4 !important;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+  opacity: 0.4 !important;
+}
+
 .loginForm {
   margin-top: 40px;
 }
@@ -410,12 +423,20 @@ body {
 }
 
 .datatable-wrapper {
-  height: 47vh;
+  height: 45vh;
+}
+
+.datatable-wrapper.expanded {
+  -webkit-transition: all 500ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  -moz-transition: all 500ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  -o-transition: all 500ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
+  transition: all 500ms cubic-bezier(0.770, 0.000, 0.175, 1.000); /* easeInOutQuart */
+  height: 75vh;
 }
 
 .dataTables_paginate,
 .dataTables_filter {
-  font-size: 12px;
+  font-size: 11px;
 }
 .dataTables_info {
   font-size: 11px;
@@ -423,7 +444,7 @@ body {
 
 #jq_datatable th,
 tr {
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .ui-autocomplete {

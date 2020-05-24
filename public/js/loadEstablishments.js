@@ -14,7 +14,8 @@
    */
   loadEstablishments = async (queryType, queryInput, version = 'current') => {
     if (!queryType) return;
-
+    let option = {method: 'GET'};
+    let savedOverlay = queryLayer[queryLayer.length - 1]; // Variable to hold current query layer.
     let reqURL, overlayURL, searchInfo, searchValue;
     if (queryType === 'zip' || queryType === 'mpo') {
       reqURL = `/api/by${queryType}/${queryInput}?`;
@@ -29,6 +30,16 @@
     } else if (queryType === 'adv' || queryType === 'road') {
       searchInfo = 'Search:';
       [reqURL, overlayURL, searchValue] = getAdvSearchInfo(queryInput);
+      if (overlayURL === 'geojson') {
+        searchInfo = '';
+        option = {
+          method: 'POST',
+          body: JSON.stringify(queryInput),
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+          },
+        };
+      }
     } else if (queryType === 'draw') {
       [reqURL, overlayURL, searchInfo, searchValue] = getDrawInfo(queryInput); // userMarkers is a global var
     } else if (queryType === 'geocoding') {
@@ -54,16 +65,16 @@
     if (!reqURL) return alert(`Error in URL. ${searchInfo}`);
     // Add versioning.
     reqURL += `&v=${version}`;
+    // console.log(reqURL, option);
     reqURL = encodeURI(reqURL);
     overlayURL = encodeURI(overlayURL);
-    // console.log(reqURL, overlayURL);
     clearUiComponents(queryType);
     d3.select('.loader').classed('hidden', false);
     d3
-      .json(reqURL)
+      .json(reqURL, option)
       .then(async (data) => {
         if (data.data.length === 0) {
-          await loadOverlay(data, overlayURL);
+          await loadOverlay(data, overlayURL, savedOverlay);
           d3.select('.loader').classed('hidden', true);
           if (queryType === 'adv') {
             $('.advancedSearchContainer').toggleClass('open');
@@ -72,7 +83,7 @@
           }
           searchInfo = `NOT FOUND ${searchInfo}`;
         } else {
-          await loadUiComponents(data, overlayURL);
+          await loadUiComponents(data, overlayURL, savedOverlay);
           d3.select('.loader').classed('hidden', true);
         }
         updateSearchInfo(searchInfo, searchValue);
@@ -89,13 +100,13 @@
    * @param {JSON Object} data 
    * @param {String} overlayURL 
    */
-  let loadUiComponents = (data, overlayURL) => {
+  let loadUiComponents = (data, overlayURL, savedOverlay) => {
     return Promise.all([
       loadMarkers(data),
       loadPieChart(data),
       loadDatatable(data),
       loadHistogram(data),
-      loadOverlay(data, overlayURL),
+      loadOverlay(data, overlayURL, savedOverlay),
     ]).catch((err) => console.log(err));
   };
   /**
@@ -163,7 +174,7 @@
    * @param {JSON Object} data 
    * @param {String} overlayURL 
   */
-  let loadOverlay = (data, overlayURL) => {
+  let loadOverlay = (data, overlayURL, savedOverlay) => {
     return new Promise(async (resolve, reject) => {
       let measurementOptions = {
         imperial: true,
@@ -203,7 +214,7 @@
         console.log('geocode');
         // Build JSON to match the app format.
         let builtGeoJsonToMatchFormat = {data: []};
-        if(data.overlayJson){
+        if (data.overlayJson) {
           console.log(JSON.parse(data.overlayJson).features);
           let overlayFeatures = JSON.parse(data.overlayJson).features;
           for (let feature of overlayFeatures) {
@@ -214,6 +225,8 @@
           }
         }
         overlay = createGeoJsonOverlay(builtGeoJsonToMatchFormat);
+      } else if (overlayURL === 'geojson') {
+        overlay = savedOverlay;
       } else {
         // URL is provided to get overlay. Zip, County, Road.. etc.
         // Get Query layer/ bounding box
@@ -223,7 +236,7 @@
         });
         overlay = createGeoJsonOverlay(jsonOverlay);
       }
-      if(!overlay) return resolve('Empty Overlay.');
+      if (!overlay) return resolve('Empty Overlay.');
       window.addOverlayToMap(overlay); // Function in map.js
       resolve('Overlay Loaded');
     });
@@ -262,7 +275,7 @@
   let createGeoJsonOverlay = (data) => {
     let l = [];
     let overlayType;
-    if(data.data.length < 1){
+    if (data.data.length < 1) {
       console.log('GeoJSON overlay is empty. - createGeoJsonOverlay()');
       return;
     }
@@ -372,8 +385,14 @@
     let query = $.param(queryInput);
     let reqURL = '/api/search?' + query;
     let overlayURL = '';
-    // Road Query
-    if (queryInput.roadNo || queryInput.roadId) {
+
+    // Get overlay URL
+    if (queryInput.geom) {
+      // Query current query layer.
+      reqURL = '/api/search?';
+      overlayURL = 'geojson';
+    } else if (queryInput.roadNo || queryInput.roadId) {
+      // Road Query
       overlayURL = `/api/getRoad?roadNo=${queryInput.roadNo || ''}&county=${queryInput.county}&\
 signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
     } else {
@@ -413,8 +432,15 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
       EmpMax: queryInput.maxEmp || '',
       Sales: queryInput.lsalvol || '',
     };
+    if (queryInput.dist) secondRow['Dist'] = queryInput.dist + 'mi';
     let arr_obj = [firstRow, secondRow];
     let searchValue = buildSearchValString(arr_obj);
+
+    // Rollback previous adv search title when searching for current query layer.
+    if (queryInput.prevTitle) {
+      searchValue[0] = queryInput.prevTitle;
+    }
+
     return [reqURL, overlayURL, searchValue];
   };
   /**
@@ -516,6 +542,7 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
 
     let reqURL, overlayURL, searchValue, searchType;
     let layer = layerArray[layerArray.length - 1]; // last layer
+    let latLon;
     switch (drawingType(layer)) {
       case 'marker':
         // reqURL = markerQuery(layer);
@@ -523,28 +550,41 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
         // searchValue = '1mi';
         // overlayURL = 'marker';
         [reqURL, overlayURL] = drivingDistQuery(layer);
-        searchType = 'Driving Distance Query';
+        latLon = layer.getLatLng();
+        searchType = `Driving Distance Query (${latLon.lat.toFixed(4)},${latLon.lng.toFixed(4)})`;
         searchValue = [``, `Dist:${window.defaultRoadBufferSize}mi`];
         break;
       case 'circle':
         reqURL = circleQuery(layer);
         searchType = 'Circle Query';
         let radius = layer.getRadius() * 0.00062137;
-        searchValue = radius.toFixed(4) + 'mi';
+        latLon = layer.getLatLng();
+        searchValue = [`(${latLon.lat.toFixed(4)},${latLon.lng.toFixed(4)}), R:${radius.toFixed(4)}mi`];
         overlayURL = 'circle';
         break;
       case 'rectangle':
+        let center = layer.getBounds().getCenter();
+        // Using the leaflet measure path library object to get the area.
+        let measurementLayer = layer._measurementLayer._layers;
+        let area = '0 ac';
+        for (segment in measurementLayer) {
+          if ((measurementLayer[segment]._title = 'Total area')) {
+            area = measurementLayer[segment]._measurement;
+          }
+        }
         reqURL = rectangleQuery(layer);
-        searchType = 'Rectangle Query';
-        searchValue = '';
+        searchType = `Rectangle Query`;
+        searchValue = [`(${center.lat.toFixed(4)},${center.lng.toFixed(4)}), A:${area}`];
         overlayURL = 'rectangle';
         break;
       case 'polyline':
         let lineCoord = layer.toGeoJSON().geometry.coordinates;
         if (lineCoord.length <= 0) return console.log('No line.');
         reqURL = polylineQuery(lineCoord);
-        searchType = 'Polyline Query';
-        searchValue = [`${layer.totalLen || ''}mi`, `Dist:${window.defaultRoadBufferSize}mi`];
+        searchType = `Line`;
+        searchValue = [`(${lineCoord[0][1].toFixed(4)},${lineCoord[0][0].toFixed(4)}) to (${lineCoord[
+          lineCoord.length - 1
+        ][1].toFixed(4)},${lineCoord[lineCoord.length - 1][0].toFixed(4)}), ${layer.totalLen || ''}mi`, ``];
         overlayURL = 'polyline';
         break;
       default:
@@ -564,7 +604,7 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
    * @param {Array} searchValue 
    */
   let updateSearchInfo = (searchType, searchValue) => {
-    if (!searchType) searchType = 'error';
+    // if (!searchType) searchType = 'error';
     if (!searchValue) searchValue = '';
     if (Array.isArray(searchValue)) {
       // Different description loading for advances search as it sends an array

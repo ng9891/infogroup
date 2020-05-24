@@ -32,13 +32,26 @@
             popupAnchor: [1, -34],
             shadowSize: [41, 41],
           });
+          let grayIcon = new L.Icon({
+            iconUrl: '/stylesheet/images/leaflet-color-markers/marker-icon-grey.png',
+            shadowUrl: '/stylesheet/images/leaflet-color-markers/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41],
+          });
           for (let data of json.data) {
-            data.geopoint = L.geoJSON(JSON.parse(data.geopoint), {
-              pointToLayer: function(feature, latlng) {
-                return L.marker(latlng, {icon: redIcon});
-              },
-            });
-            data.originalPoint = L.marker([data.row_data.LATITUDE_1, data.row_data.LONGITUDE_1]);
+            if (data.LATITUDEO === data.row_data.LATITUDE_1 && data.LONGITUDEO === data.row_data.LONGITUDE_1) {
+              // Blue marker if it is not a location change proposal.
+              data.originalPoint = L.marker([data.row_data.LATITUDE_1, data.row_data.LONGITUDE_1]);
+            } else {
+              data.geopoint = L.geoJSON(JSON.parse(data.geopoint), {
+                pointToLayer: function(feature, latlng) {
+                  return L.marker(latlng, {icon: redIcon});
+                },
+              });
+              data.originalPoint = L.marker([data.row_data.LATITUDE_1, data.row_data.LONGITUDE_1], {icon: grayIcon});
+            }
           }
           return resolve(json.data);
         })

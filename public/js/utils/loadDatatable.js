@@ -2,9 +2,19 @@
 function loadDatatable(est) {
   return new Promise((resolve) => {
     $(document).ready(() => {
+      // Button definition
+      $.fn.dataTable.ext.buttons.expand = {
+        text: 'Expand Table',
+        className: 'btn btn-info expandDatatableBtn',
+        init: function(api, node, config) {
+          $(node).removeClass('dt-button');
+        },
+      };
+
       const isAdmin = d3.select('.role').node().value;
       let table = $('#jq_datatable').DataTable({
         buttons: [
+          'expand',
           {
             extend: '',
             text: 'Export',
@@ -149,6 +159,22 @@ function loadDatatable(est) {
         let data_row = table.row($(this).parents('tr')).data();
         query_version = d3.select('#version-dropdown').property('value');
         loadEditModal(data_row['id'], query_version);
+      });
+
+      // Button to hide piechart and expand datatable.
+      $('#jq_datatable_wrapper .dt-buttons button.expandDatatableBtn').on('click', function() {
+        let dtable = $('#jq_datatable').DataTable();
+        if ($('.infoContainer .pieChartContainer').is(':visible')) {
+          $('.infoContainer .pieChartContainer').fadeOut('fast');
+          $('.infoContainer .pieChartContainer').promise().done(() => {
+            $('.infoContainer .datatable-wrapper').addClass('expanded');
+            dtable.page.len(20).draw(false); // Change page length to display 20 rows.
+          });
+        } else {
+          $('.infoContainer .datatable-wrapper').removeClass('expanded');
+          dtable.page.len(10).draw(false);
+          $('.infoContainer .pieChartContainer').fadeIn('slow');
+        }
       });
     });
   });

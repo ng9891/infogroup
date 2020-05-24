@@ -90,10 +90,12 @@
         if (row.hasClass('child')) row = row.prev();
         // row.addClass('selected');
         let data = $('#proposalTable').DataTable().row(row).data();
-        if(data){
+        if (data) {
           let geometry = data.geopoint;
           let originalGeom = data.originalPoint;
-          featureGroup = new L.featureGroup([geometry, originalGeom]);
+          if (data.changed_fields_json.LATITUDE_1) {
+            featureGroup = new L.featureGroup([geometry, originalGeom]);
+          } else featureGroup = new L.featureGroup([originalGeom]);
           window.mymap.fitBounds(featureGroup.getBounds(), {maxZoom: 16});
           window.mymap.addLayer(featureGroup);
         }
@@ -103,7 +105,7 @@
         let row = $(this);
         if (row.hasClass('child')) row = row.prev();
         // row.removeClass('selected');
-        if(featureGroup) window.mymap.removeLayer(featureGroup);
+        if (featureGroup) window.mymap.removeLayer(featureGroup);
       });
 
     $('#proposalTable_wrapper .dt-buttons button.accept').on('click', function() {

@@ -210,7 +210,7 @@ exports.reqGeoGetMpo = (request, response) => {
       responseText: 'No MPO specified',
     });
   }
-
+  console.log(decodeURIComponent(request.params.mpo));
   getQuery
     .geoGetMpo(request.params.mpo)
     .then((data) => {

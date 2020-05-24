@@ -74,7 +74,7 @@ exports.reqGeoByGeocode = async (request, response) => {
   let geoJson;
   try {
     switch (request.query.geocoder) {
-      case "mapquest":
+      case 'mapquest':
         // geoJson = await geocode.mqGeocode(query);
         break;
       default:
@@ -107,23 +107,46 @@ exports.reqGeoByGeocode = async (request, response) => {
 };
 
 exports.reqGeoBySearch = (request, response) => {
-  if (!request.query) {
-    return response.status(400).json({
-      status: 'Error',
-      responseText: 'No query',
-    });
-  }
+  // if (!request.query) {
+  //   return response.status(400).json({
+  //     status: 'Error',
+  //     responseText: 'No query',
+  //   });
+  // }
   // Copy query object.
   let query = Object.assign({}, request.query);
+  if (request.method === 'POST') query = Object.assign({}, request.body);
+
   // Sanitize input
-  inputKeys = Object.keys(query);
+  let inputKeys = Object.keys(query);
+  // Empty query or only version property included. Return empty array.
+  if (inputKeys.length <= 1)
+    return response.status(200).json({
+      data: [],
+    });
+  let empty = true;
   inputKeys.forEach((k) => {
     if (!query[k]) return delete query[k];
+    if (query[k] && k !== 'v') {
+      // console.log('not empty for %s', k);
+      empty = false;
+    }
     // Checking if valid number.
-    if (k === 'naicscd' || k === 'minEmp' || k === 'maxEmp' || k === 'roadNo' || k === 'roadId' || k === 'roadDist') {
+    if (
+      k === 'naicscd' ||
+      k === 'minEmp' ||
+      k === 'maxEmp' ||
+      k === 'roadNo' ||
+      k === 'roadId' ||
+      k === 'roadDist' ||
+      k === 'dist'
+    ) {
       if (isNaN(parseFloat(query[k]))) return delete query[k];
     }
   });
+  if (empty) {
+    return successHandler([], response);
+  }
   if (query['roadDist'] && query['roadDist'] > 10)
     return response.status(400).json({
       status: 'Error',
@@ -135,12 +158,6 @@ exports.reqGeoBySearch = (request, response) => {
       responseText: 'Distance cannot be less than 0.',
     });
   }
-  // Empty query or only version property included. Return empty array.
-  if (inputKeys.length <= 1)
-    return response.status(200).json({
-      data: [],
-    });
-
   byQuery
     .geoBySearch(query)
     .then((data) => {

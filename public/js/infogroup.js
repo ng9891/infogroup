@@ -182,6 +182,7 @@ function loadAdvancedSearchListener() {
     if (naicsCD && !naicsDS) naicsCD = undefined;
     let prmSicDs = $('#adv_PRMSICDS').val().trim();
     let roadDist = parseFloat($('#adv_roadDist').val().trim());
+    if (isNaN(roadDist)) roadDist = '';
     let roadSigning = $('#adv_roadSigning').val().trim();
     let roadNo = $('#adv_roadNo').val().trim();
     if (roadNo) {
@@ -240,9 +241,50 @@ function loadAdvancedSearchListener() {
     };
 
     if (matchCD) formBody.matchCD = matchCD;
-
     // console.log(formBody);
+    // TODO: Check if no changes before loading.
+    loadEstablishments('adv', formBody, query_version);
+    $('#search-message').hide();
+    $('.advancedSearchContainer').toggleClass('open');
+  });
 
+  d3.select('#advsearch-btn-currLayer').on('click', (e) => {
+    let coname = $('#adv_CONAME').val().trim();
+    let naicsDS = $('#adv_NAICSDS').val().trim();
+    let naicsCD = $('#adv_NAICSDS').data().value;
+    if (naicsCD && !naicsDS) naicsCD = undefined;
+    let prmSicDs = $('#adv_PRMSICDS').val().trim();
+    let minempl = $('#min-emplsize').val().trim();
+    let maxempl = $('#max-emplsize').val().trim();
+    let lsalvol = $('#dropdownSalesVolume').text().trim();
+    if (lsalvol == 'Sales Volume') lsalvol = '';
+    let matchCD = $('#adv_MATCHCD').val();
+    let query_version = d3.select('#version-dropdown').property('value');
+    let prevTitle = $('.search-description h4').first().text().trim();
+    if (prevTitle.startsWith('NOT FOUND')) prevTitle = prevTitle.slice(9);
+    let prevSubtitle = $('.search-description h6').first().text().trim();
+    let cLayer = queryLayer[queryLayer.length - 1];
+    if (!cLayer) return alert('Error. There was no overlay found.');
+
+    let formBody = {
+      prevTitle: prevTitle,
+      prevSubtitle: prevSubtitle,
+      coname: coname,
+      naicsDS: naicsDS,
+      naicsCD: naicsCD,
+      prmSicDs: prmSicDs,
+      minEmp: minempl,
+      maxEmp: maxempl,
+      lsalvol: lsalvol,
+      geom: cLayer.toGeoJSON(),
+      dist: window.defaultRoadBufferSize,
+      v: query_version,
+    };
+    if (formBody.geom.features && formBody.geom.features[0].geometry.type === 'MultiPolygon') delete formBody['dist'];
+    else if (cLayer instanceof L.Rectangle || cLayer instanceof L.Polygon || cLayer instanceof L.Circle)
+      delete formBody['dist'];
+    if (matchCD) formBody.matchCD = matchCD;
+    // console.log(formBody);
     // TODO: Check if no changes before loading.
     loadEstablishments('adv', formBody, query_version);
     $('#search-message').hide();

@@ -17,7 +17,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 // app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({extended: true}));
+
+// Parse JSON bodies (as sent by API clients)
+// app.use(express.json());
 
 // Session setup
 app.use(
