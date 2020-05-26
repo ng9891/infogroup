@@ -14,6 +14,31 @@ function errorHandler(err, response) {
   });
 }
 
+exports.reqGeoGetNYSRegions = (request, response) => {
+  if (!request.params.region) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No Region specified',
+    });
+  }
+
+  if (isNaN(parseInt(request.params.region, 10))) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'Invalid Region',
+    });
+  }
+
+  getQuery
+    .geoGetNYSRegion(request.params.region, request.query.limit)
+    .then((data) => {
+      return successHandler(data, response);
+    })
+    .catch((err) => {
+      return errorHandler(err, response);
+    });
+};
+
 exports.reqGetGeocodeReverse = async (request, response) => {
   if (!request.query.lon) {
     return response.status(400).json({
@@ -35,15 +60,15 @@ exports.reqGetGeocodeReverse = async (request, response) => {
     });
   });
   // Status check.
-  if(!json){
+  if (!json) {
     return response.status(500).json({
       status: 'Error',
       responseText: 'MapQuest service not responding correctly. Please contact dev.',
     });
   }
-  if(json.info.statuscode === 0){
+  if (json.info.statuscode === 0) {
     return successHandler(json, response);
-  }else{
+  } else {
     return response.status(500).json({
       status: 'Error',
       responseText: `MapQuest responded with status code ${json.info.statuscode}. ${json.info.messages}`,
@@ -210,7 +235,6 @@ exports.reqGeoGetMpo = (request, response) => {
       responseText: 'No MPO specified',
     });
   }
-  console.log(decodeURIComponent(request.params.mpo));
   getQuery
     .geoGetMpo(request.params.mpo)
     .then((data) => {

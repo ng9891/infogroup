@@ -14,6 +14,28 @@ function errorHandler(err, response) {
   });
 }
 
+exports.reqGeoByRegion = (request, response) => {
+  if (!request.params.region) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No region specified',
+    });
+  } else if (isNaN(parseInt(request.params.region, 10))) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'Invalid region',
+    });
+  }
+  byQuery
+    .geoByNYSRegion(request.params.region, request.query.v)
+    .then((data) => {
+      return successHandler(data, response);
+    })
+    .catch((err) => {
+      return errorHandler(err, response);
+    });
+};
+
 exports.reqGeoByDrivingDist = (request, response) => {
   if (!request.query.lon) {
     return response.status(400).json({
@@ -115,8 +137,7 @@ exports.reqGeoBySearch = (request, response) => {
   // }
   // Copy query object.
   let query = Object.assign({}, request.query);
-  if (request.method === 'POST') query = Object.assign({}, request.body);
-
+  if (request.method === 'POST') query = request.body;
   // Sanitize input
   let inputKeys = Object.keys(query);
   // Empty query or only version property included. Return empty array.
@@ -125,12 +146,13 @@ exports.reqGeoBySearch = (request, response) => {
       data: [],
     });
   let empty = true;
-  inputKeys.forEach((k) => {
-    if (!query[k]) return delete query[k];
-    if (query[k] && k !== 'v') {
-      // console.log('not empty for %s', k);
-      empty = false;
+
+  for (k of inputKeys) {
+    if (!query[k]) {
+      delete query[k];
+      continue;
     }
+    if (k !== 'v') empty = false;
     // Checking if valid number.
     if (
       k === 'naicscd' ||
@@ -141,12 +163,12 @@ exports.reqGeoBySearch = (request, response) => {
       k === 'roadDist' ||
       k === 'dist'
     ) {
-      if (isNaN(parseFloat(query[k]))) return delete query[k];
+      if (isNaN(parseFloat(query[k]))) delete query[k];
     }
-  });
-  if (empty) {
-    return successHandler([], response);
   }
+
+  if (empty) return successHandler([], response); // Return empty data if query is empty.
+
   if (query['roadDist'] && query['roadDist'] > 10)
     return response.status(400).json({
       status: 'Error',
@@ -238,6 +260,7 @@ exports.reqGeoByMpo = (request, response) => {
       responseText: 'No county specified',
     });
   }
+  // request.setTimeout(600000); // 10 min timeout.
   byQuery
     .geoByMpo(request.params.mpo, request.query.v, request.query.offset, request.query.limit)
     .then((data) => {

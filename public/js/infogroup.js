@@ -38,6 +38,7 @@ $(document).ready(function() {
     query_version = d3.select('#version-dropdown').property('value');
     query_input = query_input.trim();
     let inputObj = {};
+    let conf;
     switch (query_type) {
       case 'zip':
         if (query_input.length < 2 || isNaN(+query_input)) return alert('Invalid Input');
@@ -84,8 +85,13 @@ $(document).ready(function() {
       case 'mpo':
       case 'geocoding':
         if (query_input.length < 4 || !isNaN(+query_input)) return alert('Invalid Input');
-        let conf = confirm('This query might take more than a minute. Do you want to continue?');
+        conf = confirm('This query might take more than a minute. Do you wish to continue?');
         if (conf === false) return;
+        break;
+      case 'region':
+        conf = confirm('This query might take more than a minute. Do you wish to continue?');
+        if (conf === false) return;
+        if (isNaN(+query_input)) return alert('Invalid Input');
         break;
       default:
         return alert('Invalid Query Selection');
@@ -280,6 +286,8 @@ function loadAdvancedSearchListener() {
       dist: window.defaultRoadBufferSize,
       v: query_version,
     };
+    for (form in formBody) if (!formBody[form]) delete formBody[form]; // Delete empty keys.
+
     if (formBody.geom.features && formBody.geom.features[0].geometry.type === 'MultiPolygon') delete formBody['dist'];
     else if (cLayer instanceof L.Rectangle || cLayer instanceof L.Polygon || cLayer instanceof L.Circle)
       delete formBody['dist'];

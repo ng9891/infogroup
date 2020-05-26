@@ -18,6 +18,18 @@ const bussinessVersion = table.business;
 const defaultBufferSize = 0.5; // miles
 
 module.exports = {
+  geoGetNYSRegion: (region, limit = null) => {
+    let sql = `
+      SELECT 
+      region AS name,
+      ST_ASGeoJSON(ST_Transform(ST_SimplifyPreserveTopology(geom, 100), 4326)) AS geom
+      FROM nys_regions
+      WHERE region = $1
+      ORDER BY region
+      LIMIT $2
+    `;
+    return queryDB(sql, [region, limit]);
+  },
   geoGetDrivingDist: ({lat, lon, dist = defaultBufferSize, directed = false} = {}) => {
     let sql = `
       SELECT ST_ASGeoJSON(rd.the_geom) as geom
@@ -147,7 +159,7 @@ module.exports = {
       SELECT 
       mpo.mpo AS abbrv,
       mpo.mpo_name AS name,
-      ST_ASGeoJSON(ST_Transform(geom, 4326)) AS geom
+      ST_ASGeoJSON(ST_Transform(ST_SimplifyPreserveTopology(geom, 100), 4326)) AS geom
       FROM mpo
       WHERE UPPER(mpo.mpo) LIKE UPPER($1)
       OR UPPER(mpo.mpo_name) LIKE UPPER($1);

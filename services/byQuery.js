@@ -57,6 +57,21 @@ function getBusinessVersion(version) {
 }
 
 module.exports = {
+  geoByNYSRegion: (region, v = 'current', offset = 0, limit = null) => {
+    let bussinessVersion = getBusinessVersion(v);
+    let sql = ` 
+      SELECT ${selectStatement}
+      FROM ${bussinessVersion} as b, (
+        SELECT geom
+        FROM nys_regions_divided
+        WHERE region = $1
+      ) as r
+      WHERE ST_Contains(r.geom, b.geom)
+      OFFSET $2
+      LIMIT $3
+    `;
+    return queryDB(sql, [region, offset, limit]);
+  },
   geoByDrivingDist: ({lat, lon, dist = defaultBufferSize, directed = false, v = 'current'} = {}) => {
     let bussinessVersion = getBusinessVersion(v);
     let withStatement = `
@@ -204,13 +219,15 @@ module.exports = {
     let bussinessVersion = getBusinessVersion(v);
     let withStatement = `
       WITH mpo AS (
-        SELECT 
-        geom
-        FROM mpo
-        WHERE UPPER(mpo.mpo) = UPPER($1)
-        OR UPPER(mpo.mpo_name) = UPPER($1)
-        LIMIT 1
-      )
+        SELECT ST_Subdivide(ST_MakeValid(geom)) as geom
+        FROM (
+          SELECT geom
+          FROM public.mpo
+          WHERE UPPER(mpo.mpo) = UPPER($1)
+          OR UPPER(mpo.mpo_name) = UPPER($1)
+          LIMIT 1
+        ) as mpo
+      )    
     `;
     let sql = ` 
       ${withStatement}
@@ -411,7 +428,7 @@ module.exports = {
       from += `,(
         SELECT ST_Transform(ST_Collect(ST_SetSRID(geojson.geom,4326)),26918) AS geom, ST_ASGeoJSON(ST_Collect(ST_SetSRID(geojson.geom,4326))) as geom2
         FROM (
-          SELECT ST_GeomFromGeoJSON(json_array_elements(gdata.gj->'features')->>'geometry') as geom
+          SELECT ST_Subdivide(ST_MakeValid(ST_GeomFromGeoJSON(json_array_elements(gdata.gj->'features')->>'geometry'))) as geom
           FROM (
             SELECT $${params.length + 1}::json as gj
           ) as gdata
@@ -490,16 +507,19 @@ module.exports = {
         params.push(county, state, stateCode);
       } else if (mpo !== '') {
         from += `,(
+          SELECT ST_Subdivide(ST_MakeValid(geom)) as geom
+          FROM (
               SELECT mpo.geom
               FROM mpo
               WHERE UPPER(mpo.mpo) = UPPER($${params.length + 1})
               OR UPPER(mpo.mpo_name) = UPPER($${params.length + 1})
-              LIMIT 1) as mpo\n`;
+              LIMIT 1) as mpo
+          ) as mpo\n`;
+
         params.push(mpo);
         where += addANDStatement(`ST_Contains(mpo.geom, b.geom)`);
       }
     }
-
     where += `ORDER BY COALESCE("${column.ALEMPSZ}", 0) DESC\n`;
 
     // If its only Employee size query, limit result
@@ -521,7 +541,6 @@ module.exports = {
     }
 
     let sql = 'SELECT' + selectStatement + from + where;
-    // if(geom) sql = 'SELECT geoCollection.geom2 as overlayJson,\n' + selectStatement + from + where;
     // console.log(sql);
     return queryDB(sql, params);
   },

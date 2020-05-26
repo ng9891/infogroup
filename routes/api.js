@@ -7,6 +7,7 @@ let byCtrl = require('../controllers/byReqController');
 let getCtrl = require('../controllers/getReqController');
 
 // BY QUERY Routes
+router.get('/byregion/:region', byCtrl.reqGeoByRegion);
 router.get('/bydrivingdist', byCtrl.reqGeoByDrivingDist);
 router.get('/byrailroad', byCtrl.reqGeoByRailroad);
 router.get('/bypolyline', byCtrl.reqGeoByPolyline);
@@ -22,6 +23,7 @@ router.get('/byrectangle', byCtrl.reqGeoByRectangle);
 router.get('/byzip/:zipcode', byCtrl.reqGeoByZip);
 
 // GET QUERY Routes
+router.get('/getregion/:region', getCtrl.reqGeoGetNYSRegions);
 router.get('/getdrivingdist', getCtrl.reqGetDrivingDist);
 router.get('/getrailroad', getCtrl.reqGetRailroad);
 router.get('/getnearbyroad', getCtrl.reqGetNearbyRoad);

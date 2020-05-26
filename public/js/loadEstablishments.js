@@ -17,9 +17,9 @@
     let option = {method: 'GET'};
     let savedOverlay = queryLayer[queryLayer.length - 1]; // Variable to hold current query layer.
     let reqURL, overlayURL, searchInfo, searchValue;
-    if (queryType === 'zip' || queryType === 'mpo') {
+    if (queryType === 'zip' || queryType === 'mpo' || queryType === 'region') {
       reqURL = `/api/by${queryType}/${queryInput}?`;
-      overlayURL = `/api/get${queryType}/${queryInput}`;
+      overlayURL = `/api/get${queryType}/${queryInput}?&limit=1`;
       searchInfo = queryType.toUpperCase();
       searchValue = queryInput;
     } else if (queryType === 'county') {
@@ -32,13 +32,17 @@
       [reqURL, overlayURL, searchValue] = getAdvSearchInfo(queryInput);
       if (overlayURL === 'geojson') {
         searchInfo = '';
-        option = {
-          method: 'POST',
-          body: JSON.stringify(queryInput),
-          headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-          },
-        };
+        try {
+          option = {
+            method: 'POST',
+            body: JSON.stringify(queryInput),
+            headers: {
+              'Content-type': 'application/json',
+            },
+          };
+        } catch (e) {
+          return console.log(e);
+        }
       }
     } else if (queryType === 'draw') {
       [reqURL, overlayURL, searchInfo, searchValue] = getDrawInfo(queryInput); // userMarkers is a global var
@@ -70,8 +74,18 @@
     overlayURL = encodeURI(overlayURL);
     clearUiComponents(queryType);
     d3.select('.loader').classed('hidden', false);
-    d3
-      .json(reqURL, option)
+    fetch(reqURL, option)
+      .then((response) => {
+        // throw Error
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          alert('Error querying current layer.')
+          throw new TypeError("Oops, we haven't got JSON!");
+        }
+        if (!response.ok) throw new Error('Network response was not ok');
+        let json = response.json();
+        return json;
+      })
       .then(async (data) => {
         if (data.data.length === 0) {
           await loadOverlay(data, overlayURL, savedOverlay);
@@ -87,11 +101,33 @@
           d3.select('.loader').classed('hidden', true);
         }
         updateSearchInfo(searchInfo, searchValue);
-      })
-      .catch((err) => {
-        console.log(err);
-        alert(`Query Error on ${searchInfo}`);
+      }).catch(e =>{
+        alert(e);
+        return console.log(e);
       });
+
+    // d3
+    //   .json(reqURL, option)
+    //   .then(async (data) => {
+    //     if (data.data.length === 0) {
+    //       await loadOverlay(data, overlayURL, savedOverlay);
+    //       d3.select('.loader').classed('hidden', true);
+    //       if (queryType === 'adv') {
+    //         $('.advancedSearchContainer').toggleClass('open');
+    //         $('#search-message').text('*No match found');
+    //         $('#search-message').show();
+    //       }
+    //       searchInfo = `NOT FOUND ${searchInfo}`;
+    //     } else {
+    //       await loadUiComponents(data, overlayURL, savedOverlay);
+    //       d3.select('.loader').classed('hidden', true);
+    //     }
+    //     updateSearchInfo(searchInfo, searchValue);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     alert(`Query Error on ${searchInfo}`);
+    //   });
   };
 
   /**
@@ -582,9 +618,12 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
         if (lineCoord.length <= 0) return console.log('No line.');
         reqURL = polylineQuery(lineCoord);
         searchType = `Line`;
-        searchValue = [`(${lineCoord[0][1].toFixed(4)},${lineCoord[0][0].toFixed(4)}) to (${lineCoord[
-          lineCoord.length - 1
-        ][1].toFixed(4)},${lineCoord[lineCoord.length - 1][0].toFixed(4)}), ${layer.totalLen || ''}mi`, ``];
+        searchValue = [
+          `(${lineCoord[0][1].toFixed(4)},${lineCoord[0][0].toFixed(4)}) to (${lineCoord[
+            lineCoord.length - 1
+          ][1].toFixed(4)},${lineCoord[lineCoord.length - 1][0].toFixed(4)}), ${layer.totalLen || ''}mi`,
+          ``,
+        ];
         overlayURL = 'polyline';
         break;
       default:
