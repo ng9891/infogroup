@@ -1,5 +1,5 @@
-let _pie_naics;
-let _pie_matchcd;
+let _pie_naics = undefined;
+let _pie_matchcd = undefined;
 function loadPieChart(establishments) {
   return new Promise((resolve) => {
     let naicsObj = {};
@@ -63,13 +63,12 @@ function loadPieChart(establishments) {
       pie_content_matchcd.push(tmp);
     });
 
-    let pie_h = 290;
-    let pie_w = 700;
+    let pie_w = 768;
+    let pie_h = 320;
 
     _pie_matchcd = new d3pie(
       'pieChartMatchCD',
       getOptions(pie_content_matchcd, pie_w, pie_h, 10, () => {
-        addResponsiveViewbox('pieChartContainer', pie_w, pie_h);
         return;
       })
     );
@@ -77,17 +76,13 @@ function loadPieChart(establishments) {
     _pie_naics = new d3pie(
       'pieChart',
       getOptions(pie_content_naics, pie_w, pie_h, 9, () => {
-        addResponsiveViewbox('pieChartContainer', pie_w, pie_h);
         $('.pieChart-loader').fadeOut('slow');
         return resolve('PieChart Loaded');
       })
     );
-    // addResponsiveViewbox(null,pie_w,pie_h)
   });
 
   function getOptions(content, w, h, searchCol, cb) {
-    let searches = [];
-    let lastChosenSegment;
     return {
       header: {
         title: {
@@ -117,11 +112,6 @@ function loadPieChart(establishments) {
         content: content,
       },
       labels: {
-        // formatter: function(context) {
-        //   let label = context.label;
-        //   if (context.section === 'outer') return label.slice(5);
-        //   return label;
-        // },
         outer: {
           pieDistance: 32,
         },
@@ -170,65 +160,100 @@ function loadPieChart(establishments) {
         },
       },
       callbacks: {
-        onClickSegment: function(a) {
-          // Filter Datatable on PieChart Segment Click
-          let search = a.data.search;
-          let graph = $(a.segment).attr('id').slice(0, 2);
-          refreshSegmentsColors(graph, content.length);
-          grayoutSegments(graph, a.index, content.length);
-          if (searchCol === 10) {
-            // Matchcode Pie
-            mymap.removeLayer(matchCDClustermarkers);
-            if (lastChosenSegment) mymap.removeLayer(_matchcdLayers[lastChosenSegment].layer);
-            mymap.addLayer(_matchcdLayers[search].layer);
-          } else {
-            // NAICS Pie
-            mymap.removeLayer(naicsClustermarkers);
-            if (lastChosenSegment) mymap.removeLayer(_naicsLayers[lastChosenSegment].layer);
-            mymap.addLayer(_naicsLayers[search].layer);
-          }
-
-          let dtable = $('#jq_datatable').DataTable();
-          searches.push(search);
-          dtable.columns(searchCol).search(search, false, true, true).draw();
-
-          // On clicking twice to the same segment filter clears
-          if (lastChosenSegment === search) {
-            dtable.search('').columns().search('').draw();
-            searches = [];
-            if (searchCol === 10) {
-              // Matchcode Pie
-              // Reset to all
-              mymap.addLayer(matchCDClustermarkers);
-              mymap.removeLayer(_matchcdLayers[lastChosenSegment].layer);
-            } else {
-              // NAICS Pie
-              // Reset to all
-              mymap.addLayer(naicsClustermarkers);
-              mymap.removeLayer(_naicsLayers[lastChosenSegment].layer);
-            }
-            refreshSegmentsColors(graph, content.length);
-          }
-          // console.log(lastChosenSegment);
-          // console.log(searches);
-          lastChosenSegment = searches.pop();
+        onClickSegment: (a) => {
+          // Passing an extra variable to determine which column to search on datatable.
+          return filterSegment(a, searchCol);
         },
         onload: cb,
       },
     };
   }
-
-  function grayoutSegments(graph, currIndex, totalSegments) {
-    for (let i = 0; i < totalSegments; i++) {
-      if (i != currIndex) {
-        $(`#${graph}_segment${i}`).css({fill: 'gray'});
+  /**
+   * Helper for onClick event.
+   * @param {Object} a Object passed from onClick event form the pieChart
+   * @param {*} searchCol Variable to distinquish which pieChart was clicked.
+   */
+  function filterSegment(a, searchCol) {
+    console.log(a);
+    // console.log(_pie_naics.selected);
+    let search = a.data.search;
+    let dataTable = $('#jq_datatable').DataTable();
+    if (searchCol === 10) {
+      // Matchcode Pie
+      let selected = _pie_matchcd.getOpenSegments();
+      let content = _pie_matchcd.options.data.content;
+      let graph = _pie_matchcd.cssPrefix;
+      grayoutSegments(graph, selected, content.length);
+      filterMap(selected, search, a.expanded, _matchcdLayers), mymap;
+      filterDatatable(selected, searchCol, dataTable);
+    } else {
+      // NAICS Pie
+      let selected = _pie_naics.getOpenSegments();
+      let content = _pie_naics.options.data.content;
+      let graph = _pie_naics.cssPrefix;
+      grayoutSegments(graph, selected, content.length);
+      filterMap(selected, search, a.expanded, _naicsLayers, mymap);
+      filterDatatable(selected, searchCol, dataTable);
+    }
+  }
+  /**
+   * Helper function to filter datable when a pie segment is clicked.
+   * @param {Array} selectedSegments Contains all the segments {Object} that are open for the piechart.
+   * @param {Integer} searchCol Column to search on datatable
+   * @param {Datatable Object} dt Datatable
+   */
+  function filterDatatable(selectedSegments, searchCol, dt) {
+    let regex = '';
+    for (segment of selectedSegments) {
+      regex += segment.data.search + '|';
+    }
+    regex = regex.slice(0, -1);
+    dt.columns(searchCol).search(regex, true, false, true).draw();
+  }
+  /**
+   * Helper function to filter the map according to the segment selected on the pie chart.
+   * This function assumes the mymap has all the layerGroup displayed on the map.
+   * @param {Array} selectedSegment Contains all the segments that are open for the piechart.
+   * @param {String} search The search value. Pie section that is clicked.
+   * @param {Boolean} action of opening of closing the a segment. From the object passed as paremeter on the pieChart click event.
+   * @param {Object} layerGroup Group of layers to filter with. eg. _naicsLayers or _matchcdLayers.
+   * @param {Leaflet Map Object} map
+   */
+  function filterMap(selectedSegments, search, action, layerGroup, map) {
+    if (action) {
+      // Closing a segment.
+      if (selectedSegments.length === 0) {
+        // Closing all segments
+        for (code in layerGroup) {
+          if (code !== search) map.addLayer(layerGroup[code].layer);
+        }
+      } else {
+        map.removeLayer(layerGroup[search].layer);
+      }
+    } else {
+      // Opening a segment.
+      if (selectedSegments.length > 1) {
+        // Second or more selection.
+        map.addLayer(layerGroup[search].layer);
+      } else {
+        // First selection
+        for (code in layerGroup) {
+          if (code !== search) map.removeLayer(layerGroup[code].layer);
+        }
       }
     }
   }
 
-  function refreshSegmentsColors(graph, totalSegments) {
-    for (let i = 0; i < totalSegments; i++) {
-      $(`#${graph}_segment${i}`).css({fill: `url(#${graph}_grad${i})`});
+  function grayoutSegments(graph, selected, totalSegments) {
+    if (selected.length === 0) {
+      for (let i = 0; i < totalSegments; i++) {
+        $(`#${graph}segment${i}`).css({opacity: 1});
+      }
+    } else {
+      for (let i = 0; i < totalSegments; i++) {
+        if (!$(`#${graph}segment${i}`).hasClass(`${graph}expanded`)) $(`#${graph}segment${i}`).css({opacity: 0.4});
+        else $(`#${graph}segment${i}`).css({opacity: 1});
+      }
     }
   }
 

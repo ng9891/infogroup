@@ -1,4 +1,5 @@
 /*
+* Description OUTDATED
 * Function will create a marker in mymap for any points inside the parameter 'establishments'
 * Previous markers and overlay layers will be cleared.
 * The color of the markers will be decided by their repective NAICS code.
@@ -24,12 +25,12 @@ let _naicsLayers = {};
     let tmp = {};
     for (let twoDigit of codes) {
       tmp[twoDigit] = {
-        layer: L.markerClusterGroup(clusterOptions),
+        layer: L.featureGroup.subGroup(naicsClustermarkers), // Subgroup plugin
         markers: [],
       };
     }
     tmp[99] = {
-      layer: L.markerClusterGroup(clusterOptions),
+      layer: L.featureGroup.subGroup(naicsClustermarkers),
       markers: [],
     };
     return tmp;
@@ -39,7 +40,7 @@ let _naicsLayers = {};
     let tmp = {};
     for (let k in _matchCDObj) {
       tmp[k] = {
-        layer: L.markerClusterGroup(clusterOptions),
+        layer: L.featureGroup.subGroup(matchCDClustermarkers),
         markers: [],
       };
     }
@@ -48,9 +49,6 @@ let _naicsLayers = {};
 
   loadMarkers = (establishments) => {
     return new Promise((resolve) => {
-      let matchCDMarker = [];
-      let naicsCDMarker = [];
-
       // Variable to calculate bounding box
       let lats = [];
       let lngs = [];
@@ -73,29 +71,30 @@ let _naicsLayers = {};
           let naicsColor = naicsKeys[twoDigitCode] ? naicsKeys[twoDigitCode].color : 'black';
           let matchCDColor = _matchCDColorScheme[est.MATCHCD] ? _matchCDColorScheme[est.MATCHCD] : 'black';
 
-          _naicsLayers[twoDigitCode].markers.push(styleMarker(est, naicsColor));
+          let markerNAICS = styleMarker(est, naicsColor);
+          _naicsLayers[twoDigitCode].markers.push(markerNAICS);
+          markerNAICS.addTo(_naicsLayers[twoDigitCode].layer); // Add marker to subgroup
 
           if (!est.MATCHCD) est.MATCHCD = 'NULL';
-          _matchcdLayers[est.MATCHCD].markers.push(styleMarker(est, matchCDColor));
-
-          naicsCDMarker.push(styleMarker(est, naicsColor));
-          matchCDMarker.push(styleMarker(est, matchCDColor));
+          let markerMatchCD = styleMarker(est, matchCDColor);
+          _matchcdLayers[est.MATCHCD].markers.push(markerMatchCD);
+          markerMatchCD.addTo(_matchcdLayers[est.MATCHCD].layer); // Add marker to subgroup
         }
       });
 
       // Add markers to respective layers.
       for (let code in _naicsLayers) {
-        _naicsLayers[code].layer.addLayers(_naicsLayers[code].markers);
+        _naicsLayers[code].layer.addTo(mymap); // Add subgroup to map to display.
+        _naicsLayers[code].layer.code = code;
       }
 
       for (let code in _matchcdLayers) {
-        _matchcdLayers[code].layer.addLayers(_matchcdLayers[code].markers);
+        _matchcdLayers[code].layer.addTo(mymap); // Add subgroup to map to display.
+        _matchcdLayers[code].layer.code = code;
       }
 
-      naicsClustermarkers.addLayers(naicsCDMarker);
-      matchCDClustermarkers.addLayers(matchCDMarker);
-      mymap.addLayer(naicsClustermarkers); // Show on map
-      // mymap.addLayer(matchCDClustermarkers );
+      mymap.addLayer(naicsClustermarkers); // Show NAICS on map as default.
+      // Layer control
       layerControl.addOverlay(naicsClustermarkers, 'Establishments - NAICS');
       layerControl.addOverlay(matchCDClustermarkers, 'Establishments - MatchCD');
       // calculate the bounding Box

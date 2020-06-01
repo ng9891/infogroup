@@ -79,7 +79,7 @@
         // throw Error
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
-          alert('Error querying current layer.')
+          alert('Error querying current layer.');
           throw new TypeError("Oops, we haven't got JSON!");
         }
         if (!response.ok) throw new Error('Network response was not ok');
@@ -101,7 +101,8 @@
           d3.select('.loader').classed('hidden', true);
         }
         updateSearchInfo(searchInfo, searchValue);
-      }).catch(e =>{
+      })
+      .catch((e) => {
         alert(e);
         return console.log(e);
       });
@@ -181,19 +182,6 @@
     // Clearing markers in marker cluster.
     naicsClustermarkers.clearLayers();
     matchCDClustermarkers.clearLayers();
-
-    //TODO: Tentative to change with new pie chart.
-    // Clear marker if map was filtered.
-    const dataTable = $('#jq_datatable');
-    if ($.fn.DataTable.isDataTable(dataTable)) {
-      let currentDatatableFilter = $('#jq_datatable').DataTable().column(9).search();
-      if (currentDatatableFilter) {
-        _naicsLayers[currentDatatableFilter].layer.clearLayers();
-      } else {
-        currentDatatableFilter = $('#jq_datatable').DataTable().column(10).search();
-        if (currentDatatableFilter) _matchcdLayers[currentDatatableFilter].layer.clearLayers();
-      }
-    }
 
     // Clear datatable
     window.clearDatatable(); // loadDatatable.js
@@ -380,8 +368,8 @@
     overlayURL = `/api/getcounty/${queryInput.county}?stateCode=${queryInput.stateCode}`;
     // Search criteria for display
     let searchValue = [];
-    searchValue.push(queryInput.county);
-    searchValue.push('State: ' + queryInput.stateCode);
+    searchValue.push(queryInput.county + ' - ' + queryInput.stateCode);
+    searchValue.push('');
 
     return [reqURL, overlayURL, searchValue];
   };
@@ -429,8 +417,8 @@
       overlayURL = 'geojson';
     } else if (queryInput.roadNo || queryInput.roadId) {
       // Road Query
-      overlayURL = `/api/getRoad?roadNo=${queryInput.roadNo || ''}&county=${queryInput.county}&\
-signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}`;
+      overlayURL = `/api/getRoad?roadNo=${queryInput.roadNo || ''}&county=${queryInput.county || ''}&\
+signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}&mun=${queryInput.mun || ''}&mpo=${queryInput.mpo || ''}`;
     } else {
       if (queryInput.mun != '') {
         overlayURL = '/api/getmun/' + queryInput.mun;

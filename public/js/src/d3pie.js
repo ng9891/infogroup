@@ -255,8 +255,8 @@ var helpers = {
 		var backgroundColor = pie.options.misc.colors.background;
 
 		var svg = d3.select(element).append("svg:svg")
-			.attr("width", canvasWidth)
-			.attr("height", canvasHeight);
+			.attr("preserveAspectRatio", "xMinYMin meet")
+			.attr("viewBox", "0 0 " + canvasWidth + " " + canvasHeight);
 
 		if (backgroundColor !== "transparent") {
 			svg.style("background-color", function() { return backgroundColor; });
@@ -1397,14 +1397,18 @@ var segments = {
 			}
 
 			var isExpanded = segment.attr("class") === pie.cssPrefix + "expanded";
-			segments.onSegmentEvent(pie, pie.options.callbacks.onClickSegment, segment, isExpanded);
 			if (pie.options.effects.pullOutSegmentOnClick.effect !== "none") {
 				if (isExpanded) {
-					segments.closeSegment(pie, segment.node());
+					segments.closeSegment(pie, segment.node()).then(()=>{
+            segments.onSegmentEvent(pie, pie.options.callbacks.onClickSegment, segment, isExpanded);
+          });
 				} else {
-					segments.openSegment(pie, segment.node());
+					segments.openSegment(pie, segment.node()).then(()=>{
+            segments.onSegmentEvent(pie, pie.options.callbacks.onClickSegment, segment, isExpanded);
+          });
 				}
-			}
+      }
+      
 		});
 
 		arc.on("mouseover", function() {
@@ -1482,46 +1486,57 @@ var segments = {
 	},
 
 	openSegment: function(pie, segment) {
-		if (pie.isOpeningSegment) {
-			return;
-		}
-		pie.isOpeningSegment = true;
+    return new Promise((resolve)=>{
+      if (pie.isOpeningSegment) {
+        resolve();
+        return;
+      }
+      pie.isOpeningSegment = true;
+      	// segments.maybeCloseOpenSegment(pie);
 
-		segments.maybeCloseOpenSegment(pie);
+      d3.select(segment).transition()
+      .ease(segments.effectMap[pie.options.effects.pullOutSegmentOnClick.effect])
+      .duration(pie.options.effects.pullOutSegmentOnClick.speed)
+      .attr("transform", function(d, i) {
+        var c = pie.arc.centroid(d),
+          x = c[0],
+          y = c[1],
+          h = Math.sqrt(x*x + y*y),
+          pullOutSize = parseInt(pie.options.effects.pullOutSegmentOnClick.size, 10);
 
-		d3.select(segment).transition()
-			.ease(segments.effectMap[pie.options.effects.pullOutSegmentOnClick.effect])
-			.duration(pie.options.effects.pullOutSegmentOnClick.speed)
-			.attr("transform", function(d, i) {
-				var c = pie.arc.centroid(d),
-					x = c[0],
-					y = c[1],
-					h = Math.sqrt(x*x + y*y),
-					pullOutSize = parseInt(pie.options.effects.pullOutSegmentOnClick.size, 10);
-
-				return "translate(" + ((x/h) * pullOutSize) + ',' + ((y/h) * pullOutSize) + ")";
-			})
-			.on("end", function(d, i) {
-				pie.currentlyOpenSegment = segment;
-				pie.isOpeningSegment = false;
-				d3.select(segment).attr("class", pie.cssPrefix + "expanded");
-			});
+        return "translate(" + ((x/h) * pullOutSize) + ',' + ((y/h) * pullOutSize) + ")";
+      })
+      .on("end", function(d, i) {
+        pie.currentlyOpenSegment = segment;
+        pie.isOpeningSegment = false;
+        d3.select(segment).attr("class", pie.cssPrefix + "expanded");
+        return resolve('opened segment')
+      });
+    });
 	},
 
-    maybeCloseOpenSegment: function(pie) {
-        if (d3.selectAll("." + pie.cssPrefix + "expanded").size() > 0) {
-            segments.closeSegment(pie, d3.select("." + pie.cssPrefix + "expanded").node());
+    maybeCloseOpenSegment: function(pie, index) {
+      if(index || index === 0){
+        if(d3.select('#p1_segment'+index).classed(pie.cssPrefix + "expanded")){
+          // If its expanded.
+          segments.closeSegment(pie, d3.select('#p1_segment'+index).node());
         }
+      }else if (d3.selectAll("." + pie.cssPrefix + "expanded").size() > 0) {
+        segments.closeSegment(pie, d3.select("." + pie.cssPrefix + "expanded").node());
+      }
 	},
 
 	closeSegment: function(pie, segment) {
-		d3.select(segment).transition()
+    return new Promise((resolve)=>{
+      d3.select(segment).transition()
 			.duration(400)
 			.attr("transform", "translate(0,0)")
 			.on("end", function(d, i) {
 				d3.select(segment).attr("class", "");
-				pie.currentlyOpenSegment = null;
+        pie.currentlyOpenSegment = null;
+        return resolve('closed segment');
 			});
+    })
 	},
 
 	getCentroid: function(el) {
@@ -1951,6 +1966,26 @@ var tt = {
 		} else {
 			return null;
 		}
+  };
+  
+  d3pie.prototype.getOpenSegments = function() {
+    let pie = this;
+    let expanded = d3.selectAll("." + pie.cssPrefix + "expanded");
+
+    if(expanded && expanded.size() > 0){
+      let tmp = [];
+      expanded.nodes().forEach(function(d,i){
+        let index = parseInt(d3.select(d).attr('data-index'), 10);
+        tmp.push({
+          element: d,
+          index: index,
+          data: pie.options.data.content[index],
+        })
+      });
+      return tmp;
+    }else{
+      return [];
+    }
 	};
 
 	d3pie.prototype.openSegment = function(index) {
@@ -1961,8 +1996,20 @@ var tt = {
 		segments.openSegment(this, d3.select("#" + this.cssPrefix + "segment" + index).node());
 	};
 
-	d3pie.prototype.closeSegment = function() {
-        segments.maybeCloseOpenSegment(this);
+	d3pie.prototype.closeSegment = function(index) {
+    if(index || index === 0) return segments.maybeCloseOpenSegment(this, index);
+    segments.maybeCloseOpenSegment(this);
+  };
+  
+  d3pie.prototype.closeSegments = function() {
+    let pie = this;
+    let expanded = d3.selectAll("." + pie.cssPrefix + "expanded");
+    if(expanded && expanded.size() > 0){
+      expanded.nodes().forEach(function(d){
+        let index = parseInt(d3.select(d).attr('data-index'), 10);
+        segments.maybeCloseOpenSegment(pie, index);
+      });
+    }
 	};
 
 	// this let's the user dynamically update aspects of the pie chart without causing a complete redraw. It

@@ -201,7 +201,9 @@ module.exports = {
     sql += `\nORDER BY name;`;
     return queryDB(sql, params);
   },
-  geoGetRoad: ({roadNo = null, county = null, signing = null, roadId = null, offset = 0, limit = null} = {}) => {
+  geoGetRoad: (
+    {roadNo = null, county = null, signing = null, roadId = null, mun = null, mpo = null, offset = 0, limit = null} = {}
+  ) => {
     let params = [];
     let sql = `
       SELECT ST_ASGeoJSON(ST_Transform(geom, 4326)) as geom, gid, gis_id, dot_id, road_name, route,\
@@ -216,10 +218,12 @@ module.exports = {
       AND ($${params.length + 1}::varchar(40) IS NULL OR UPPER(county_name) = UPPER($${params.length + 1}))
       AND ($${params.length + 2}::varchar(10) IS NULL OR signing = UPPER($${params.length + 2}))
       AND ($${params.length + 3}::int IS NULL OR dot_id = $${params.length + 3})
-      OFFSET $${params.length + 4}
-      LIMIT $${params.length + 5}
+      AND (NULLIF($${params.length + 4}, '')::varchar(40) IS NULL OR UPPER(muni_name) = UPPER($${params.length + 4}))
+      AND (NULLIF($${params.length + 5}, '')::varchar(40) IS NULL OR UPPER(mpo_desc) = UPPER($${params.length + 5}))
+      OFFSET $${params.length + 6}
+      LIMIT $${params.length + 7}
     ;`;
-    params.push(county, signing, roadId, offset, limit);
+    params.push(county, signing, roadId, mun, mpo, offset, limit);
     return queryDB(sql, params);
   },
   getSalesVolumeList: () => {

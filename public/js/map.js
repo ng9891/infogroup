@@ -64,6 +64,7 @@ const googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z
 });
 
 var mymap = L.map('mapid', {
+  attributionControl: false,
   preferCanvas: true,
   keyboard: false,
   editable: true,

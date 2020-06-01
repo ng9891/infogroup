@@ -105,15 +105,25 @@ $(document).ready(function() {
     d3.select('.legendContainer').classed('open', toggle ? false : true);
   });
 
+  /**
+   * Helper function to restore map to the original state.
+   * @param {Leaflet Map Object} map 
+   * @param {Object} layerGroup Group of layers to remove filter with. eg. _naicsLayers or _matchcdLayers.
+   */
+  function removeFilterOnMap(map, layerGroup) {
+    for (code in layerGroup) {
+      if (!map.hasLayer(layerGroup[code].layer)) map.addLayer(layerGroup[code].layer);
+    }
+  }
   // Button listener to change pie chart type
   $('.togglePieBtn').click(() => {
     let dtable = $('#jq_datatable').DataTable();
     dtable.search('').columns().search('').draw();
     if ($('.togglePieBtn').text() === 'MatchCD') {
-      let lastSegment = _pie_naics.getOpenSegment();
-      if (lastSegment) {
-        mymap.removeLayer(_naicsLayers[lastSegment.data.search].layer);
-      }
+      let selectedSegments = _pie_naics.getOpenSegments();
+      // Add back the removed layers when pie segments are selected for filtering.
+      if (selectedSegments && selectedSegments.length > 0) removeFilterOnMap(mymap, _naicsLayers);
+
       $('.infoContainer #pieChart').css('display', 'none');
       $('.infoContainer #pieChartMatchCD').css('display', 'block');
       $('.togglePieBtn').text('NAICS');
@@ -123,10 +133,10 @@ $(document).ready(function() {
         mymap.removeLayer(naicsClustermarkers); // Deselect naics in layer control
       });
     } else {
-      let lastSegment = _pie_matchcd.getOpenSegment();
-      if (lastSegment) {
-        mymap.removeLayer(_matchcdLayers[lastSegment.data.search].layer);
-      }
+      let selectedSegments = _pie_matchcd.getOpenSegments();
+      // Add back the removed layers when pie segments are selected for filtering.
+      if (selectedSegments && selectedSegments.length > 0) removeFilterOnMap(mymap, _matchcdLayers);
+
       $('.infoContainer #pieChartMatchCD').css('display', 'none');
       $('.infoContainer #pieChart').css('display', 'block');
       $('.togglePieBtn').text('MatchCD');

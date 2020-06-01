@@ -284,7 +284,6 @@ exports.reqGeoGetRoad = (request, response) => {
     return response.status(200).json({
       data: [],
     });
-
   getQuery
     .geoGetRoad(query)
     .then((data) => {
