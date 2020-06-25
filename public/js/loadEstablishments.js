@@ -27,7 +27,7 @@
       [reqURL, overlayURL, searchValue] = getCountyInfo(queryInput);
     } else if (queryType === 'mun') {
       [reqURL, overlayURL, searchInfo, searchType, searchValue] = getMunInfo(queryInput);
-    } else if (queryType === 'adv' || queryType === 'road') {
+    } else if (queryType === 'adv' || queryType === 'road' || queryType === 'currLayer' || queryType === 'multiQuery') {
       searchInfo = 'Search:';
       [reqURL, overlayURL, searchValue] = getAdvSearchInfo(queryInput);
       if (overlayURL === 'geojson') {
@@ -70,8 +70,8 @@
     // Add versioning.
     reqURL += `&v=${version}`;
     // console.log(reqURL, option);
-    reqURL = encodeURI(reqURL);
-    overlayURL = encodeURI(overlayURL);
+    // reqURL = encodeURI(reqURL);
+    // overlayURL = encodeURI(overlayURL);
     clearUiComponents(queryType);
     d3.select('.loader').classed('hidden', false);
     fetch(reqURL, option)
@@ -79,8 +79,8 @@
         // throw Error
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
-          alert('Error querying current layer.');
-          throw new TypeError("Oops, we haven't got JSON!");
+          // Did not get a JSON response.
+          throw new TypeError('Error querying current layer.');
         }
         if (!response.ok) throw new Error('Network response was not ok');
         let json = response.json();
@@ -89,6 +89,7 @@
       .then(async (data) => {
         if (data.data.length === 0) {
           await loadOverlay(data, overlayURL, savedOverlay);
+          if (window.queryLayer.length > 0) window.mymap.fitBounds(window.queryLayer[0].getBounds());
           d3.select('.loader').classed('hidden', true);
           if (queryType === 'adv') {
             $('.advancedSearchContainer').toggleClass('open');
@@ -164,15 +165,17 @@
     if (queryType !== 'draw') {
       window.clearUsrMarker(); // function in map.js to clear user drawings
       // If its not a drawing query and its not a road query. Close the sidebar.
-      if (queryType !== 'road') window.closeSideBar(); // function in loadNearbyRoad.js
+      // if (queryType !== 'road' && queryType !== 'multiQuery') window.closeSideBar(); // function in sideBar.js
+      if (queryType === 'adv') $('.sideBarCloseBtn').click(); // function in sideBar.js
     }
 
     // Clearing queryOverlay in case of drawing query
     if (queryLayer.length > 0) {
-      let cLayer = queryLayer.pop();
-      mymap.removeLayer(cLayer);
+      for (layer of queryLayer) {
+        mymap.removeLayer(layer);
+        layerControl.removeLayer(layer);
+      }
       queryLayer = [];
-      layerControl.removeLayer(cLayer);
     }
     // Clearing est markers
     mymap.removeLayer(matchCDClustermarkers); // Deselect matchCD
@@ -182,9 +185,10 @@
     // Clearing markers in marker cluster.
     naicsClustermarkers.clearLayers();
     matchCDClustermarkers.clearLayers();
-
+    clusterSubgroup.clearLayers();
     // Clear datatable
     window.clearDatatable(); // loadDatatable.js
+    // window.destroyDatatable();
 
     // if (markerList.length > 0) {
     //   layerControl.removeLayer(markers);
@@ -235,11 +239,11 @@
           measurementOptions: measurementOptions,
         });
       } else if (overlayURL === 'geocode') {
-        console.log('geocode');
+        // console.log('geocode');
         // Build JSON to match the app format.
         let builtGeoJsonToMatchFormat = {data: []};
         if (data.overlayJson) {
-          console.log(JSON.parse(data.overlayJson).features);
+          // console.log(JSON.parse(data.overlayJson).features);
           let overlayFeatures = JSON.parse(data.overlayJson).features;
           for (let feature of overlayFeatures) {
             builtGeoJsonToMatchFormat.data.push({
@@ -329,7 +333,6 @@
     });
 
     let layerStyle = {
-      color: '#4169e1',
       weight: 4,
       opacity: 0.5,
     };
@@ -364,8 +367,8 @@
   };
   let getCountyInfo = (queryInput) => {
     if (!queryInput && !queryInput.county) return;
-    reqURL = `/api/bycounty/${queryInput.county}?stateCode=${queryInput.stateCode}`;
-    overlayURL = `/api/getcounty/${queryInput.county}?stateCode=${queryInput.stateCode}`;
+    reqURL = `/api/bycounty/${encodeURIComponent(queryInput.county)}?stateCode=${queryInput.stateCode}`;
+    overlayURL = `/api/getcounty/${encodeURIComponent(queryInput.county)}?stateCode=${queryInput.stateCode}`;
     // Search criteria for display
     let searchValue = [];
     searchValue.push(queryInput.county + ' - ' + queryInput.stateCode);
@@ -380,17 +383,17 @@
   let getMunInfo = (queryInput) => {
     if (!queryInput.mun) return;
     let searchInfo, searchType;
-    let reqURL = `/api/bymun/${queryInput.mun}?`;
+    let reqURL = `/api/bymun/${encodeURIComponent(queryInput.mun)}?`;
     let param = '';
     if (queryInput.type && queryInput.county) {
-      param += '?munType=' + queryInput.type + '&county=' + queryInput.county;
-      reqURL += '&munType=' + queryInput.type + '&county=' + queryInput.county;
+      param += '?munType=' + queryInput.type + '&county=' + encodeURIComponent(queryInput.county);
+      reqURL += '&munType=' + queryInput.type + '&county=' + encodeURIComponent(queryInput.county);
       searchInfo = queryInput.type;
     } else {
       param += '?exact=1';
       searchInfo = 'Municipal';
     }
-    let overlayURL = '/api/getmun/' + queryInput.mun + param;
+    let overlayURL = '/api/getmun/' + encodeURIComponent(queryInput.mun) + param;
     // Search criteria for display
     let searchValue = [];
     searchValue.push(queryInput.mun);
@@ -417,15 +420,16 @@
       overlayURL = 'geojson';
     } else if (queryInput.roadNo || queryInput.roadId) {
       // Road Query
-      overlayURL = `/api/getRoad?roadNo=${queryInput.roadNo || ''}&county=${queryInput.county || ''}&\
-signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}&mun=${queryInput.mun || ''}&mpo=${queryInput.mpo || ''}`;
+      overlayURL = `/api/getRoad?roadNo=${queryInput.roadNo || ''}&county=${encodeURIComponent(queryInput.county) ||
+        ''}&signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}&mun=${encodeURIComponent(queryInput.mun) ||
+        ''}&mpo=${encodeURIComponent(queryInput.mpo) || ''}`;
     } else {
       if (queryInput.mun != '') {
-        overlayURL = '/api/getmun/' + queryInput.mun;
+        overlayURL = '/api/getmun/' + encodeURIComponent(queryInput.mun);
       } else if (queryInput.county != '') {
-        overlayURL = `/api/getcounty/${queryInput.county}?statecode=${queryInput.statecode || ''}`;
+        overlayURL = `/api/getcounty/${encodeURIComponent(queryInput.county)}?statecode=${queryInput.statecode || ''}`;
       } else if (queryInput.mpo != '') {
-        overlayURL = '/api/getmpo/' + queryInput.mpo;
+        overlayURL = '/api/getmpo/' + encodeURIComponent(queryInput.mpo);
       }
     }
     // Search criteria for display
@@ -464,7 +468,6 @@ signing=${queryInput.roadSigning}&roadId=${queryInput.roadId}&mun=${queryInput.m
     if (queryInput.prevTitle) {
       searchValue[0] = queryInput.prevTitle;
     }
-
     return [reqURL, overlayURL, searchValue];
   };
   /**

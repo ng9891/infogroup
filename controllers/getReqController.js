@@ -23,10 +23,7 @@ exports.reqGeoGetNYSRegions = (request, response) => {
   }
 
   if (isNaN(parseInt(request.params.region, 10))) {
-    return response.status(400).json({
-      status: 'Error',
-      responseText: 'Invalid Region',
-    });
+    return successHandler([], response);
   }
 
   getQuery

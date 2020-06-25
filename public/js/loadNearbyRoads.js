@@ -4,16 +4,17 @@
   /**
    * Global variable.
    * Driver for query related to road query feature.
-   * Including the sidebar functionality.
+   * Including the sidebar functionality from utils/sideBar.js.
    * @param {integer} lat 
    * @param {integer} lon 
    */
-  loadNearbyRoads = (lat, lon) => {
+  window.loadNearbyRoads = (lat, lon) => {
     defaultMarkerRadius = window.defaultMarkerRadius;
     defaultRoadBufferSize = window.defaultRoadBufferSize;
-    toggleLoadingIcon();
+    window.toggleSideBarLoadingIcon();
     loadSideBarEventListener();
-    openSideBar();
+    window.closeRoadDescription();
+    window.openSideBar();
     loadSidebarData(lat, lon, defaultMarkerRadius);
     return;
   };
@@ -23,7 +24,7 @@
    */
   let loadSideBarEventListener = () => {
     $('.sideBarCloseBtn').unbind('click').on('click', () => {
-      closeSideBar();
+      window.closeSideBar();
     });
 
     $('#roadDesc .backBtn').unbind('click').on('click', () => {
@@ -81,7 +82,10 @@
    */
   let loadSidebarData = (lat, lon, dist) => {
     if (!lat || !lon) return;
+    $('#sideBar .sideBarTitle').text('Query Results');
+    $('#sideBar .multiple-query-container').hide();
     let ul = $('#sideBar .query-result-list');
+    ul.show();
     ul.empty();
     // Make API call
     let reqURL = `/api/getnearbyroad?lat=${lat}&lon=${lon}&dist=${dist}`;
@@ -91,7 +95,7 @@
         if (data.data.length === 0) {
           $('<li>').text(`No road found in ${dist}mi.`).appendTo(ul);
         }
-        toggleLoadingIcon();
+        window.toggleSideBarLoadingIcon();
         for (road of data.data) {
           let li = $('<li>')
             .addClass('road')
@@ -114,43 +118,6 @@
         console.log(err);
         alert(`Query Error on finding nearby roads`);
       });
-  };
-
-  /**
-   * Global function to close the road sidebar.
-   */
-  closeSideBar = () => {
-    if ($('.mapContainer').hasClass('sideBar-open')) {
-      $('.mapContainer').toggleClass('sideBar-open');
-      window.setTimeout(() => {
-        window.mymap.invalidateSize();
-      }, 400);
-      clearUsrMarker();
-    }
-  };
-
-  /**
-   * Function to open the road sidebar.
-   */
-  let openSideBar = () => {
-    closeRoadDescription();
-    if (!$('.mapContainer').hasClass('sideBar-open')) {
-      $('.mapContainer').toggleClass('sideBar-open');
-      window.setTimeout(() => {
-        window.mymap.invalidateSize();
-      }, 400);
-    }
-  };
-
-  /**
-   * Toggles the loading animation in the road sidebar.
-   */
-  let toggleLoadingIcon = () => {
-    if ($('#sideBarLoader').css('display') == 'block') {
-      $('#sideBarLoader').css('display', 'none');
-    } else if ($('#sideBarLoader').css('display') == 'none') {
-      $('#sideBarLoader').css('display', 'block');
-    }
   };
 
   /**
@@ -235,10 +202,9 @@
   /**
    * Handler for closing road description sidebar
    */
-  let closeRoadDescription = () => {
+  window.closeRoadDescription = () => {
     $('#roadDesc').removeClass('open');
     $('#roadDesc .roadDescContent').empty();
-    // Remove Geom
-    removeSelectedRoadGeom();
+    removeSelectedRoadGeom(); // Remove Geom
   };
 })();

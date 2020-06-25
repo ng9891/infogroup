@@ -8,6 +8,7 @@ const passport = require('./utils/passport.js');
 const uuid = require('uuid/v4');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
+const compression = require('compression')
 
 //Create server
 const app = express();
@@ -18,7 +19,7 @@ app.use(cors());
 // app.use(logger('dev'));
 app.use(bodyParser.json({limit: '10mb'}));
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
-
+app.use(compression());
 // Parse JSON bodies (as sent by API clients)
 // app.use(express.json());
 

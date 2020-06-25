@@ -1,21 +1,21 @@
 //File for the initialization of the leaflet Map and Event listeners
 //Setup Leaflet Map
 
-//markers will contain the markers for the plugin markerClusterGroup
-const naicsClustermarkers = L.markerClusterGroup({
+let _clusterOptions = {
   spiderfyOnMaxZoom: true,
   disableClusteringAtZoom: 20,
   chunkedLoading: true,
-});
-const matchCDClustermarkers = L.markerClusterGroup({
-  spiderfyOnMaxZoom: true,
-  disableClusteringAtZoom: 20,
-  chunkedLoading: true,
-});
+};
+
+// markers will contain the markers for the plugin markerClusterGroup
+const naicsClustermarkers = L.markerClusterGroup(_clusterOptions);
+const matchCDClustermarkers = L.markerClusterGroup(_clusterOptions);
+const clusterSubgroup = L.markerClusterGroup(_clusterOptions);
 // let markerList = []; //contains all the points from query
-let queryLayer = []; //contains the query layer or bounding box of query
+window.queryLayer = []; //contains the query layer or bounding box of query
 let usrMarkers = []; //contains all the marker drawn by user
 let featureSelected;
+window.multiQueryGroup = new L.FeatureGroup(); // Feature group containing all the layers in multi-search feature.
 
 // var redoBuffer = [];
 
@@ -371,22 +371,25 @@ function moveTooltip(e) {
 }
 
 function addUsrMarker(e) {
-  // If its a road nearby query;
   // On drawing commit, push drawing
   usrMarkers.push(e.layer);
   drawnItems.addLayer(e.layer);
   removeTooltip();
   if (e.layer.options.kind && e.layer.options.kind == 'road') {
+    // If its a road nearby query;
     e.layer.dragging.disable();
     let latlng = e.layer.getLatLng();
-    return loadNearbyRoads(latlng.lat, latlng.lng);
+    return window.loadNearbyRoads(latlng.lat, latlng.lng);
   }
-  // else if (e.layer.options.kind && e.layer.options.kind == 'line') {
-  //   removeTooltip();
-  // }
-  $('.leaflet-control.leaflet-bar.queryBtn').css('display', 'block'); // Display the query button
-  $('.leaflet-control-queryBtn').off('click').on('click', queryDrawing); // QUERY BUTTON LISTENER
-  // drawnItems.clearLayers();
+  // Logic for multiQuerySearch
+  if(window._multiSearchQueryState){
+    $('.multi-query-addBtn').prop('disabled', false);
+    $('.multi-query-inputBox').val(`Drawing`);
+  }else{
+    // Normal drawing query.
+    $('.leaflet-control.leaflet-bar.queryBtn').css('display', 'block'); // Display the query button
+    $('.leaflet-control-queryBtn').off('click').on('click', queryDrawing); // QUERY BUTTON LISTENER
+  }
 }
 
 function clearUsrMarker(e) {
@@ -395,7 +398,7 @@ function clearUsrMarker(e) {
   drawnItems.clearLayers();
   $('.leaflet-control.leaflet-bar.queryBtn').css('display', 'none'); // hide btn so no meaningless query request
   $('.leaflet-control-queryBtn').off('click');
-  addTooltip(e);
+  if(e) addTooltip(e);
 }
 
 mymap.on('editable:drawing:start', clearUsrMarker);
@@ -405,9 +408,14 @@ mymap.on('editable:vertex:drag editable:vertex:deleted', function(e) {
   addTooltip(e);
   moveTooltip(e.originalEvent);
 });
-mymap.on('editable:vertex:dragend editable:drawing:cancel', () => {
+mymap.on('editable:vertex:dragend editable:drawing:cancel', function(e) {
   removeTooltip();
 });
+
+mymap.on('editable:drawing:cancel', function(e){
+  if (!e.editTools.featuresLayer) return;
+  for (key in e.editTools.featuresLayer._layers) mymap.removeLayer(e.editTools.featuresLayer._layers[key]);
+})
 
 let lastVertex;
 mymap.on('editable:vertex:new', function(e) {

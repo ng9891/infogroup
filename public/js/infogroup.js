@@ -31,6 +31,10 @@ $(document).ready(function() {
     $(this).select();
   });
 
+  // Open multi-query sidebar
+  $('.query-open-multiQuery').on('click',function(){
+    window.loadMultiSearchSideBar();
+  })
   // Search button on nav bar
   d3.select('#query-button').on('click', (e) => {
     query_input = d3.select('#query-search').property('value');
@@ -112,7 +116,7 @@ $(document).ready(function() {
    */
   function removeFilterOnMap(map, layerGroup) {
     for (code in layerGroup) {
-      if (!map.hasLayer(layerGroup[code].layer)) map.addLayer(layerGroup[code].layer);
+      map.removeLayer(layerGroup[code].layer);
     }
   }
   // Button listener to change pie chart type
@@ -131,6 +135,7 @@ $(document).ready(function() {
         _pie_matchcd.redraw();
         mymap.addLayer(matchCDClustermarkers);
         mymap.removeLayer(naicsClustermarkers); // Deselect naics in layer control
+        mymap.removeLayer(clusterSubgroup);
       });
     } else {
       let selectedSegments = _pie_matchcd.getOpenSegments();
@@ -144,6 +149,7 @@ $(document).ready(function() {
         _pie_naics.redraw();
         mymap.addLayer(naicsClustermarkers);
         mymap.removeLayer(matchCDClustermarkers); // Deselect matchCD in layer control
+        mymap.removeLayer(clusterSubgroup);
       });
     }
   });
@@ -298,13 +304,19 @@ function loadAdvancedSearchListener() {
     };
     for (form in formBody) if (!formBody[form]) delete formBody[form]; // Delete empty keys.
 
-    if (formBody.geom.features && formBody.geom.features[0].geometry.type === 'MultiPolygon') delete formBody['dist'];
+    // console.log('formBody geom', formBody.geom);
+    if (
+      formBody.geom.features &&
+      formBody.geom.features.length > 0 &&
+      formBody.geom.features[0].geometry.type === 'MultiPolygon'
+    )
+      delete formBody['dist'];
     else if (cLayer instanceof L.Rectangle || cLayer instanceof L.Polygon || cLayer instanceof L.Circle)
       delete formBody['dist'];
     if (matchCD) formBody.matchCD = matchCD;
     // console.log(formBody);
     // TODO: Check if no changes before loading.
-    loadEstablishments('adv', formBody, query_version);
+    loadEstablishments('currLayer', formBody, query_version);
     $('#search-message').hide();
     $('.advancedSearchContainer').toggleClass('open');
   });
@@ -327,18 +339,4 @@ function loadAdvancedSearchListener() {
     $('#adv_MATCHCD').val('');
     $('#adv_MATCHCD_button').text('MATCH LEVEL CODE ');
   });
-}
-
-/**This function is calling from public/js/loadDatatable.js (in DataTable)
- * Purpose: To update business_audit table, making entity primary or not
- */
-function updatePrimaryField(entityId) {
-  // TODO: Some Ajax request to update business_audit (boolean field)
-  if (document.getElementById('prmswitch' + entityId).checked) {
-    alert('Sorry. Feature is in development. Make field primary.');
-    // alert('update business_audit for id = ' + entityId + ' (make this field primary)');
-  } else {
-    alert('Sorry. Feature is in development. Make field non-primary.');
-    // alert('update business_audit for id = ' + entityId + ' (make this field not primary)');
-  }
 }

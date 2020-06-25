@@ -1,59 +1,67 @@
 <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-    <div class="col-sm-4">
-      <ul class="navbar-nav">
-        <li class="nav-item active">
-          <a class="nav-link active" href="/">Home</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="nav-link" href="/">Home</a>
+  
+  <div class="collapse navbar-collapse" id="navbarToggler">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item">
+        <a class="nav-link" href="/edit">Proposals</a>
+      </li>
+    </ul>
+    <% if(typeof noSearchBar === 'undefined'){%>
+    <form class="form-inline mr-auto navBarSearch">
+      <div class="row no-gutters">
+        <div class="col">
+          <input type="text" class="search form-control input-sm" placeholder="Search" id="query-search">
+        </div>
+        <div class="col">
+          <select id='query-dropdown' class="custom-select">
+            <option selected value="zip">Zip</option>
+            <option value="county">County</option>
+            <option value="mpo">MPO</option>
+            <option value="region">NYS Regions</option>
+            <option value="mun">Municipality</option>
+            <option value="geocoding">Address</option>
+            <option value="railroad">Train Station</option>
+          </select>
+        </div>
+        <div class="col">
+          <select id='version-dropdown' class="custom-select">
+            <option selected value="current">Current</option>
+            <option value="original">Original</option>
+          </select>
+        </div>
+        <div class="col">
+          <button id="query-button" type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Search for Businesses">Search</button>
+        </div>
+        <div class="col">
+          <button class="btn btn-success query-open-multiQuery" type="button" data-toggle="tooltip" data-placement="bottom" title="Multiple Query"><i class="fas fa-plus"></i></button>
+        </div>
+      </div>
+    </form>
+    <% } %>
+    <div id="login" class="nav navbar-nav navbar-right">
+      <ul class="navbar-nav ml-auto">
+        <%if(!localUser){%>
+        <li class="nav-item">
+          <a class="nav-link" href="/login">Login</a>
         </li>
-        <li class="nav-item active">
-          <a class="nav-link active" href="/edit">Proposals</a>
-        </li>
-        <% if(typeof noSearchBar === 'undefined'){%>
- 
-        <% } %>
+        <%}else{%>
+          <li class="nav-item">
+            <!-- <a class="nav-link" href="/logout">Logout</a> -->
+            <div class="btn-group dropleft">
+              <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%-localUser.id%></button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="/user/<%-localUser.id%>">Profile</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="/logout">Logout</a>
+              </div>
+            </div>
+          </li>
+        <%}%>
       </ul>
     </div>
-    <div class="col-sm-6">
-      <% if(typeof noSearchBar === 'undefined'){%>
-      <form class="form-inline mx-auto" role="search">
-        <input type="text" class="search form-control input-sm" placeholder="Search" id="query-search">
-        <select id='query-dropdown' class="custom-select">
-          <option selected value="zip">Zip</option>
-          <option value="county">County</option>
-          <option value="mpo">MPO</option>
-          <option value="region">NYS Regions</option>
-          <option value="mun">Municipality</option>
-          <option value="geocoding">Address</option>
-          <option value="railroad">Train Station</option>
-        </select>
-        <select id='version-dropdown' class="custom-select">
-          <option selected value="current">Current</option>
-          <option value="original">Original</option>
-        </select>
-        <button id="query-button" type="button" class="btn btn-secondary">Search</button>
-      </form>
-      <% } %>
-    </div>
-    <div class="col-sm-2">
-      <div id="login" class="nav navbar-nav navbar-right">
-        <ul class="navbar-nav ml-auto">
-          <%if(!localUser){%>
-          <li class="nav-item">
-            <a class="nav-link" href="/login">Login</a>
-          </li>
-          <%}else{%>
-            <li class="nav-item">
-              <!-- <a class="nav-link" href="/logout">Logout</a> -->
-              <div class="btn-group dropleft">
-                <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><%-localUser.id%></button>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item" href="/user/<%-localUser.id%>">Profile</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="/logout">Logout</a>
-                </div>
-              </div>
-            </li>
-          <%}%>
-        </ul>
-      </div>
-    </div>
-  </nav>
+  </div>
+</nav>

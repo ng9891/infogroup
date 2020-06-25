@@ -138,8 +138,8 @@ body {
 }
 
 .mapContainer.sideBar-open #mapid {
-  left: 15%;
-  width: 85%;
+  left: 20%;
+  width: 80%;
   transition: 0.3s ease-in-out;
 }
 
@@ -177,7 +177,7 @@ body {
 }
 
 #sideBar {
-  width: 15%;
+  width: 20%;
   height: 100%;
   padding-bottom: 5%;
   position: fixed;
@@ -185,7 +185,7 @@ body {
   overflow-y: auto;
 }
 
-.sideBarContainer .sideBarTitle,
+.sideBarContainer .sideBarHeader,
 .roadDescTitle {
   padding: 10px;
   position: -webkit-sticky; /* Safari */
@@ -215,12 +215,14 @@ body {
   border-bottom: 1px solid #ccc;
 }
 
-#sideBar li.road.selected {
+#sideBar li.road.selected,
+#sideBar .multi-query-list li.geom.selected{
   background: #5cb85c;
 }
 
 #sideBar li.road p,
-#roadDesc .roadDescContent p {
+#roadDesc .roadDescContent p,
+.multi-query-list li.geom p {
   margin: 0;
   padding: 0;
   border: 0;
@@ -232,8 +234,8 @@ body {
 }
 
 #roadDesc {
-  width: 15%;
-  left: 15%;
+  width: 20%;
+  left: 20%;
   height: 100%;
   position: fixed;
   display: block;
@@ -390,7 +392,7 @@ body {
 
 .infoContainerButton {
   left: -54px;
-  top: 15px;
+  top: 30px;
   width: 70px;
   height: 30px;
   background-color: #14a57a;
@@ -622,4 +624,34 @@ tr {
   position: absolute;
   width: 4em;
   height: 100%;
+}
+
+.multi-query-searchContainer{
+  padding: 10px 5px 15px 5px;
+  border-bottom: 1px solid #ccc;
+}
+
+.multi-query-search{
+  margin: 5px 0px;
+}
+
+.multi-query-btnContainer .btn.disabled, .multi-query-btnContainer .btn:disabled{
+  opacity: 0.4 !important; /*Overwrites Bootstrap disabled*/
+}
+
+span.deleteEntry{
+  /* background: red; */
+  /* color:white; */
+  height: 25px;
+  width: 25px;
+  margin-right: 10px;
+  text-align: center;
+  display: none;
+  transition: 0.2s linear;
+}
+
+li:hover span.deleteEntry{
+  width: 25px;
+  display: inline-block;
+  cursor: pointer;
 }

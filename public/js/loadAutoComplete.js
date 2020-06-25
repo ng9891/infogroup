@@ -132,7 +132,7 @@ Expected input: a string that creates a valid API URL with the param 'column'. e
                  type: string variable to complete the URL. eg. /api/getsic/test?type='cd'
 Output: An expected list of autocompletion displayed below 'inputId' input box
 */
-function autoComplete_url(inputId, column, minlen = 2) {
+function autoComplete_url(inputId, column, minlen = 2, selectCb = ()=>{}) {
   $(inputId).autocomplete({
     delay: 1000,
     minLength: minlen,
@@ -170,6 +170,7 @@ function autoComplete_url(inputId, column, minlen = 2) {
         },
       });
     },
+    select: selectCb,
     messages: {
       noResults: '',
       results: function() {},
