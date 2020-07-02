@@ -176,13 +176,17 @@ body {
   z-index: 650;
 }
 
-#sideBar {
+#sideBar, #sideBar2{
   width: 20%;
   height: 100%;
   padding-bottom: 5%;
   position: fixed;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+#sideBar2{
+  display: none;
 }
 
 .sideBarContainer .sideBarHeader,
@@ -194,23 +198,23 @@ body {
   background: var(--colorPrimary400);
 }
 
-#sideBar .sideBarCloseBtn {
+.sideBarContainer .sideBarCloseBtn {
   float: right;
   transform: scale(1.5);
 }
-#sideBar .sideBarCloseBtn:hover {
+.sideBarContainer .sideBarCloseBtn:hover {
   color: #ac1818;
   cursor: pointer;
 }
 
-#sideBar .loaderIcon {
+.sideBarContainer .loaderIcon {
   /* center loader image */
   display: block;
   padding-top: 10%;
   margin: auto;
 }
 
-#sideBar .sideBarContent ul li {
+.sideBarContainer .sideBarContent ul li {
   padding: 15px 20px;
   border-bottom: 1px solid #ccc;
 }
@@ -477,36 +481,11 @@ tr {
 }
 
 .ui-autocomplete {
-  position: fixed;
-  background: inherit;
-  z-index: 6002;
+  z-index: 6002 !important;
+  position: fixed !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
   max-height: 200px;
-  /* prevent horizontal scrollbar */
-  overflow-x: hidden;
-}
-/* IE 6 doesn't support max-height
- * we use height instead, but this forces the menu to always be this tall
- */
-* html .ui-autocomplete {
-  border: 1px solid lightgray;
-  position: fixed;
-  z-index: 6002;
-  height: 200px;
-  overflow-x: hidden;
-  background: inherit;
-}
-
-.ui-autocomplete .ui-menu-item {
-  padding: 5px 10px;
-}
-
-.ui-autocomplete .ui-menu-item:hover {
-  background-color: lightblue;
-  cursor: pointer;
-}
-
-.ui-helper-hidden-accessible {
-  display: none;
 }
 
 .ui-autocomplete-loading {

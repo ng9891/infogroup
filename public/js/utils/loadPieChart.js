@@ -174,7 +174,6 @@ function loadPieChart(establishments) {
    * @param {*} searchCol Variable to distinquish which pieChart was clicked.
    */
   function filterSegment(a, searchCol) {
-    console.log(a);
     // console.log(_pie_naics.selected);
     let search = a.data.search;
     let dataTable = $('#jq_datatable').DataTable();
@@ -184,7 +183,7 @@ function loadPieChart(establishments) {
       let content = _pie_matchcd.options.data.content;
       let graph = _pie_matchcd.cssPrefix;
       grayoutSegments(graph, selected, content.length);
-      filterMap(selected, search, a.expanded, _matchcdLayers), mymap;
+      filterMap(selected, search, a.expanded, _matchcdLayers, mymap, matchCDClustermarkers);
       filterDatatable(selected, searchCol, dataTable);
     } else {
       // NAICS Pie
@@ -192,7 +191,7 @@ function loadPieChart(establishments) {
       let content = _pie_naics.options.data.content;
       let graph = _pie_naics.cssPrefix;
       grayoutSegments(graph, selected, content.length);
-      filterMap(selected, search, a.expanded, _naicsLayers, mymap);
+      filterMap(selected, search, a.expanded, _naicsLayers, mymap, naicsClustermarkers);
       filterDatatable(selected, searchCol, dataTable);
     }
   }
@@ -218,15 +217,16 @@ function loadPieChart(establishments) {
    * @param {Boolean} action of opening of closing the a segment. From the object passed as paremeter on the pieChart click event.
    * @param {Object} layerGroup Group of layers to filter with. eg. _naicsLayers or _matchcdLayers.
    * @param {Leaflet Map Object} map
+   * @param {Leaflet Cluster Object} cluster Contains all the markers of a category.
    */
-  function filterMap(selectedSegments, search, action, layerGroup, map) {
+  function filterMap(selectedSegments, search, action, layerGroup, map, cluster) {
     if (action) {
       // Closing a segment.
       if (selectedSegments.length === 0) {
         // Closing all segments
-        for (code in layerGroup) {
-          if (code !== search) map.addLayer(layerGroup[code].layer);
-        }
+        map.removeLayer(layerGroup[search].layer);
+        map.removeLayer(clusterSubgroup);
+        map.addLayer(cluster);
       } else {
         map.removeLayer(layerGroup[search].layer);
       }
@@ -237,9 +237,9 @@ function loadPieChart(establishments) {
         map.addLayer(layerGroup[search].layer);
       } else {
         // First selection
-        for (code in layerGroup) {
-          if (code !== search) map.removeLayer(layerGroup[code].layer);
-        }
+        map.removeLayer(cluster); // Removes cluster with all the markers.
+        map.addLayer(clusterSubgroup); // Add subgroup cluster to the map.
+        map.addLayer(layerGroup[search].layer); // Add layer to clusterSubgroup.
       }
     }
   }

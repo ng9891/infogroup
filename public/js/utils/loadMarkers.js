@@ -15,32 +15,27 @@
 let _matchcdLayers = {};
 let _naicsLayers = {};
 (() => {
-  let clusterOptions = {
-    spiderfyOnMaxZoom: true,
-    disableClusteringAtZoom: 20,
-    chunkedLoading: true,
-  };
   function buildNaicsLayerObj(twoDigitNaics) {
     let codes = Object.keys(twoDigitNaics);
     let tmp = {};
     for (let twoDigit of codes) {
       tmp[twoDigit] = {
-        layer: L.featureGroup.subGroup(naicsClustermarkers), // Subgroup plugin
+        layer: L.featureGroup.subGroup(clusterSubgroup), // Subgroup plugin
         markers: [],
       };
     }
     tmp[99] = {
-      layer: L.featureGroup.subGroup(naicsClustermarkers),
+      layer: L.featureGroup.subGroup(clusterSubgroup),
       markers: [],
     };
     return tmp;
   }
-  function buildMatchCDLayerObj() {
+  function buildMatchCDLayerObj(matchCDObj) {
     // let codes = Object.keys(_matchCDObj);
     let tmp = {};
-    for (let k in _matchCDObj) {
+    for (let k in matchCDObj) {
       tmp[k] = {
-        layer: L.featureGroup.subGroup(matchCDClustermarkers),
+        layer: L.featureGroup.subGroup(clusterSubgroup),
         markers: [],
       };
     }
@@ -54,7 +49,7 @@ let _naicsLayers = {};
       let lngs = [];
 
       _naicsLayers = buildNaicsLayerObj(twoDigitNaics);
-      _matchcdLayers = buildMatchCDLayerObj();
+      _matchcdLayers = buildMatchCDLayerObj(_matchCDObj);
 
       establishments = establishments.data.map((est) => {
         est.geopoint = JSON.parse(est.geopoint);
@@ -79,19 +74,11 @@ let _naicsLayers = {};
           let markerMatchCD = styleMarker(est, matchCDColor);
           _matchcdLayers[est.MATCHCD].markers.push(markerMatchCD);
           markerMatchCD.addTo(_matchcdLayers[est.MATCHCD].layer); // Add marker to subgroup
+
+          naicsClustermarkers.addLayer(markerNAICS);
+          matchCDClustermarkers.addLayer(markerMatchCD);
         }
       });
-
-      // Add markers to respective layers.
-      for (let code in _naicsLayers) {
-        _naicsLayers[code].layer.addTo(mymap); // Add subgroup to map to display.
-        _naicsLayers[code].layer.code = code;
-      }
-
-      for (let code in _matchcdLayers) {
-        _matchcdLayers[code].layer.addTo(mymap); // Add subgroup to map to display.
-        _matchcdLayers[code].layer.code = code;
-      }
 
       mymap.addLayer(naicsClustermarkers); // Show NAICS on map as default.
       // Layer control
@@ -99,13 +86,6 @@ let _naicsLayers = {};
       layerControl.addOverlay(matchCDClustermarkers, 'Establishments - MatchCD');
       // calculate the bounding Box
       bbox = [[d3.min(lats), d3.min(lngs)], [d3.max(lats), d3.max(lngs)]];
-
-      // zoom to bounds
-      //values for paddingBottomRight are weird.... need further research
-      //[1000,400]
-      // mymap.fitBounds(bbox, {
-      // 	paddingBottomRight: [1000, 400]
-      // });
 
       mymap.fitBounds(bbox);
       resolve('Map Loaded');

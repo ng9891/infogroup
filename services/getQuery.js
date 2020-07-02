@@ -154,17 +154,19 @@ module.exports = {
     `;
     return queryDB(sql, []);
   },
-  geoGetMpo: (mpo) => {
+  geoGetMpo: (mpo = null) => {
     let sql = `
       SELECT 
       mpo.mpo AS abbrv,
       mpo.mpo_name AS name,
       ST_ASGeoJSON(ST_Transform(ST_SimplifyPreserveTopology(geom, 100), 4326)) AS geom
       FROM mpo
-      WHERE UPPER(mpo.mpo) LIKE UPPER($1)
-      OR UPPER(mpo.mpo_name) LIKE UPPER($1);
+      WHERE ($1::text IS NULL OR UPPER(mpo.mpo) LIKE UPPER($1))
+      OR ($1::text IS NULL OR UPPER(mpo.mpo_name) LIKE UPPER($1));
     `;
-    return queryDB(sql, [`${decodeURIComponent(mpo)}%`]);
+    let param = null;
+    if(mpo) param = `${decodeURIComponent(mpo)}%`;
+    return queryDB(sql, [param]);
   },
   geoGetMun: (mun, munType, county, exact = 0) => {
     let params = [];

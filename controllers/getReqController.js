@@ -226,12 +226,6 @@ exports.reqGetNaics = (request, response) => {
 };
 
 exports.reqGeoGetMpo = (request, response) => {
-  if (!request.params.mpo) {
-    return response.status(400).json({
-      status: 'Error',
-      responseText: 'No MPO specified',
-    });
-  }
   getQuery
     .geoGetMpo(request.params.mpo)
     .then((data) => {

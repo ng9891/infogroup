@@ -9,7 +9,7 @@
   };
   let turfBufferPadding = 0.35; // Turf buffer is a bit inaccurate, Error is around ~0.33mi for ESPG: 4326
 
-  let bufferStyle = {color: 'green', opacity: 0.2};
+  let bufferStyle = {color: 'yellow', opacity: 0.4};
   /**
    * Gets an approximation of the radius to draw for the turf buffer. As it is not accurate for version 06/12/2020
    * @param {Float} radius 
@@ -212,10 +212,8 @@
     p.appendTo(li);
 
     if (layer.length === 0) {
-      p.empty();
-      p
-        .html(`<p style="color:red;">${deleteBtn} Geometry not found: ${type.toUpperCase()} - ${name}.</p>`)
-        .appendTo(li);
+      p.empty().remove();
+      $(`<p style="color:red;">${deleteBtn} Geometry not found: ${type.toUpperCase()} - ${name}.</p>`).appendTo(li);
     } else {
       // Create dynamically the edit buttons and buffer option depending on layer.
       let editingDiv = $(`<div class="row editLayerContainer" style="display:none;"></div>`);
@@ -446,7 +444,7 @@
     // Input box listener
     // TODO: Add query versioning.
     let query_type, query_version;
-    $('.multi-query-inputBox').on('input', () => {
+    $('.multi-query-inputBox').on('focus', function() {
       query_type = $('#multi-query-dropdown').val();
       switch (query_type) {
         case 'zip':
@@ -456,7 +454,8 @@
           window.autoComplete_url('.multi-query-inputBox', 'county', 1, autoCompleteSelectCB);
           break;
         case 'mpo':
-          window.autoComplete_url('.multi-query-inputBox', 'mpo', 1, autoCompleteSelectCB);
+          window.autoComplete_url('.multi-query-inputBox', 'mpo', 0, autoCompleteSelectCB);
+          $(this).autocomplete('search', $(this).val());
           break;
         case 'mun':
           window.autoComplete_url('.multi-query-inputBox', 'mun', 2, autoCompleteSelectCB);
@@ -485,7 +484,6 @@
       if (open) {
         $('.multi-query-addBtn').prop('disabled', true);
         $('.multi-query-inputBox').val('');
-        // Clear user drawings. // TODO: It might clear layers added to the list.
         usrMarkers.pop();
         drawnItems.clearLayers();
 
@@ -645,7 +643,6 @@
     $('.navBarSearch').hide();
     $('.leaflet-control.leaflet-bar').hide();
     if (!$('.infoContainer').hasClass('closed')) $('.infoContainer').addClass('closed');
-    // TODO: Hide current geom (?) or add the current one on the list.
     $('.leaflet-control-zoom').show();
 
     $('#sideBar .sideBarTitle').text('Multiple Search');

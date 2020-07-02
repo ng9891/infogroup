@@ -16,7 +16,7 @@ let _obj_sic_arr = [];
 function loadAutoComplete() {
   // Declare the AC on ready. Main Page
   // $('#query-search').autocomplete();
-  $('#query-search').on('input', () => {
+  $('#query-search').on('focus', function() {
     query_type = d3.select('#query-dropdown').property('value');
     switch (query_type) {
       case 'zip':
@@ -26,7 +26,8 @@ function loadAutoComplete() {
         autoComplete_url('#query-search', 'county', 1);
         break;
       case 'mpo':
-        autoComplete_url('#query-search', 'mpo', 1);
+        autoComplete_url('#query-search', 'mpo', 0);
+        $(this).autocomplete('search', $(this).val());
         break;
       case 'mun':
         autoComplete_url('#query-search', 'mun');
@@ -48,7 +49,10 @@ function loadAutoComplete() {
   // Advance search autocomplete
   autoComplete_url('#adv_CONAME', 'coname');
   autoComplete_url('#countyName', 'county', 1);
-  autoComplete_url('#mpoId', 'mpo', 1);
+  autoComplete_url('#mpoId', 'mpo', 0);
+  $('#mpoId').focus(function() {
+    $(this).autocomplete('search', $(this).val());
+  });
   autoComplete_url('#munId', 'mun');
 
   d3.json(`/api/getindustries`).then((data) => {
@@ -132,7 +136,8 @@ Expected input: a string that creates a valid API URL with the param 'column'. e
                  type: string variable to complete the URL. eg. /api/getsic/test?type='cd'
 Output: An expected list of autocompletion displayed below 'inputId' input box
 */
-function autoComplete_url(inputId, column, minlen = 2, selectCb = ()=>{}) {
+function autoComplete_url(inputId, column, minlen = 2, selectCb = () => {}) {
+  let prevGeomToShow;
   $(inputId).autocomplete({
     delay: 1000,
     minLength: minlen,
@@ -158,23 +163,44 @@ function autoComplete_url(inputId, column, minlen = 2, selectCb = ()=>{}) {
                 // County formatting
                 d.name += ' - ' + capitalizeFirstLetter(d.state_code);
               }
-              arr_data.push(`${d.name}`);
-              if (d.abbrv) arr_data.push(d.abbrv); // Abbreviation and name query AC for MPO
+              // arr_data.push(`${d.name}`);
+              arr_data.push(d);
+              // if (d.abbrv) arr_data.push(d.abbrv); // Abbreviation and name query AC for MPO
             });
-            setTimeout(() => {
-              var results = $.ui.autocomplete.filter(arr_data, input);
-              $(inputId).removeClass('.ui-autocomplete-loading ');
-              response(results.slice(0, 15));
-            }, 500);
+            $(inputId).removeClass('.ui-autocomplete-loading ');
+            response(
+              $.map(arr_data.slice(0, 30), function(obj) {
+                return {
+                  label: obj.name,
+                  value: obj.name,
+                  geom: obj.geom,
+                };
+              })
+            );
           }
         },
       });
     },
     select: selectCb,
-    messages: {
-      noResults: '',
-      results: function() {},
+    focus: function(e, ui) {
+      if (e.keyCode === 38 || e.keyCode === 40) {
+        // Focus on geom.
+        if(!ui.item.geom) return;
+        try{
+          if(prevGeomToShow) window.mymap.removeLayer(prevGeomToShow);
+          let geoJSON = JSON.parse(ui.item.geom);
+          prevGeomToShow = L.geoJSON(geoJSON);
+          window.mymap.addLayer(prevGeomToShow);
+          window.mymap.fitBounds(prevGeomToShow.getBounds(), {padding: [100, 100]});
+        }catch(e){
+          return console.log(e);
+        }
+      }
     },
+    close: function(e, ui){
+      if(!prevGeomToShow) return;
+      window.mymap.removeLayer(prevGeomToShow);
+    }
   });
 }
 
