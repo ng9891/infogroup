@@ -371,11 +371,14 @@ function moveTooltip(e) {
 }
 
 function addUsrMarker(e) {
+  drawnItems.addLayer(e.layer);
+  // If its a bounding box drawing rectangle, do nothing.
+  if(e.layer.options.kind && e.layer.options.kind === 'BBox') return;
+  
   // On drawing commit, push drawing
   usrMarkers.push(e.layer);
-  drawnItems.addLayer(e.layer);
   removeTooltip();
-  if (e.layer.options.kind && e.layer.options.kind == 'road') {
+  if (e.layer.options.kind && e.layer.options.kind === 'road') {
     // If its a road nearby query;
     e.layer.dragging.disable();
     let latlng = e.layer.getLatLng();

@@ -68,6 +68,20 @@
     }
   };
 
+  let showGeomEditSaveBtn = (containerEl) => {
+    containerEl.find('.editBtn').prop('disabled', true);
+    containerEl.find('.saveBtn').show();
+    containerEl.find('.cancelBtn').show();
+    containerEl.find('.bufferInputGroup').show();
+  };
+
+  let hideGeomEditSaveBtn = (containerEl) => {
+    containerEl.find('.saveBtn').hide();
+    containerEl.find('.cancelBtn').hide();
+    containerEl.find('.bufferInputGroup').hide();
+    containerEl.find('.editBtn').prop('disabled', false);
+  };
+
   let clearCurrentDrawing = () => {
     window.mymap.editTools.stopDrawing();
     usrMarkers.pop();
@@ -158,7 +172,7 @@
    * Helper function to get the desired geometry.
    * If it is a drawing inputType, will get the layer from usrMarkers array located in map.js
    * Returns an array of geoms.
-   * LineString returns 3 geoms to make buffering changes easier. [L.Polyline, GeoJSON of the linestring, GeoJSON of the buffer]
+   * LineString returns 3 geoms to make buffering changes easier. [L.Polyline, GeoJSON of the linestring, GeoJSON LAYER of the buffer]
    * @param {String} input 
    * @param {String} inputType 
    * @param {Leaflet Layer} inputLayer Layer to make copy on drawing layer. Not used if its an API request.
@@ -179,6 +193,18 @@
         if (!inputLayer) return reject('Invalid inputLayer');
         geom = inputLayer;
         return resolve(createLineAndBuffer(geom));
+      } else if (inputType === 'road') {
+        let geoJSON = inputLayer.toGeoJSON();
+        // Adding a type to properties to filter this geom when collecting geoms to query.
+        let feature = geoJSON.features[0];
+        feature.properties = feature.properties || {};
+        feature.properties['type'] = 'road';
+        let geom = createGeoJsonLayer(geoJSON);
+
+        let collection = turf.combine(geoJSON); // Combine the feature collection so, when creating a buffer, there is only 1 buffer.
+        let linestring = collection;
+        let buffer = createGeoJsonLayer(turf.buffer(collection, getBufferRadius(0.5), {units: 'miles'}));
+        return resolve([geom, linestring, buffer]);
       } else if (inputType === 'geoJSON') {
         geom = createGeoJsonLayer(inputLayer.toGeoJSON());
       } else {
@@ -235,13 +261,15 @@
 
       let geom = layer[0];
       li.data('geom', geom);
+      li.data('type', type);
+      li.data('name', name);
       window.multiQueryGroup.addLayer(geom);
       let id = window.multiQueryGroup.getLayerId(geom);
       let div = $(`<div class="geomInfo">${deleteBtn} ID: <b>${id}</b> | ${type.toUpperCase()} - ${name}</div>`);
       let popUpContent = `<b>ID: ${id}</b><br>Query Type: ${type.toUpperCase()}<br>Query Input: ${name}`;
       geom.bindPopup(popUpContent);
-      // Add the linestring ID to the buffer for easy reference.
-      if (IsLineString(geom)) {
+      // If it is a lineString add a buffer.
+      if (IsLineString(geom) || type === 'road') {
         let lineString = layer[1];
         let buffer = layer[2];
         buffer.refLineStringID = id;
@@ -250,7 +278,7 @@
         buffer.setStyle(bufferStyle);
         window.multiQueryGroup.addLayer(buffer);
         li.data('lineString', lineString);
-        li.data('bufferGeom', buffer);
+        li.data('bufferGeom', buffer); // References the buffer of the linestring.
         bufferBoxDiv.appendTo(editingDiv);
       }
       window.mymap.addLayer(window.multiQueryGroup);
@@ -299,6 +327,7 @@
       } else {
         if (IsLineString(layer)) continue; // Dont add linestring. Buffer of the linestring is already added to multiQueryGroup.
         geoJSON = layer.toGeoJSON();
+        if (geoJSON.features && geoJSON.features[0].properties && geoJSON.features[0].properties.type === 'road') continue; // Dont add road geom collection. Buffer is already added to multiQueryGroup.
       }
       if (!geoJSON.features) {
         geoJSON = {
@@ -347,7 +376,7 @@
    */
   let loadSideBarEventListener = () => {
     // Close sidebar listener
-    $('.sideBarCloseBtn').unbind('click').on('click', () => {
+    $('#sideBar2 .sideBarCloseBtn').unbind('click').on('click', () => {
       window._multiSearchQueryState = false;
       window.closeSideBar();
       $('.navBarSearch').show();
@@ -356,11 +385,12 @@
     });
 
     // Delete entry button listener
-    $('#sideBar').unbind('click').on('click', '.deleteEntry', function(e) {
+    $('#sideBar2').unbind('click').on('click', '.deleteEntry', function(e) {
       // Eliminate geom.
       let li = $(this).parent().parent('li');
       let geom = li.data('geom');
-      if (IsLineString(geom)) {
+      let type = li.data('type');
+      if (IsLineString(geom) || type === 'road') {
         let bufferGeom = li.data('bufferGeom');
         window.multiQueryGroup.removeLayer(bufferGeom);
       }
@@ -401,10 +431,13 @@
         let editContainer = li.find('.editLayerContainer');
         editContainer.toggleClass('open');
         editContainer.slideToggle(300);
-        if (editContainer.hasClass('open')) geometry.setStyle({color: 'red'});
-        else geometry.setStyle({color: '#3388ff'});
-        geometry.bringToFront();
-        mymap.fitBounds(geometry.getBounds(), {padding: [100, 100]});
+        if (editContainer.hasClass('open')) {
+          geometry.setStyle({color: 'red'});
+          geometry.bringToFront();
+          mymap.fitBounds(geometry.getBounds(), {padding: [100, 100]});
+        } else {
+          geometry.setStyle({color: '#3388ff'});
+        }
       });
 
     // Clear button listener
@@ -496,6 +529,16 @@
             window.mymap.editTools.startRectangle(null, drawingOptions);
           } else if (drawingType === 'line') {
             window.mymap.editTools.startPolyline(null, drawingOptions);
+          } else if (drawingType === 'road') {
+            let redIcon = new L.Icon({
+              iconUrl: '/stylesheet/images/leaflet-color-markers/marker-icon-red.png',
+              shadowUrl: '/stylesheet/images/leaflet-color-markers/marker-shadow.png',
+              iconSize: [25, 41],
+              iconAnchor: [12, 41],
+              popupAnchor: [1, -34],
+              shadowSize: [41, 41],
+            });
+            window.mymap.editTools.startMarker(null, Object.assign({kind: 'road', icon: redIcon}, drawingOptions));
           }
         }
         el.data('opened', false);
@@ -531,12 +574,20 @@
     $('.multiple-query-container').on('input', '.multi-query-list .list-group-item .bufferInput', function(e) {
       e.stopPropagation();
       let geom = $(this).closest('.geom').data('geom');
-      if (!IsLineString(geom)) return;
+      let type = $(this).closest('.geom').data('type');
+      if (!IsLineString(geom) && type !== 'road') return;
       let radius = $(this).val();
       if (!radius || radius === '0') radius = 0;
       else radius = parseFloat(radius);
 
-      let buffer = createLineAndBuffer(geom, radius)[2];
+      let buffer;
+      if (type === 'road') {
+        let linestring = $(this).closest('.geom').data('lineString');
+        buffer = createGeoJsonLayer(turf.buffer(linestring, getBufferRadius(radius), {units: 'miles'}));
+      } else {
+        buffer = createLineAndBuffer(geom, radius)[2];
+      }
+      // let buffer = createLineAndBuffer(geom, radius)[2];
       let oldBuffer = $(this).closest('.geom').data('bufferGeom');
       if (oldBuffer) window.multiQueryGroup.removeLayer(oldBuffer);
       if (buffer) {
@@ -570,7 +621,9 @@
         newEditGeom = newEditGeom[0];
         window.multiQueryGroup.addLayer(newEditGeom.setStyle({color: 'red'}));
         enableEditing(newEditGeom);
+
         $(this).closest('.geom').data('editingGeom', newEditGeom);
+        showGeomEditSaveBtn($(this).parent().parent());
       }
     });
 
@@ -578,6 +631,7 @@
     $('.multiple-query-container').on('click', '.multi-query-list .list-group-item .saveBtn', function(e) {
       e.stopPropagation();
       let editGeom = $(this).closest('.geom').data('editingGeom');
+      let type = $(this).closest('.geom').data('type');
       let geom;
       if (editGeom) {
         // Saves the edited layer as the geom.
@@ -586,7 +640,7 @@
       }
 
       // If it is linestring, create the buffer.
-      if (geom && IsLineString(geom)) {
+      if (geom && (IsLineString(geom) || type === 'road')) {
         let oldBuffer = $(this).closest('.geom').data('bufferGeom');
         window.multiQueryGroup.removeLayer(oldBuffer);
         let id = oldBuffer.refLineStringID;
@@ -594,8 +648,17 @@
         let popUpContent = `<b>ID: ${id}</b><br>Query Type: LINE<br>Query Input: ${name}`;
 
         let radius = $(this).parent().siblings('.bufferInputGroup').find('.bufferInput').val();
-        let lineAndBufferGeom = createLineAndBuffer(geom, radius); // Creates a buffer with turf. Lat and lng are inversed compared to leaflet.
-        let buffer = lineAndBufferGeom[2];
+
+        let buffer;
+        if (type === 'road') {
+          let linestring = turf.combine(geom.toGeoJSON());
+          $(this).closest('.geom').data('lineString', linestring);
+          buffer = createGeoJsonLayer(turf.buffer(linestring, getBufferRadius(radius), {units: 'miles'}));
+        } else {
+          let lineAndBufferGeom = createLineAndBuffer(geom, radius); // Creates a buffer with turf. Lat and lng are inversed compared to leaflet.
+          buffer = lineAndBufferGeom[2];
+        }
+
         buffer.setStyle(bufferStyle);
         buffer.refLineStringID = id;
         buffer.refLineStringName = name;
@@ -604,6 +667,7 @@
         $(this).closest('.geom').data('bufferGeom', buffer);
       }
       disableEditing(geom);
+      hideGeomEditSaveBtn($(this).parent().parent());
     });
 
     // Click listener for the Cancel Button in editing tab
@@ -611,13 +675,15 @@
       e.stopPropagation();
       let editGeom = $(this).closest('.geom').data('editingGeom');
       let originalGeom = $(this).closest('.geom').data('geom');
+      let type = $(this).closest('.geom').data('type');
       if (editGeom) window.multiQueryGroup.removeLayer(editGeom);
       window.multiQueryGroup.addLayer(originalGeom);
-      if (IsLineString(originalGeom)) {
+      if (IsLineString(originalGeom) || type === 'road') {
         let buffer = $(this).closest('.geom').data('bufferGeom');
         window.multiQueryGroup.addLayer(buffer);
       }
       $(this).closest('.geom').data('editingGeom', null);
+      hideGeomEditSaveBtn($(this).parent().parent());
     });
   };
 
@@ -640,14 +706,19 @@
     window.openSideBar();
 
     // Disable UI
+    window.closeRoadDescription();
+    $('#sideBar').hide();
     $('.navBarSearch').hide();
     $('.leaflet-control.leaflet-bar').hide();
     if (!$('.infoContainer').hasClass('closed')) $('.infoContainer').addClass('closed');
     $('.leaflet-control-zoom').show();
 
-    $('#sideBar .sideBarTitle').text('Multiple Search');
-    $('#sideBar .multiple-query-container').show();
-    $('#sideBar .query-result-list').hide();
+    $('#sideBar2 .sideBarTitle').text('Multiple Search');
+    $('#sideBar2 .multiple-query-container').show();
+    $('#sideBar2').show();
+
+    $('#sideBar2 .query-result-list').hide();
+
     $('.multi-query-inputBox').val('');
 
     clearUsrMarker(); // Clear user drawn items before opening the sidebar.

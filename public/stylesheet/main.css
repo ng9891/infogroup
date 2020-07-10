@@ -220,7 +220,7 @@ body {
 }
 
 #sideBar li.road.selected,
-#sideBar .multi-query-list li.geom.selected{
+#sideBar2 .multi-query-list li.geom.selected{
   background: #5cb85c;
 }
 
@@ -279,6 +279,35 @@ body {
 
 #roadDesc .btnContainer button {
   margin-bottom: 5px;
+}
+.multi-query-searchContainer{
+  padding: 10px 5px 15px 5px;
+  border-bottom: 1px solid #ccc;
+}
+
+.multi-query-search{
+  margin: 5px 0px;
+}
+
+.multi-query-btnContainer .btn.disabled, .multi-query-btnContainer .btn:disabled{
+  opacity: 0.4 !important; /*Overwrites Bootstrap disabled*/
+}
+
+#sideBar2 span.deleteEntry{
+  /* background: red; */
+  /* color:white; */
+  height: 25px;
+  width: 25px;
+  margin-right: 10px;
+  text-align: center;
+  display: none;
+  transition: 0.2s linear;
+}
+
+#sideBar2 li:hover span.deleteEntry{
+  width: 25px;
+  display: inline-block;
+  cursor: pointer;
 }
 
 .advancedSearchContainer {
@@ -603,34 +632,4 @@ tr {
   position: absolute;
   width: 4em;
   height: 100%;
-}
-
-.multi-query-searchContainer{
-  padding: 10px 5px 15px 5px;
-  border-bottom: 1px solid #ccc;
-}
-
-.multi-query-search{
-  margin: 5px 0px;
-}
-
-.multi-query-btnContainer .btn.disabled, .multi-query-btnContainer .btn:disabled{
-  opacity: 0.4 !important; /*Overwrites Bootstrap disabled*/
-}
-
-span.deleteEntry{
-  /* background: red; */
-  /* color:white; */
-  height: 25px;
-  width: 25px;
-  margin-right: 10px;
-  text-align: center;
-  display: none;
-  transition: 0.2s linear;
-}
-
-li:hover span.deleteEntry{
-  width: 25px;
-  display: inline-block;
-  cursor: pointer;
 }

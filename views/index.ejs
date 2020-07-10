@@ -23,7 +23,36 @@
           <img alt="Loading..." class="loaderIcon" src="/stylesheet/images/loader.gif">
         </div>
         <ul class="query-result-list"></ul>
+      </div>
+    </div>
+    <div id="roadDesc">
+      <div class="roadDescTitle">
+        Description<span class="backBtn" data-toggle="tooltip" data-placement="right" title="Go Back">&#11176</span>
+      </div>
+      <div id="roadDescLoader" style="display: none;">
+        <img alt="Loading..." class="loaderIcon" src="/stylesheet/images/loader.gif">
+      </div>
+      <div class="roadDescContent"></div>
+      <div class="row btnContainer">
+        <div class="col-sm-6 pr-1"><button class="btn btn-info btn-block resetRoad" data-toggle="tooltip">Reset</button></div>
+        <div class="col-sm-6 pl-1"><button class="btn btn-info btn-block displayWholeRoad" data-toggle="tooltip">Entire Road</button></div>
+        <div class="col-sm-12"><button class="btn btn-warning btn-block drawBBox" data-toggle="tooltip">Prune</button></div>
+        <div class="col-sm-6 pr-1 drawBtn" style="display:none;"><button class="btn btn-success btn-block confirmDraw" data-toggle="tooltip">Confirm</button></div>
+        <div class="col-sm-6 pl-1 drawBtn" style="display:none;"><button class="btn btn-danger btn-block cancelDraw" data-toggle="tooltip">Cancel</button></div>
 
+        <div class="col-sm-12 border-top my-2"></div>
+
+        <div class="col-sm-12 queryBtn"><button class="btn btn-primary btn-block queryRoadLinestring" data-toggle="tooltip">Query on Displayed</button></div>
+        <div class="col-sm-12 queryBtn"><button class="btn btn-primary btn-block queryRoadIDCounty" data-toggle="tooltip">Query road ID on County</button></div>
+        <div class="col-sm-12 queryBtn"><button class="btn btn-primary btn-block queryRoadID" data-toggle="tooltip">Query road ID</button></div>
+        <div class="col-sm-12 addBtn" style="display:none;"><button class="btn btn-primary btn-block addToMultiSearch" data-toggle="tooltip">Confirm Road</button></div>
+      </div>
+    </div>
+
+    <div id="sideBar2">
+      <div class="sideBarHeader"><span class="sideBarTitle">Query Result</span><span class="sideBarCloseBtn" data-toggle="tooltip" data-placement="right" title="Cancel query">×</span></div>
+      <div class="sideBarContent">
+        
         <div class="multiple-query-container">
           <div class="multi-query-searchContainer">
             <div class="input-group multi-query-search">
@@ -43,6 +72,9 @@
                     <option class="sidebar-draw" value="circle">Circle</option>
                     <option class="sidebar-draw" value="rectangle">Rectangle</option>
                     <option class="sidebar-draw" value="line">Line</option>
+                  </optgroup>
+                  <optgroup label="Road">
+                    <option class="sidebar-draw" value="road">Find a road</option>
                   </optgroup>
                 </select>
               </div>
@@ -64,16 +96,7 @@
 
       </div>
     </div>
-    <div id="roadDesc">
-      <div class="roadDescTitle">
-        Description<span class="backBtn" data-toggle="tooltip" data-placement="right" title="Go Back">&#11176</span>
-      </div>
-      <div class="roadDescContent"></div>
-      <div class="row btnContainer">
-        <div class="col-sm-12"><button class="btn btn-primary btn-block queryRoadIDCounty">Query road ID on County</button></div>
-        <div class="col-sm-12"><button class="btn btn-primary btn-block queryRoadID">Query road ID</button></div>
-      </div>
-    </div>
+
   </div>
 
   <div class='mapContainer'>

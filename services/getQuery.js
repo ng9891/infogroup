@@ -211,21 +211,17 @@ module.exports = {
       SELECT ST_ASGeoJSON(ST_Transform(geom, 4326)) as geom, gid, gis_id, dot_id, road_name, route,\
        county_name, muni_name, mpo_desc,signing, fc
       FROM roadway\n`;
-    if (roadNo === null) sql += `WHERE (route_no IS NULL)`;
-    else {
-      sql += `WHERE route_no = $1::int`;
-      params.push(roadNo);
-    }
-    sql += `  
-      AND ($${params.length + 1}::varchar(40) IS NULL OR UPPER(county_name) = UPPER($${params.length + 1}))
-      AND ($${params.length + 2}::varchar(10) IS NULL OR signing = UPPER($${params.length + 2}))
-      AND ($${params.length + 3}::int IS NULL OR dot_id = $${params.length + 3})
-      AND (NULLIF($${params.length + 4}, '')::varchar(40) IS NULL OR UPPER(muni_name) = UPPER($${params.length + 4}))
-      AND (NULLIF($${params.length + 5}, '')::varchar(40) IS NULL OR UPPER(mpo_desc) = UPPER($${params.length + 5}))
-      OFFSET $${params.length + 6}
-      LIMIT $${params.length + 7}
+    sql += `
+      WHERE ($${params.length + 1}::int IS NULL OR route_no = $${params.length + 1}::int)
+      AND ($${params.length + 2}::varchar(40) IS NULL OR UPPER(county_name) = UPPER($${params.length + 2}))
+      AND ($${params.length + 3}::varchar(10) IS NULL OR signing = UPPER($${params.length + 3}))
+      AND ($${params.length + 4}::int IS NULL OR dot_id = $${params.length + 4})
+      AND (NULLIF($${params.length + 5}, '')::varchar(40) IS NULL OR UPPER(muni_name) = UPPER($${params.length + 5}))
+      AND (NULLIF($${params.length + 6}, '')::varchar(40) IS NULL OR UPPER(mpo_desc) = UPPER($${params.length + 6}))
+      OFFSET $${params.length + 7}
+      LIMIT $${params.length + 8}
     ;`;
-    params.push(county, signing, roadId, mun, mpo, offset, limit);
+    params.push(roadNo, county, signing, roadId, mun, mpo, offset, limit);
     return queryDB(sql, params);
   },
   getSalesVolumeList: () => {
