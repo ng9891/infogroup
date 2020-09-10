@@ -1062,7 +1062,7 @@ var labels = {
 		// fade in the labels when the load effect is complete - or immediately if there's no load effect
 		var loadSpeed = (pie.options.effects.load.effect === "default") ? pie.options.effects.load.speed : 1;
 		setTimeout(function() {
-			var labelFadeInTime = (pie.options.effects.load.effect === "default") ? 400 : 1; // 400 is hardcoded for the present
+			var labelFadeInTime = (pie.options.effects.load.effect === "default") ? 50 : 1; // 400 is hardcoded for the present
 
 			d3.selectAll("." + pie.cssPrefix + "labelGroup-outer")
 				.transition()

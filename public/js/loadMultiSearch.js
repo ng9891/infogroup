@@ -472,6 +472,14 @@
       };
       queryLayer.push(createGeoJsonLayer(jsonToQuery).setStyle(layerStyle));
       queryOverlay(jsonToQuery);
+
+      // Save query data for export purposes
+      let queryList = $('.multi-query-list').children('li');
+      let tmp = [];
+      for(let query of queryList){
+        tmp.push($(query).data());
+      }
+      $('.multi-query-list').data('queryList', tmp);
     });
 
     // Input box listener

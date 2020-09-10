@@ -150,7 +150,7 @@ function loadPieChart(establishments) {
           size: 8,
         },
         load: {
-          speed: 350,
+          speed: 300,
         },
       },
       misc: {
@@ -185,6 +185,7 @@ function loadPieChart(establishments) {
       grayoutSegments(graph, selected, content.length);
       filterMap(selected, search, a.expanded, _matchcdLayers, mymap, matchCDClustermarkers);
       filterDatatable(selected, searchCol, dataTable);
+      filterHistogram(dataTable);
     } else {
       // NAICS Pie
       let selected = _pie_naics.getOpenSegments();
@@ -193,7 +194,19 @@ function loadPieChart(establishments) {
       grayoutSegments(graph, selected, content.length);
       filterMap(selected, search, a.expanded, _naicsLayers, mymap, naicsClustermarkers);
       filterDatatable(selected, searchCol, dataTable);
+      filterHistogram(dataTable);
     }
+  }
+
+    /**
+   * Helper function to filter the histrogram and cards when a pie segment is clicked.
+   * @param {Datatable Object} dt Datatable
+   */
+  function filterHistogram(dt) {
+    let data = {
+      data: dt.rows({ search: 'applied' }).data(),
+    }
+    loadHistogram(data);
   }
   /**
    * Helper function to filter datable when a pie segment is clicked.

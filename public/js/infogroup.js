@@ -126,8 +126,10 @@ $(document).ready(function() {
     if ($('.togglePieBtn').text() === 'MatchCD') {
       let selectedSegments = _pie_naics.getOpenSegments();
       // Add back the removed layers when pie segments are selected for filtering.
-      if (selectedSegments && selectedSegments.length > 0) removeFilterOnMap(mymap, _naicsLayers);
-
+      if (selectedSegments && selectedSegments.length > 0){
+        removeFilterOnMap(mymap, _naicsLayers, _pie_naics);
+        _pie_naics.redraw();
+      }
       $('.infoContainer #pieChart').css('display', 'none');
       $('.infoContainer #pieChartMatchCD').css('display', 'block');
       $('.togglePieBtn').text('NAICS');
@@ -140,8 +142,10 @@ $(document).ready(function() {
     } else {
       let selectedSegments = _pie_matchcd.getOpenSegments();
       // Add back the removed layers when pie segments are selected for filtering.
-      if (selectedSegments && selectedSegments.length > 0) removeFilterOnMap(mymap, _matchcdLayers);
-
+      if (selectedSegments && selectedSegments.length > 0){
+        removeFilterOnMap(mymap, _matchcdLayers);
+        _pie_matchcd.redraw()
+      }
       $('.infoContainer #pieChartMatchCD').css('display', 'none');
       $('.infoContainer #pieChart').css('display', 'block');
       $('.togglePieBtn').text('MatchCD');
