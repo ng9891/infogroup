@@ -12,7 +12,7 @@
 <body>
   <%include ./partials/nav.ejs %>
   <%if(localUser){%>
-  <input class="role" type="hidden" value="<%=localUser.isadmin || true%>" />
+  <input class="role" type="hidden" value="<%=localUser.authLevel%>" />
   <%}%>
   <div class="loader"></div>
   <div class="sideBarContainer">
@@ -103,7 +103,7 @@
       <div id="mapid"></div>
       <div id="map-draw-tooltip"></div>
   </div>
-  <%if(localUser && (localUser.isadmin || true)){%>
+  <%if(localUser && (localUser.authLevel === 5 || localUser.authLevel === 10) || localUser.authLevel === 3){%>
   <%include ./partials/editModal/editModal.ejs %>
   <%}else{%>
   <%include ./partials/editModal/editModalView.ejs %>

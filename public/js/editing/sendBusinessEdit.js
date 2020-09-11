@@ -123,6 +123,12 @@ function parseFormInput(val) {
   }
   return val;
 }
+// Helper function that helps converting million into thousands for range checking
+function convertToThousandFromMillion(input) {
+  if (!input) return null;
+  if (isNaN(input)) return null;
+  return parseFloat(input) * 1000;
+}
 function parseFormInput_salesVol(val) {
   if (isFormInputEmpty(val)) return null;
   if (isNaN(val)) return null;

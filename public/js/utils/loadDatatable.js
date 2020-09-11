@@ -11,7 +11,8 @@ function loadDatatable(est) {
         },
       };
 
-      const isAdmin = d3.select('.role').node().value;
+      const authLevel = d3.select('.role').node().value;
+      
       let table = $('#jq_datatable').DataTable({
         buttons: [
           'expand',
@@ -65,7 +66,7 @@ function loadDatatable(est) {
             data: null,
             render: function(data, type, row) {
               if (type === 'display') {
-                if (isAdmin === 'false') {
+                if (authLevel === 'false') {
                   return 'Yes';
                 }
                 data =
@@ -87,7 +88,7 @@ function loadDatatable(est) {
             render: function() {
               let name = 'Edit';
               let className = 'btn btn-success btn-xs';
-              if (isAdmin === 'false') {
+              if (authLevel === '0') {
                 name = 'View';
                 className = 'btn btn-primary btn-xs';
               }
@@ -151,7 +152,7 @@ function loadDatatable(est) {
         responsive: true,
       });
 
-      if (isAdmin === 'false') {
+      if (authLevel === 'false') {
         table.column(5).visible(false);
       }
       // Edit button event listener

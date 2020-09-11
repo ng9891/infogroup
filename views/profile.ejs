@@ -7,13 +7,16 @@
 
 <body>
   <%include ./partials/nav.ejs %>
+  <%if(localUser){%>
+    <input class="role" type="hidden" value="<%=localUser.authLevel%>" />
+  <%}%>
   <div class='container mainContainer'>
     <div class="row justify-content-center">
       <div class="col-md-12 text-center">
         <h4>USER: <%-user%> </h4>
       </div>
-      <div class="col-md-12">
-        <table id="submittedTable" class="display"></table>
+      <div class="tableContainer col-md-12">
+        <table id="submittedTable" class="display nowrap" style="width:100%"></table>
       </div>
     </div>
   </div>

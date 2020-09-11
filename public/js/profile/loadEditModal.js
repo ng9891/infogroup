@@ -90,7 +90,7 @@
     }, function(err) {
       console.log(err);
     });
-  };
+  }
 
   function loadDropdown() {
     d3.json(`/api/getsalesvolume`).then((data) => {
@@ -98,19 +98,19 @@
     }, function(err) {
       console.log(err);
     });
-  
+
     d3.json(`/api/getempsize`).then((data) => {
       loadDropdown_EmpSize(data); //function in file
     }, function(err) {
       console.log(err);
     });
-  
+
     d3.json(`/api/getsqfoot`).then((data) => {
       loadDropdown_SqFoot(data); //function in file
     }, function(err) {
       console.log(err);
     });
-  
+
     loadDropdown_MatchCD();
 
     function loadDropdown_SalesVolume(input) {
@@ -124,7 +124,7 @@
             return `<li value=${est.LSALVOLCD}><a class='dropdown-item' href='#'>${est.LSALVOLCD} - ${est.LSALVOLDS}</a></li>`;
         })
         .join('');
-    
+
       if (modal_corpSalesVol_dropdown[0]) {
         modal_corpSalesVol_dropdown[0].innerHTML = list;
       }
@@ -133,7 +133,7 @@
         modal_salesVol_dropdown[0].innerHTML = list;
       }
     }
-    
+
     function loadDropdown_EmpSize(input) {
       // Edit Modal
       let modal_empSZ_dropdown = $('#modal_LEMPSZCD');
@@ -147,7 +147,7 @@
           .join('');
       }
     }
-    
+
     function loadDropdown_SqFoot(input) {
       // Edit Modal
       let modal_SQFoot_dropdown = $('#modal_SQFOOTCD');
@@ -161,24 +161,24 @@
           .join('');
       }
     }
-    
-    function loadDropdown_MatchCD(){
+
+    function loadDropdown_MatchCD() {
       let matchCDObj = {
-        '2':'ZIP2',
-        '4':'ZIP4',
+        '2': 'ZIP2',
+        '4': 'ZIP4',
         X: 'ZIP',
         '0': 'EXACT',
         P: 'PARCEL',
         NULL: 'UNKNOWN',
-      }
-    
+      };
+
       let modal_matchCD_dropdown = $('#modal_MATCHCD');
       if (modal_matchCD_dropdown[0]) {
         modal_matchCD_dropdown.empty();
-    
+
         let html = '';
-        for(key in matchCDObj){
-          html += `<li value=${key}><a class='dropdown-item' href='#'>${matchCDObj[key]}</a></li>`
+        for (key in matchCDObj) {
+          html += `<li value=${key}><a class='dropdown-item' href='#'>${matchCDObj[key]}</a></li>`;
         }
         modal_matchCD_dropdown[0].innerHTML = html;
       }
@@ -190,7 +190,7 @@
 
     loadEditModalAutocomplete();
     loadDropdown();
-
+    
     let reqURL = '/api/byid/' + business_id + '?v=' + version;
     d3.json(reqURL).then((data) => {
       if (data.data.length === 0) {
@@ -247,7 +247,6 @@
       );
 
       loadEditModal_eventListeners();
-      $('#editModal .modal_location_edit_container .locate_addr').parent().hide();
     }, function(err) {
       alert('Query Error on ID');
       console.log(err);
@@ -307,7 +306,6 @@
       $('#modal_LEMPSZDS').val(chosen_LEMPSZDS);
       // Check the range for actual employment size
       checkRangeEmply(chosen_LEMPSZDS);
-      console.log('hello');
     });
 
     $('#modal_SQFOOTCD li').unbind('click').click(function() {

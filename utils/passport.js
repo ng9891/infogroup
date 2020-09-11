@@ -7,16 +7,19 @@ const passport = require('passport'),
 passport.use(
   new LocalStrategy({usernameField: 'email'}, (email, password, done) => {
     const HOST = 'https://availauth.availabs.org/';
+    // 'utrc_infogroup'
+    // 'NPMRDS'
     fetch(`${HOST}login/`, {
       method: 'POST',
       headers: {
         Accept: 'application/json, text/plain, odata=verbose, */*',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({email: email, password: password, project: 'NPMRDS', token: null}),
+      body: JSON.stringify({email: email, password: password, project: 'utrc_infogroup', token: null}),
     })
       .then((response) => response.json())
       .then((json) => {
+        // console.log(json)
         if (json && JSON.stringify(json.error))
           return done(false, false, {message: json.error, error: 'not authenticated'});
 

@@ -1,7 +1,7 @@
 const router = require('express').Router();
-const {isLoggedIn, secureAPI} = require('../middleware/middleware.js');
+const {isLoggedIn, secureAPI, isEditUser, isAdmin} = require('../middleware/middleware.js');
 
-router.use(secureAPI);
+router.use(isLoggedIn);
 
 let editCtrl = require('../controllers/editController');
 
@@ -10,23 +10,26 @@ let editCtrl = require('../controllers/editController');
 //   // Get page to edit data for a business.
 // });
 
-router.get('/datatable', editCtrl.reqEditListDatatable);
-router.get('/', editCtrl.reqEditPage);
-router.get('/list', editCtrl.reqEditList);
+router.get('/datatable', isAdmin, editCtrl.reqEditListDatatable);
+router.get('/', isAdmin, editCtrl.reqEditPage);
+router.get('/list', isAdmin, editCtrl.reqEditList);
 
 // Get business log by id.
-router.get('/:edit_id', editCtrl.reqEditListById);
-router.put('/:edit_id/accept', editCtrl.reqAcceptEdit);
-router.put('/:edit_id/reject', editCtrl.reqRejectEdit);
-router.put('/:edit_id/withdraw', editCtrl.reqWithdrawEdit);
+router.get('/:edit_id', isAdmin, editCtrl.reqEditListById);
+router.put('/:edit_id/accept', isAdmin, editCtrl.reqAcceptEdit);
+router.put('/:edit_id/reject', isAdmin, editCtrl.reqRejectEdit);
+
+router.get('/business/:bus_id', isAdmin, editCtrl.reqEditListByBusId);
 /*
 WITHDRAWN
 REPLACED
 RETIRED
 */
 
-router.get('/business/:bus_id', editCtrl.reqEditListByBusId);
-router.post('/business/:bus_id', editCtrl.reqProposeBusinessChange);
+router.post('/business/:bus_id', isEditUser, editCtrl.reqProposeBusinessChange);
+
 router.get('/user/:user_id', editCtrl.reqEditListByUserId);
+// TODO: Check if same user that submitted
+router.put('/:edit_id/withdraw', isEditUser, editCtrl.reqWithdrawEdit);
 
 module.exports = router;

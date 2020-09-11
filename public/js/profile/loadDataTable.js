@@ -1,11 +1,14 @@
 (() => {
   let renderButton = (data) => {
+    const authLevel = d3.select('.role').node().value;
+    if(authLevel === '0') return '';
     let html = '';
     let withdrawBtn = `<button class="btn btn-warning withdraw" type="button">Withdraw</button>`;
-    let proposeBtn = `<button class="btn btn-primary resubmit" type="button">Propose Again</button>`;
+    let proposeBtn = `<button class="btn btn-primary resubmit" type="button">New Edit</button>`;
     switch (data.type) {
       case 'NEW':
         html = `${withdrawBtn} ${proposeBtn}`;
+        // html = `${withdrawBtn}`;
         break;
       case 'REJECTED':
         html = proposeBtn;
@@ -23,7 +26,6 @@
   loadDatatable = (data) => {
     let dataTableSetting = {
       pageLength: 10,
-      responsive: true,
       data: data,
       columns: [
         {
@@ -79,6 +81,7 @@
           targets: [7, 8],
         },
       ],
+      responsive: true,
       order: [[4, 'desc']],
       searching: false,
       lengthChange: false,
@@ -86,6 +89,10 @@
       paging: true,
       pagingType: 'full_numbers',
       scrollX: true,
+      // autoWidth: true,
+      initComplete: function() {
+        $('#submittedTable').DataTable().columns.adjust().draw().responsive.recalc();
+      },
     };
 
     window.dataTable = $('#submittedTable').DataTable(dataTableSetting);

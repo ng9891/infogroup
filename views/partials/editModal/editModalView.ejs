@@ -1,228 +1,234 @@
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header pt-reduced pb-reduced">
-          <div class="modal-title pt-reduced pb-reduced" id="modal_title">MODAL TITLE PLACEHOLDER</div>
-          <a href="#" class="ml-3 mt-2" id="modal_expand" onclick="modalExpand()">Expand</a>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <form id="modal-form" novalidate>
-            <div class="modal_location_edit_container mb-2">
-              <div class="header">Address</div>
-              <div class="content">
-                <div class="form-row">
-                  <div class="form-group col-sm-6">
-                    <label for="modal_PRMADDR">PRM ADDR</label>
-                    <input type="text" class="form-control" id="modal_PRMADDR" disabled>
-                    <div class="invalid-feedback">
-                      Please provide a valid PRM ADDR.
-                    </div>
-                  </div>
-                  <div class="form-group col-sm-6">
-                    <label for="modal_PRMCITY">PRM CITY</label>
-                    <input type="text" class="form-control" id="modal_PRMCITY" disabled>
-                    <div class="invalid-feedback">
-                      Please provide a valid PRM CITY.
-                    </div>
-                  </div>
-                </div>
-                <div class="form-row">
-                  <div class="form-group col-sm-2">
-                    <label for="modal_PRMSTATE">STATE</label>
-                    <input type="text" class="form-control" id="modal_PRMSTATE" disabled>
-                    <div class="invalid-feedback">
-                      Please provide a valid STATE.
-                    </div>
-                  </div>
-                  <div class="form-group col-sm-3">
-                    <label for="modal_PRMZIP">ZIP</label>
-                    <input type="text" class="form-control" id="modal_PRMZIP" pattern="[0-9]*" disabled>
-                    <div class="invalid-feedback">
-                      Please provide a valid ZIP.
-                    </div>
-                  </div>
-                  <div class="form-group col-sm-2">
-                    <label for="modal_PRMZIP">LAT</label>
-                    <input type="text" class="form-control" id="modal_LATITUDE" disabled>
-                    <div class="invalid-feedback">
-                      Please provide a valid latitude.
-                    </div>
-                  </div>
-                  <div class="form-group col-sm-2">
-                    <label for="modal_PRMZIP">LON</label>
-                    <input type="text" class="form-control" id="modal_LONGITUDE" disabled>
-                    <div class="invalid-feedback">
-                      Please provide a valid latitude.
-                    </div>
-                  </div>
-                  <div class="form-group col-sm-3">
-                    <label for="modal_MATCHCD">MATCH LEVEL CODE</label>
-                    <div class="dropdown">
-                      <button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_MATCHCD_button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
-                        NULL
-                      </button>
-                      <ul class="dropdown-menu" id="modal_MATCHCD"></ul>
-                    </div>
-                  </div>
-                  <div class="form-group col-sm-5">
-                    <p><a href="#" class="locate_addr">Locate on Map</a> | 
-                      <a href="#" class="geocode_addr">Geocode Address</a>
-                    </p>
-                  </div>
-                </div>
-                <div class="form-row" id="modal_newaddress_container">
-                  <div class="col-sm-12 checkbox" id="modal_newaddress">
-                    <!-- Here will appear a checkbox with new address after pressing "Check" 
-                      Just for showing to user and checking that it is correct -->
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="col-sm-6 mb-2">
-                <label for="modal_alias">ALIAS</label>
-                <input type="text" class="form-control" id="modal_alias" disabled>
-                <div class="invalid-feedback">
-                  Invalid Alias
-                </div>
-              </div>
-              <div class="col-sm-6 mb-2">
-                <label for="modal_CONAME">Company name</label>
-                <input type="text" class="form-control" id="modal_CONAME" disabled>
-                <div class="invalid-feedback">
-                  Invalid Company name Code.
-                </div>
-              </div>
-              <div class="col-sm-3 mb-3">
-                <label for="modal_LEMPSZCD">EMP SIZE CODE</label>
-                <div class="dropdown">
-                  <button class="btn btn-block btn-secondary" type="button" id="modal_LEMPSZCD_button"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
-                    EMP SIZE
-                  </button>
-                  <!-- <ul class="dropdown-menu" id="modal_LEMPSZCD"></ul> -->
-                </div>
-              </div>
-              <div class="col-sm-9 mb-1">
-                <label for="modal_LEMPSZDS">EMP SIZE DESC </label>
-                <input type="text" class="form-control" id="modal_LEMPSZDS" disabled>
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="input-group col-sm-12">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">Actual Employment Size</span>
-                </div>
-                <input type="text" class="form-control" id="modal_ALEMPSZ" pattern="[0-9]*" disabled>
-                <div class="invalid-feedback">
-                  Please provide a valid Employment Size.
-                </div>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="col-sm-3 mb-2">
-                <label for="modal_NAICSCD">NAICS CODE</label>
-                <input type="text" class="form-control" id="modal_NAICSCD" pattern="[0-9]*" disabled>
-                <div class="invalid-feedback">
-                  Invalid NAICS Code.
-                </div>
-              </div>
-              <div class="col-sm-9 mb-2">
-                <label for="modal_NAICSDS">NAICS DESC</label>
-                <input type="text" class="form-control" id="modal_NAICSDS" disabled>
-                <div class="invalid-feedback">
-                  Please provide a valid NAICS Description.
-                </div>
-              </div>
-              <div class="col-sm-3 mb-2">
-                <label for="modal_PRMSICCD">PRIMARY SIC CODE</label>
-                <input type="text" class="form-control" id="modal_PRMSICCD" pattern="[0-9]*" disabled>
-                <div class="invalid-feedback">
-                  Invalid SIC Code.
-                </div>
-              </div>
-              <div class="col-sm-9 mb-2">
-                <label for="modal_PRMSICDS">PRIMARY SIC DESC</label>
-                <input type="text" class="form-control" id="modal_PRMSICDS" disabled>
-                <div class="invalid-feedback">
-                  Please provide a valid SIC Description.
-                </div>
-              </div>
-              <div class="col-sm-3 mb-2">
-                <label for="modal_SQFOOTCD">SQF CODE</label>
-                <div class="dropdown">
-                  <button class="btn btn-block btn-secondary" type="button" id="modal_SQFOOTCD_button"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
-                    SQF CODE
-                  </button>
-                  <!-- <ul class="dropdown-menu" id="modal_SQFOOTCD"></ul> -->
-                </div>
-              </div>
-              <div class="col-sm-9 mb-2">
-                <label for="modal_SQFOOTDS">SQF DESC</label>
-                <input type="text" class="form-control" id="modal_SQFOOTDS" disabled>
-              </div>
-              <div class="col-sm-3 mb-1">
-                <label for="modal_LSALVOLCD">LSALVOLCD</label>
-                <div class="dropdown">
-                  <button class="btn btn-block btn-secondary" type="button" id="modal_LSALVOLCD_button"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
-                    Sales Volume
-                  </button>
-                  <!-- <ul class="dropdown-menu" id="modal_LSALVOLCD"></ul> -->
-                </div>
-              </div>
-              <div class="col-sm-9 mb-1">
-                <label for="modal_LSALVOLDS">LSALVOLDS</label>
-                <input type="text" class="form-control" id="modal_LSALVOLDS" disabled>
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="input-group col-sm-12">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">Actual Sales Volume (in Millions)</span>
-                </div>
-                <input type="text" class="form-control" id="modal_ALSLSVOL" pattern="[0-9]+([,.][0-9]+)?" disabled>
-                <div class="invalid-feedback"></div>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="col-sm-4 mb-1">
-                <label for="modal_LSALVOLCD">CSALVOLCD</label>
-                <div class="dropdown">
-                  <button class="btn btn-block btn-secondary" type="button" id="modal_CSALVOLCD_button"
-                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
-                    Corporate Sales Volume
-                  </button>
-                  <!-- <ul class="dropdown-menu" id="modal_CSALVOLCD"></ul> -->
-                </div>
-              </div>
-              <div class="col-sm-8 mb-1">
-                <label for="modal_CSALVOLDS">CSALVOLDS</label>
-                <input type="text" class="form-control" id="modal_CSALVOLDS" disabled>
-              </div>
-            </div>
-            <div class="form-group row">
-              <div class="input-group col-sm-12">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">Actual Corporate Sales Volume (in Millions)</span>
-                </div>
-                <input type="text" class="form-control" id="modal_ACSLSVOL" pattern="[0-9]+([,.][0-9]+)?" disabled>
-                <div class="invalid-feedback"></div>
-              </div>
-            </div>
-          </form>
-        </div>
-        <!--end of modal body-->
-        <div class="modal-footer">
-          <button id="byemodal" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header pt-reduced pb-reduced">
+        <div class="modal-title pt-reduced pb-reduced" id="modal_title">MODAL TITLE PLACEHOLDER</div>
+        <span class="ml-auto modal_expand_container">
+            <a href="#" class="btn btn-warning modal_expand">Expand</a>
+        </span>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <!--end of modal-content-->
+      <div class="modal-body">
+        <form id="modal-form" novalidate>
+          <div class="modal_location_edit_container mb-4">
+            <div class="header">Address</div>
+            <div class="content">
+              <div class="form-row">
+                <div class="form-group col-sm-6">
+                  <label for="modal_PRMADDR">ADDRESS</label>
+                  <input type="text" class="form-control" id="modal_PRMADDR" required disabled>
+                  <div class="invalid-feedback">
+                    Please provide a valid ADDRESS.
+                  </div>
+                </div>
+                <div class="form-group col-sm-6">
+                  <label for="modal_PRMCITY">CITY</label>
+                  <input type="text" class="form-control" id="modal_PRMCITY" required disabled>
+                  <div class="invalid-feedback">
+                    Please provide a valid CITY.
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-sm-2">
+                  <label for="modal_PRMSTATE">STATE</label>
+                  <input type="text" class="form-control" id="modal_PRMSTATE" required disabled>
+                  <div class="invalid-feedback">
+                    Please provide a valid STATE.
+                  </div>
+                </div>
+                <div class="form-group col-sm-3">
+                  <label for="modal_PRMZIP">ZIP</label>
+                  <input type="text" class="form-control" id="modal_PRMZIP" pattern="^\d{5}(?:[-\s]\d{4})?$" required disabled>
+                  <div class="invalid-feedback">
+                    Please provide a valid ZIP.
+                  </div>
+                </div>
+                <div class="form-group col-sm-2">
+                  <label for="modal_PRMZIP">LAT</label>
+                  <input type="text" class="form-control" id="modal_LATITUDE" required disabled>
+                  <div class="invalid-feedback">
+                    Please provide a valid latitude.
+                  </div>
+                </div>
+                <div class="form-group col-sm-2">
+                  <label for="modal_PRMZIP">LON</label>
+                  <input type="text" class="form-control" id="modal_LONGITUDE" required disabled>
+                  <div class="invalid-feedback">
+                    Please provide a valid latitude.
+                  </div>
+                </div>
+                <div class="form-group col-sm-3">
+                  <label for="modal_MATCHCD">MATCH LEVEL CODE</label>
+                  <div class="dropdown">
+                    <button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_MATCHCD_button"
+                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
+                      NULL
+                    </button>
+                    <ul class="dropdown-menu" id="modal_MATCHCD"></ul>
+                  </div>
+                </div>
+                <div class="form-group col-sm-5">    
+                  <a href="#" class="locate_addr">Locate on Map</a> 
+                </div>
+              </div>
+              <span class="newaddress_loading" style="display:none">
+                <img alt="Loading..." src="/stylesheet/images/ui-anim_basic_16x16.gif">
+              </span>
+              <div class="form-row" id="modal_newaddress_container" style="display:none">
+                <select class="form-control form-control-sm" id="modal_newaddress"></select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-sm-6 mb-2">
+              <label for="modal_alias">ALIAS</label>
+              <input type="text" class="form-control" id="modal_alias" required disabled>
+              <div class="invalid-feedback">
+                Invalid Alias
+              </div>
+            </div>
+            <div class="col-sm-6 mb-2">
+              <label for="modal_CONAME">Company name</label>
+              <input type="text" class="form-control" id="modal_CONAME" disabled>
+              <div class="invalid-feedback">
+                Invalid Company name Code.
+              </div>
+            </div>
+            <div class="col-sm-3 mb-3">
+              <label for="modal_LEMPSZCD">EMP SIZE CODE</label>
+              <div class="dropdown">
+                <button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_LEMPSZCD_button"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
+                  EMP SIZE
+                </button>
+                <ul class="dropdown-menu" id="modal_LEMPSZCD"></ul>
+              </div>
+            </div>
+            <div class="col-sm-9 mb-1">
+              <label for="modal_LEMPSZDS">EMP SIZE DESC </label>
+              <input type="text" class="form-control" id="modal_LEMPSZDS" disabled>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="input-group col-sm-12">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Actual Employment Size</span>
+              </div>
+              <input type="text" class="form-control" id="modal_ALEMPSZ" pattern="[0-9]*" disabled>
+              <div class="invalid-feedback">
+                Please provide a valid Employment Size.
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-sm-3 mb-2">
+              <label for="modal_NAICSCD">NAICS CODE</label>
+              <input type="text" class="form-control" id="modal_NAICSCD" pattern="[0-9]*" required disabled>
+              <div class="invalid-feedback">
+                Invalid NAICS Code.
+              </div>
+            </div>
+            <div class="col-sm-9 mb-2">
+              <label for="modal_NAICSDS">NAICS DESC</label>
+              <input type="text" class="form-control" id="modal_NAICSDS" required disabled>
+              <div class="invalid-feedback">
+                Please provide a valid NAICS Description.
+              </div>
+            </div>
+            <div class="col-sm-3 mb-2">
+              <label for="modal_PRMSICCD">PRIMARY SIC CODE</label>
+              <input type="text" class="form-control" id="modal_PRMSICCD" pattern="[0-9]*" required disabled>
+              <div class="invalid-feedback">
+                Invalid SIC Code.
+              </div>
+            </div>
+            <div class="col-sm-9 mb-2">
+              <label for="modal_PRMSICDS">PRIMARY SIC DESC</label>
+              <input type="text" class="form-control" id="modal_PRMSICDS" disabled>
+              <div class="invalid-feedback">
+                Please provide a valid SIC Description.
+              </div>
+            </div>
+            <div class="col-sm-3 mb-2">
+              <label for="modal_SQFOOTCD">SQF CODE</label>
+              <div class="dropdown">
+                <button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_SQFOOTCD_button"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
+                  SQF CODE
+                </button>
+                <ul class="dropdown-menu" id="modal_SQFOOTCD"></ul>
+              </div>
+            </div>
+            <div class="col-sm-9 mb-2">
+              <label for="modal_SQFOOTDS">SQF DESC</label>
+              <input type="text" class="form-control" id="modal_SQFOOTDS" disabled>
+            </div>
+            <div class="col-sm-3 mb-1">
+              <label for="modal_LSALVOLCD">LSALVOLCD</label>
+              <div class="dropdown">
+                <button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_LSALVOLCD_button"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
+                  Sales Volume
+                </button>
+                <ul class="dropdown-menu" id="modal_LSALVOLCD" disabled></ul>
+              </div>
+            </div>
+            <div class="col-sm-9 mb-1">
+              <label for="modal_LSALVOLDS">LSALVOLDS</label>
+              <input type="text" class="form-control" id="modal_LSALVOLDS" disabled>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="input-group col-sm-12">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Actual Sales Volume (in Millions)</span>
+              </div>
+              <input type="text" class="form-control" id="modal_ALSLSVOL" pattern="[0-9]+([,.][0-9]+)?" disabled>
+              <div class="invalid-feedback"></div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-sm-4 mb-1">
+              <label for="modal_LSALVOLCD">CSALVOLCD</label>
+              <div class="dropdown">
+                <button class="btn btn-block btn-secondary dropdown-toggle" type="button" id="modal_CSALVOLCD_button"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
+                  Corporate Sales Volume
+                </button>
+                <ul class="dropdown-menu" id="modal_CSALVOLCD" disabled></ul>
+              </div>
+            </div>
+            <div class="col-sm-8 mb-1">
+              <label for="modal_CSALVOLDS">CSALVOLDS</label>
+              <input type="text" class="form-control" id="modal_CSALVOLDS" disabled>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="input-group col-sm-12">
+              <div class="input-group-prepend">
+                <span class="input-group-text">Actual Corporate Sales Volume (in Millions)</span>
+              </div>
+              <input type="text" class="form-control" id="modal_ACSLSVOL" pattern="[0-9]+([,.][0-9]+)?" disabled>
+              <div class="invalid-feedback"></div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-12">
+              <label for="modal_comment">Comments</label>
+              <textarea class="form-control" rows="1" id="modal_comment" disabled></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+      <!--end of modal body-->
+      <div class="modal-footer">
+        <button id="byemodal" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
     </div>
+    <!--end of modal-content-->
   </div>
+</div>
