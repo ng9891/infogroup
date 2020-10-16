@@ -17,9 +17,10 @@
     let option = {method: 'GET'};
     let savedOverlay = queryLayer[queryLayer.length - 1]; // Variable to hold current query layer.
     let reqURL, overlayURL, searchInfo, searchValue;
-    if (queryType === 'zip' || queryType === 'mpo' || queryType === 'region') {
+    if (queryType === 'zip' || queryType === 'mpo' || queryType === 'region' || queryType === 'infoid') {
       reqURL = `/api/by${queryType}/${queryInput}?`;
       overlayURL = `/api/get${queryType}/${queryInput}?&limit=1`;
+      if (queryType === 'infoid') overlayURL = '';
       searchInfo = queryType.toUpperCase();
       searchValue = queryInput;
     } else if (queryType === 'county') {
@@ -69,9 +70,6 @@
     if (!reqURL) return alert(`Error in URL. ${searchInfo}`);
     // Add versioning.
     reqURL += `&v=${version}`;
-    // console.log(reqURL, option);
-    // reqURL = encodeURI(reqURL);
-    // overlayURL = encodeURI(overlayURL);
     clearUiComponents(queryType);
     d3.select('.loader').classed('hidden', false);
     fetch(reqURL, option)
@@ -107,29 +105,6 @@
         alert(e);
         return console.log(e);
       });
-
-    // d3
-    //   .json(reqURL, option)
-    //   .then(async (data) => {
-    //     if (data.data.length === 0) {
-    //       await loadOverlay(data, overlayURL, savedOverlay);
-    //       d3.select('.loader').classed('hidden', true);
-    //       if (queryType === 'adv') {
-    //         $('.advancedSearchContainer').toggleClass('open');
-    //         $('#search-message').text('*No match found');
-    //         $('#search-message').show();
-    //       }
-    //       searchInfo = `NOT FOUND ${searchInfo}`;
-    //     } else {
-    //       await loadUiComponents(data, overlayURL, savedOverlay);
-    //       d3.select('.loader').classed('hidden', true);
-    //     }
-    //     updateSearchInfo(searchInfo, searchValue);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     alert(`Query Error on ${searchInfo}`);
-    //   });
   };
 
   /**
@@ -258,7 +233,6 @@
       } else {
         // URL is provided to get overlay. Zip, County, Road.. etc.
         // Get Query layer/ bounding box
-        overlayURL = encodeURI(overlayURL);
         let jsonOverlay = await d3.json(overlayURL).catch((err) => {
           return reject(err);
         });
@@ -304,7 +278,7 @@
     let l = [];
     let overlayType;
     if (data.data.length < 1) {
-      console.log('GeoJSON overlay is empty. - createGeoJsonOverlay()');
+      // console.log('GeoJSON overlay is empty. - createGeoJsonOverlay()');
       return;
     }
     data.data.map((d) => {

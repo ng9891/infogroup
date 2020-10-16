@@ -12,7 +12,7 @@ function loadDatatable(est) {
       };
 
       const authLevel = d3.select('.role').node().value;
-      
+
       let table = $('#jq_datatable').DataTable({
         buttons: [
           'expand',
@@ -27,6 +27,10 @@ function loadDatatable(est) {
           {
             title: 'id',
             data: 'id',
+          },
+          {
+            title: 'Info_ID',
+            data: 'INFOUSA_ID',
           },
           {
             title: 'Name',
@@ -129,15 +133,11 @@ function loadDatatable(est) {
         columnDefs: [
           {
             visible: false,
-            targets: [0, 5, 7, 8, 9, 10], //Invisible. id, Latitude, Longitude, two digit, matchcd
-          },
-          {
-            width: 30,
-            targets: 2, //Empl column
+            targets: [0, 1, 6, 8, 9, 10, 11], //Invisible. id, Latitude, Longitude, two digit, matchcd
           },
           {
             responsivePriority: 1,
-            targets: 6,
+            targets: 7,
           },
         ],
         initComplete: function() {
@@ -146,15 +146,14 @@ function loadDatatable(est) {
         // pagingType: 'full_numbers',
         dom: 'Bfrtip',
         destroy: true,
-        scrollResize: true,
         scrollY: 300,
         scrollCollapse: true,
         responsive: true,
       });
 
-      if (authLevel === 'false') {
-        table.column(5).visible(false);
-      }
+      // if (authLevel === 'false') {
+      //   table.column(5).visible(false);
+      // }
       // Edit button event listener
       $('#jq_datatable tbody').unbind('click').on('click', 'td a', function() {
         let data_row = table.row($(this).parents('tr')).data();

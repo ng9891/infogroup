@@ -14,6 +14,30 @@ function errorHandler(err, response) {
   });
 }
 
+exports.reqGeoByInfoUSAID = (request, response) => {
+  if (!request.params.infousa_id) {
+    return response.status(400).json({
+      status: 'Error',
+      responseText: 'No ID specified',
+    });
+  } 
+  // else if (isNaN(parseInt(request.params.infousa_id, 10))) {
+  //   return response.status(400).json({
+  //     status: 'Error',
+  //     responseText: 'Invalid ID',
+  //   });
+  // }
+  const infoID = request.params.infousa_id.trim();
+  byQuery
+    .geoByInfoUSAID(infoID, request.query.v)
+    .then((data) => {
+      return successHandler(data, response);
+    })
+    .catch((err) => {
+      return errorHandler(err, response);
+    });
+};
+
 exports.reqGeoByRegion = (request, response) => {
   if (!request.params.region) {
     return response.status(400).json({

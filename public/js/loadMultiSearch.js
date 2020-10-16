@@ -321,6 +321,7 @@
       // TODO: Check if contain for faster query.
       let geoJSON;
       if (layer instanceof L.Circle) {
+        // Transform to a GeoJSON Polygon instead of Point for easier handling.
         let latLng = layer.getLatLng();
         let radius = layer.getRadius();
         geoJSON = turf.circle([latLng.lng, latLng.lat], radius / 1000, {units: 'kilometers'});
@@ -381,6 +382,7 @@
       window.closeSideBar();
       $('.navBarSearch').show();
       $('.leaflet-control.leaflet-bar').show();
+      $('.leaflet-control.leaflet-bar.queryBtn').css('display', 'none');
       clearList();
     });
 

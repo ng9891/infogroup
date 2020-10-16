@@ -32,9 +32,9 @@ $(document).ready(function() {
   });
 
   // Open multi-query sidebar
-  $('.query-open-multiQuery').on('click',function(){
+  $('.query-open-multiQuery').on('click', function() {
     window.loadMultiSearchSideBar();
-  })
+  });
   // Search button on nav bar
   d3.select('#query-button').on('click', (e) => {
     query_input = d3.select('#query-search').property('value');
@@ -97,6 +97,9 @@ $(document).ready(function() {
         if (conf === false) return;
         if (isNaN(+query_input)) return alert('Invalid Input');
         break;
+      case 'infoid':
+        if (isNaN(+query_input)) return alert('Invalid Input');
+        break;
       default:
         return alert('Invalid Query Selection');
     }
@@ -126,7 +129,7 @@ $(document).ready(function() {
     if ($('.togglePieBtn').text() === 'MatchCD') {
       let selectedSegments = _pie_naics.getOpenSegments();
       // Add back the removed layers when pie segments are selected for filtering.
-      if (selectedSegments && selectedSegments.length > 0){
+      if (selectedSegments && selectedSegments.length > 0) {
         removeFilterOnMap(mymap, _naicsLayers, _pie_naics);
         _pie_naics.redraw();
       }
@@ -142,9 +145,9 @@ $(document).ready(function() {
     } else {
       let selectedSegments = _pie_matchcd.getOpenSegments();
       // Add back the removed layers when pie segments are selected for filtering.
-      if (selectedSegments && selectedSegments.length > 0){
+      if (selectedSegments && selectedSegments.length > 0) {
         removeFilterOnMap(mymap, _matchcdLayers);
-        _pie_matchcd.redraw()
+        _pie_matchcd.redraw();
       }
       $('.infoContainer #pieChartMatchCD').css('display', 'none');
       $('.infoContainer #pieChart').css('display', 'block');
@@ -309,15 +312,24 @@ function loadAdvancedSearchListener() {
     for (form in formBody) if (!formBody[form]) delete formBody[form]; // Delete empty keys.
 
     // console.log('formBody geom', formBody.geom);
+    if (cLayer instanceof L.Marker) return;
     if (
       formBody.geom.features &&
       formBody.geom.features.length > 0 &&
       formBody.geom.features[0].geometry.type === 'MultiPolygon'
     )
       delete formBody['dist'];
-    else if (cLayer instanceof L.Rectangle || cLayer instanceof L.Polygon || cLayer instanceof L.Circle)
-      delete formBody['dist'];
+    else if (cLayer instanceof L.Rectangle || cLayer instanceof L.Polygon) delete formBody['dist'];
+
     if (matchCD) formBody.matchCD = matchCD;
+
+    // Circle is handled differently here compared to multiquery.
+    // Add a property radius.
+    if (cLayer instanceof L.Circle) {
+      delete formBody['dist'];
+      const radius = cLayer.getRadius() * 0.00062137;
+      formBody.geom.properties.radius = radius;
+    }
     // console.log(formBody);
     // TODO: Check if no changes before loading.
     loadEstablishments('currLayer', formBody, query_version);

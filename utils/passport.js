@@ -19,13 +19,13 @@ passport.use(
     })
       .then((response) => response.json())
       .then((json) => {
-        // console.log(json)
+        // console.log(json);
         if (json && JSON.stringify(json.error))
-          return done(false, false, {message: json.error, error: 'not authenticated'});
+          return done(false, false, {message: {error: json.error}, error: 'not authenticated'});
 
         if (JSON.stringify(json.user.id)) return done(null, json.user);
 
-        return done(null, {message: 'unknown error'});
+        return done(null, {message: {error: 'unknown error'}});
       })
       .catch((error) => {
         console.log(error);

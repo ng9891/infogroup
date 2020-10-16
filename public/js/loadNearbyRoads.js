@@ -30,11 +30,11 @@
    */
   let loadSideBarEventListener = () => {
     $('#sideBar .sideBarCloseBtn').unbind('click').on('click', () => {
-      if(window._multiSearchQueryState){
+      if (window._multiSearchQueryState) {
         $('#sideBar2').show();
         $('#sideBar').hide();
         window.clearUsrMarker();
-      }else{
+      } else {
         window.closeSideBar();
       }
     });
@@ -158,10 +158,10 @@
     $('#roadDesc .queryRoadID').attr('title', 'Query on the entire road. *Not normally recommended.');
     $('#roadDesc .addToMultiSearch').attr('title', 'Add current road configuration to the multiple search list.');
 
-    if(forMultiSearch){
+    if (forMultiSearch) {
       $('#roadDesc .btnContainer .queryBtn').hide();
       $('#roadDesc .btnContainer .addBtn').show();
-    }else{
+    } else {
       $('#roadDesc .btnContainer .queryBtn').show();
       $('#roadDesc .btnContainer .addBtn').hide();
     }
@@ -295,26 +295,34 @@
       let maxY = bboxCoord.getNorthEast().lat;
       let turfBBox = [minX, minY, maxX, maxY]; // Left lower and Rigth upper corners.
       if (!data.currentGeom) return console.log('Error. No current Geom. (confirmDraw Btn)');
-      window.mymap.removeLayer(data.currentGeom);
       let layer = data.currentGeom;
 
       let arrOfSegments = [];
       for (let feature of layer.toGeoJSON().features) {
-        let coord;
-        // Resolving issues of how turf manages geoJSON2
-        if (feature.geometry.coordinates.length === 1) coord = feature.geometry.coordinates[0];
-        else coord = feature.geometry.coordinates;
+        let coord = [];
+        if (feature.geometry.type === 'MultiLineString') {
+          for (geom of feature.geometry.coordinates) {
+            coord.push(...geom);
+          }
+        } else if (feature.geometry.type === 'LineString') {
+          coord = [...feature.geometry.coordinates];
+        }
 
-        let linestringSegment = turf.lineString(coord);
-        let clipped = turf.bboxClip(linestringSegment, turfBBox);
-        if (clipped.geometry.coordinates.length > 0) arrOfSegments.push(clipped);
+        if (coord.length > 0){
+          let linestringSegment = turf.lineString(coord);
+          let clipped = turf.bboxClip(linestringSegment, turfBBox);
+          if (clipped.geometry.coordinates.length > 0) arrOfSegments.push(clipped);
+        }
       }
 
-      let geomCollection = turf.featureCollection(arrOfSegments); // Contains linestring inside BBox.
-      let newGeoJSONLayer = createGeoJSONLayer(geomCollection);
-      window.mymap.addLayer(newGeoJSONLayer);
-      $('#roadDesc .roadDescContent').data('currentGeom', newGeoJSONLayer);
-      $('#roadDesc .roadDescContent').data('clippedGeom', newGeoJSONLayer);
+      if(arrOfSegments.length > 0){
+        let geomCollection = turf.featureCollection(arrOfSegments); // Contains linestring inside BBox.
+        let newGeoJSONLayer = createGeoJSONLayer(geomCollection);
+        window.mymap.removeLayer(data.currentGeom);
+        window.mymap.addLayer(newGeoJSONLayer);
+        $('#roadDesc .roadDescContent').data('currentGeom', newGeoJSONLayer);
+        $('#roadDesc .roadDescContent').data('clippedGeom', newGeoJSONLayer);
+      }
       drawnItems.clearLayers();
       $('#roadDesc .drawBBox').prop('disabled', false);
     });
@@ -392,8 +400,10 @@
     let data = $('#roadDesc .roadDescContent').data();
     // window.mymap.removeLayer(selectedRoad.data('geom'));
     if (data.currentGeom) window.mymap.removeLayer(data.currentGeom);
-    
-    selectedRoad.removeClass('selected');
+    if (data.entireGeom) window.mymap.removeLayer(data.entireGeom);
+    if (data.clippedGeom) window.mymap.removeLayer(data.clippedGeom);
+
+    // selectedRoad.removeClass('selected');
     loadSideBarEventListener();
   };
 

@@ -165,7 +165,7 @@ module.exports = {
       OR ($1::text IS NULL OR UPPER(mpo.mpo_name) LIKE UPPER($1));
     `;
     let param = null;
-    if(mpo) param = `${decodeURIComponent(mpo)}%`;
+    if (mpo) param = `${decodeURIComponent(mpo)}%`;
     return queryDB(sql, [param]);
   },
   geoGetMun: (mun, munType, county, exact = 0) => {

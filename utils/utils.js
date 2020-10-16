@@ -7,6 +7,7 @@ module.exports = {
   },
   columnNames: {
     id: 'id',
+    INFOUSAID: 'INFOUSA_ID',
     geom: 'geom',
     CONAME: 'COMPANY_NAME',
     PRMADDR: 'PRIMARY_ADDRESS',

@@ -32,7 +32,7 @@
 
   function exportDataTable() {
     // Convert datatable export into CSV string
-    let columnsToExport = [0, 1, 2, 3, 4, 7, 8, 9, 10];
+    let columnsToExport = [0, 1, 2, 3, 4, 5, 8, 9, 10, 11];
 
     let table = $('#jq_datatable').DataTable();
     let data = table.buttons.exportData({

@@ -8,6 +8,7 @@ const table = utils.tableNames;
 
 const selectStatement = `
   "${column.id}" as id,
+  "${column.INFOUSAID}" as "INFOUSA_ID",
   ST_ASGeoJSON(ST_transform(b."${column.geom}",4326)) as geoPoint,
   "${column.PRMADDR}" as "PRMADDR",
   "${column.PRMCITY}" as "PRMCITY",
@@ -57,6 +58,15 @@ function getBusinessVersion(version) {
 }
 
 module.exports = {
+  geoByInfoUSAID: (infoUSAID, v = 'current') => {
+    let bussinessVersion = getBusinessVersion(v);
+    let sql = ` 
+      SELECT ${selectStatement}
+      FROM ${bussinessVersion} as b
+      WHERE "${column.INFOUSAID}"::text LIKE $1
+    `;
+    return queryDB(sql, [`${infoUSAID}%`]);
+  },
   geoByNYSRegion: (region, v = 'current', offset = 0, limit = null) => {
     let bussinessVersion = getBusinessVersion(v);
     let sql = ` 
@@ -438,13 +448,17 @@ module.exports = {
       let tmpGeom = geom.features[0];
       if (
         tmpGeom.geometry.type &&
-        (tmpGeom.geometry.type === 'LineString' ||
-          tmpGeom.geometry.type === 'MultiLineString' ||
-          tmpGeom.geometry.type === 'Point')
+        (tmpGeom.geometry.type === 'LineString' || tmpGeom.geometry.type === 'MultiLineString')
       ) {
         if (dist > 10 || dist < 0) dist = defaultBufferSize;
         where += addANDStatement(`ST_DWithin(geoCollection.geom, b.geom, $${params.length + 2})`);
         params.push(geom, utils.convertMilesToMeters(dist));
+      } else if (tmpGeom.geometry.type === 'Point') {
+        // For a current layer search Point, check if it has radius property. If not set to dist.
+        let radius = dist;
+        if (tmpGeom.properties && tmpGeom.properties.radius) radius = tmpGeom.properties.radius;
+        where += addANDStatement(`ST_DWithin(geoCollection.geom, b.geom, $${params.length + 2})`);
+        params.push(geom, utils.convertMilesToMeters(radius));
       } else {
         where += addANDStatement(`ST_Contains(geoCollection.geom, b.geom)`);
         params.push(geom);

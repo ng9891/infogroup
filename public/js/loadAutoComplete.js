@@ -38,6 +38,9 @@ function loadAutoComplete() {
       case 'region':
         autoComplete_url('#query-search', 'region', 1);
         break;
+      case 'infoid':
+        autoComplete_url('#query-search', 'infoid', 5);
+        break;
       default:
         // Geocode
         if ($('#query-search').hasClass('ui-autocomplete-input')) {
@@ -147,6 +150,7 @@ function autoComplete_url(inputId, column, minlen = 2, selectCb = () => {}) {
       let url = `/api/get${column}/`;
       if (column === 'railroad')
         url += `?station=${encodeURIComponent(input)}`; // railroad get URL is a bit different because string contains '/'
+      else if (column === 'infoid') url = `/api/by${column}/${input}`
       else url += `${encodeURIComponent(input)}`;
       $.ajax({
         type: 'GET',
@@ -163,9 +167,11 @@ function autoComplete_url(inputId, column, minlen = 2, selectCb = () => {}) {
                 // County formatting
                 d.name += ' - ' + capitalizeFirstLetter(d.state_code);
               }
-              // arr_data.push(`${d.name}`);
+              if (column === 'infoid'){
+                d.name = d.INFOUSA_ID;
+                d.geom = d.geopoint;
+              }
               arr_data.push(d);
-              // if (d.abbrv) arr_data.push(d.abbrv); // Abbreviation and name query AC for MPO
             });
             $(inputId).removeClass('.ui-autocomplete-loading ');
             response(

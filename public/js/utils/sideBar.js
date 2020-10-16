@@ -1,5 +1,5 @@
 (() => {
-    /**
+  /**
    * Global function to close the road sidebar.
    */
   window.closeSideBar = () => {
@@ -24,7 +24,7 @@
     }
   };
 
-    /**
+  /**
    * Toggles the loading animation in the road sidebar.
    */
   window.toggleSideBarLoadingIcon = () => {
@@ -34,5 +34,4 @@
       $('#sideBarLoader').css('display', 'block');
     }
   };
-  
 })();

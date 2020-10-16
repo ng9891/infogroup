@@ -68,14 +68,14 @@ function loadPieChart(establishments) {
 
     _pie_matchcd = new d3pie(
       'pieChartMatchCD',
-      getOptions(pie_content_matchcd, pie_w, pie_h, 10, () => {
+      getOptions(pie_content_matchcd, pie_w, pie_h, 11, () => {
         return;
       })
     );
 
     _pie_naics = new d3pie(
       'pieChart',
-      getOptions(pie_content_naics, pie_w, pie_h, 9, () => {
+      getOptions(pie_content_naics, pie_w, pie_h, 10, () => {
         $('.pieChart-loader').fadeOut('slow');
         return resolve('PieChart Loaded');
       })
@@ -174,10 +174,9 @@ function loadPieChart(establishments) {
    * @param {*} searchCol Variable to distinquish which pieChart was clicked.
    */
   function filterSegment(a, searchCol) {
-    // console.log(_pie_naics.selected);
     let search = a.data.search;
     let dataTable = $('#jq_datatable').DataTable();
-    if (searchCol === 10) {
+    if (searchCol === 11) {
       // Matchcode Pie
       let selected = _pie_matchcd.getOpenSegments();
       let content = _pie_matchcd.options.data.content;

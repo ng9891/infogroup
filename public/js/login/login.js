@@ -20,19 +20,13 @@
     })
       .then((response) => response.json())
       .then((response) => {
-        if (response === 'Incorrect email or password.') {
-          let error = 'Incorrect email or password.';
+        if(response.error){
+          let error = response.error;
           document.getElementById('message').innerHTML = error;
           return false;
+        }else{
+          window.location.replace('/');
         }
-        if (response) window.location.replace('/');
-
-        // if(response && response.status &&response.status === 'logged in'){
-        //   redirect: window.location.replace("/");
-        // }else if(response){
-        //   document.getElementById("message").innerHTML = response;
-        //   return false;
-        // }
       });
   }
 })();
