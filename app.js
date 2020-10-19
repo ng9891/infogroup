@@ -1,6 +1,6 @@
 //Module dependencies
 const express = require('express');
-const cors = require('cors');
+// const cors = require('cors');
 const path = require('path');
 const bodyParser = require('body-parser');
 const indexRoutes = require('./routes/index');
@@ -15,13 +15,12 @@ const app = express();
 
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(cors());
-// app.use(logger('dev'));
+// app.use(cors());
+
+// Parse JSON bodies (as sent by API clients)
 app.use(bodyParser.json({limit: '10mb'}));
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}));
 app.use(compression());
-// Parse JSON bodies (as sent by API clients)
-// app.use(express.json());
 
 // Session setup
 app.use(

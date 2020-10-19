@@ -82,7 +82,6 @@ function loadDatatable(est) {
                   row['id'] +
                   "'><span class='onoffswitch-inner'></span><span class='onoffswitch-switch'></span></label></div>";
               }
-              // function updatePrimaryField() located in public/infogroup.js
               return data;
             },
           },
@@ -143,17 +142,14 @@ function loadDatatable(est) {
         initComplete: function() {
           return resolve('Datatable loaded');
         },
-        // pagingType: 'full_numbers',
         dom: 'Bfrtip',
         destroy: true,
+        autoWidth: false,
         scrollY: 300,
         scrollCollapse: true,
         responsive: true,
       });
 
-      // if (authLevel === 'false') {
-      //   table.column(5).visible(false);
-      // }
       // Edit button event listener
       $('#jq_datatable tbody').unbind('click').on('click', 'td a', function() {
         let data_row = table.row($(this).parents('tr')).data();
