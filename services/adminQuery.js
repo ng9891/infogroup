@@ -187,9 +187,9 @@ exports.auditByUser = (id, limit = null, offset = 0) => {
   return queryDB(sql, [id, limit, offset]);
 };
 
-exports.proposeBusinessChange = (id, form, originalForm, user) => {
+exports.proposeBusinessChange = (id, form, originalData, user) => {
   // Key names have to match with table column name in DB
-  function build_query(id, form, originalForm, user) {
+  function build_query(id, form, originalData, user) {
     let sql = '';
     // let now_string = "(now() at time zone 'utc')";
     let insert_str = ''; // Contains the string for the INSERT in the sql. Keys.
@@ -209,11 +209,18 @@ exports.proposeBusinessChange = (id, form, originalForm, user) => {
       values.push(form['LATITUDE_1']);
     }
 
-    // HSTORE fields in audit table
-    let row_data = `('${hstore.stringify(originalForm)}'::hstore)`;
+    // For HSTORE fields in audit table
+    let originalTableColumns = {};
+    // Format the key to have the same name as the column names.
+    for(const r in originalData){
+      let key = column[r];
+      if(!key) continue;
+      originalTableColumns[key] = originalData[r];
+    }
+    originalTableColumns['alias'] = originalData['alias'];
+
+    let row_data = `('${hstore.stringify(originalTableColumns)}'::hstore)`;
     let changed_fields = `('${hstore.stringify(form)}'::hstore - ${row_data}) - '{comment}'::text[]`;
-    // console.log(row_data);
-    // console.log(changed_fields);
 
     // Owner of submit
     form['by'] = user.email;
@@ -241,7 +248,7 @@ exports.proposeBusinessChange = (id, form, originalForm, user) => {
         `;
     return [sql, values];
   }
-  let [sql, params] = build_query(id, form, originalForm, user);
+  let [sql, params] = build_query(id, form, originalData, user);
   return queryDB(sql, params);
 };
 

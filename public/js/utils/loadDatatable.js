@@ -30,7 +30,7 @@ function loadDatatable(est) {
           },
           {
             title: 'Info_ID',
-            data: 'INFOUSA_ID',
+            data: 'INFOUSAID',
           },
           {
             title: 'Name',

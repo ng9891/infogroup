@@ -168,7 +168,7 @@ function autoComplete_url(inputId, column, minlen = 2, selectCb = () => {}) {
                 d.name += ' - ' + capitalizeFirstLetter(d.state_code);
               }
               if (column === 'infoid'){
-                d.name = d.INFOUSA_ID;
+                d.name = d.INFOUSAID;
                 d.geom = d.geopoint;
               }
               arr_data.push(d);

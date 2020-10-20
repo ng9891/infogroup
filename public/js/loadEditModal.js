@@ -38,8 +38,8 @@ function loadEditModal(business_id, version = 'current') {
     let est = data.data[0];
     let title = '';
     if (version === 'original')
-      title = `<h4>${est.CONAME} - ID: <span id="business_id">${business_id}<span id="infousa_id">${est.INFOUSA_ID}</span></span> - ${version}</h4>`;
-    else title = `<h4>${est.CONAME} - ID: <span id="business_id">${business_id}</span><span id="infousa_id">${est.INFOUSA_ID}</span></h4>`;
+      title = `<h4>${est.CONAME} - ID: <span id="business_id">${business_id}<span id="infousa_id">${est.INFOUSAID}</span></span> - ${version}</h4>`;
+    else title = `<h4>${est.CONAME} - ID: <span id="business_id">${business_id}</span><span id="infousa_id">${est.INFOUSAID}</span></h4>`;
     $('#modal_title').html(title);
     $('#modal_CONAME').val(est.CONAME);
     $('#modal_alias').val(!est.alias ? '' : est.alias);

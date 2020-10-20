@@ -1,6 +1,5 @@
 const adminQuery = require('../services/adminQuery');
 const byQuery = require('../services/byQuery');
-let hstore = require('pg-hstore')();
 
 function successHandler(data, response) {
   return response.status(200).json({
@@ -221,35 +220,9 @@ exports.reqProposeBusinessChange = async (request, response) => {
   }
 
   let [originalData] = await byQuery.geoById(request.params.bus_id);
-  let originalForm = {
-    alias: originalData['alias'],
-    COMPANY_NAME: originalData['CONAME'],
-    PRIMARY_SIC_CODE: originalData['PRMSICCD'],
-    PRIMARY_SIC_DESC: originalData['PRMSICDS'],
-    NAICS_CODE: originalData['NAICSCD'],
-    NAICS_DESC: originalData['NAICSDS'],
-    SQUARE_FOOTAGE_CODE: originalData['SQFOOTCD'],
-    SQUARE_FOOTAGE_DESC: originalData['SQFOOTDS'],
-    LOCATION_EMPLOYMENT_SIZE_CODE: originalData['LEMPSZCD'],
-    LOCATION_EMPLOYMENT_SIZE_DESC: originalData['LEMPSZDS'],
-    ACTUAL_LOCATION_EMPLOYMENT_SIZE: originalData['ALEMPSZ'],
-    LOCATION_SALES_VOLUME_CODE: originalData['LSALVOLCD'],
-    LOCATION_SALES_VOLUME_DESC: originalData['LSALVOLDS'],
-    ACTUAL_LOCATION_SALES_VOLUME: originalData['ALSLSVOL'],
-    CORPORATE_SALES_VOLUME_CODE: originalData['CSALVOLCD'],
-    CORPORATE_SALES_VOLUME_DESC: originalData['CSALVOLDS'],
-    ACTUAL_CORPORATE_SALES_VOLUME: originalData['ACSLSVOL'],
-    PRIMARY_ADDRESS: originalData['PRMADDR'],
-    PRIMARY_CITY: originalData['PRMCITY'],
-    PRIMARY_STATE: originalData['PRMSTATE'],
-    PRIMARY_ZIP_CODE: originalData['PRMZIP'],
-    MATCH_LEVEL_CODE: originalData['MATCHCD'],
-    LATITUDE_1: originalData['LATITUDEO'],
-    LONGITUDE_1: originalData['LONGITUDEO'],
-  };
 
   adminQuery
-    .proposeBusinessChange(request.params.bus_id, request.body, originalForm, request.user)
+    .proposeBusinessChange(request.params.bus_id, request.body, originalData, request.user)
     .then((data) => {
       return response.status(200).json({
         data: data,

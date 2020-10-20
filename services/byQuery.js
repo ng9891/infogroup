@@ -8,7 +8,7 @@ const table = utils.tableNames;
 
 const selectStatement = `
   "${column.id}" as id,
-  "${column.INFOUSAID}" as "INFOUSA_ID",
+  "${column.INFOUSAID}" as "INFOUSAID",
   ST_ASGeoJSON(ST_transform(b."${column.geom}",4326)) as geoPoint,
   "${column.PRMADDR}" as "PRMADDR",
   "${column.PRMCITY}" as "PRMCITY",
