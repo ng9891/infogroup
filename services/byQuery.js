@@ -207,14 +207,15 @@ module.exports = {
     `;
     return queryDB(sql, [county_name, state, stateCode, offset, limit]);
   },
-  geoByDistance: ({lon, lat, dist = 1609, v = 'current'} = {}) => {
+  geoByDistance: ({lon, lat, dist = defaultBufferSize, v = 'current'} = {}) => {
     let bussinessVersion = getBusinessVersion(v);
     let sql = `
       SELECT ${selectStatement}
       FROM ${bussinessVersion} as b
       WHERE ST_DWithin(ST_GeogFromText('SRID=4326;POINT(' || $1 || ' ' || $2 || ')'), geography(ST_transform(b.geom,4326)), $3);
     `;
-    return queryDB(sql, [lon, lat, dist]);
+    // TODO: A limit is needed.
+    return queryDB(sql, [lon, lat, utils.convertMilesToMeters(dist)]);
   },
   geoById: (businessId, v = 'current') => {
     let bussinessVersion = getBusinessVersion(v);
@@ -540,17 +541,17 @@ module.exports = {
     if (params.length <= 2) {
       // If only range query.
       if (minEmp && maxEmp) {
-        where += 'LIMIT 5000';
+        where += 'LIMIT 100000';
       } else if (params.length === 1) {
         // if only min or max is input.
         if (minEmp || maxEmp) {
-          where += 'LIMIT 5000';
+          where += 'LIMIT 100000';
         }
       }
 
       // If only match code is selected and it is parcel.
       if (matchCD && matchCD === 'P') {
-        where += 'LIMIT 200000';
+        where += 'LIMIT 100000';
       }
     }
 

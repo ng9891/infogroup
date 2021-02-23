@@ -148,9 +148,10 @@ function autoComplete_url(inputId, column, minlen = 2, selectCb = () => {}) {
     source: function(request, response) {
       let input = request.term.trim();
       let url = `/api/get${column}/`;
-      if (column === 'railroad')
-        url += `?station=${encodeURIComponent(input)}`; // railroad get URL is a bit different because string contains '/'
-      else if (column === 'infoid') url = `/api/by${column}/${input}`
+      if (column === 'railroad') url += `?station=${encodeURIComponent(input)}`;
+      else if (column === 'infoid')
+        // railroad get URL is a bit different because string contains '/'
+        url = `/api/by${column}/${input}`;
       else url += `${encodeURIComponent(input)}`;
       $.ajax({
         type: 'GET',
@@ -167,7 +168,7 @@ function autoComplete_url(inputId, column, minlen = 2, selectCb = () => {}) {
                 // County formatting
                 d.name += ' - ' + capitalizeFirstLetter(d.state_code);
               }
-              if (column === 'infoid'){
+              if (column === 'infoid') {
                 d.name = d.INFOUSAID;
                 d.geom = d.geopoint;
               }
@@ -191,22 +192,22 @@ function autoComplete_url(inputId, column, minlen = 2, selectCb = () => {}) {
     focus: function(e, ui) {
       if (e.keyCode === 38 || e.keyCode === 40) {
         // Focus on geom.
-        if(!ui.item.geom) return;
-        try{
-          if(prevGeomToShow) window.mymap.removeLayer(prevGeomToShow);
+        if (!ui.item.geom) return;
+        try {
+          if (prevGeomToShow) window.mymap.removeLayer(prevGeomToShow);
           let geoJSON = JSON.parse(ui.item.geom);
           prevGeomToShow = L.geoJSON(geoJSON);
           window.mymap.addLayer(prevGeomToShow);
           window.mymap.fitBounds(prevGeomToShow.getBounds(), {padding: [100, 100]});
-        }catch(e){
+        } catch (e) {
           return console.log(e);
         }
       }
     },
-    close: function(e, ui){
-      if(!prevGeomToShow) return;
+    close: function(e, ui) {
+      if (!prevGeomToShow) return;
       window.mymap.removeLayer(prevGeomToShow);
-    }
+    },
   });
 }
 

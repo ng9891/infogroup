@@ -120,11 +120,13 @@ body {
   opacity: 0.4 !important; /* for older chrome versions. may no longer apply. */
 }
 
-:-moz-placeholder { /* Firefox 18- */
+:-moz-placeholder {
+  /* Firefox 18- */
   opacity: 0.4 !important;
 }
 
-::-moz-placeholder {  /* Firefox 19+ */
+::-moz-placeholder {
+  /* Firefox 19+ */
   opacity: 0.4 !important;
 }
 
@@ -176,7 +178,8 @@ body {
   z-index: 650;
 }
 
-#sideBar, #sideBar2{
+#sideBar,
+#sideBar2 {
   width: 20%;
   height: 100%;
   padding-bottom: 5%;
@@ -185,7 +188,7 @@ body {
   overflow-y: auto;
 }
 
-#sideBar2{
+#sideBar2 {
   display: none;
 }
 
@@ -220,7 +223,7 @@ body {
 }
 
 #sideBar li.road.selected,
-#sideBar2 .multi-query-list li.geom.selected{
+#sideBar2 .multi-query-list li.geom.selected {
   background: #5cb85c;
 }
 
@@ -280,20 +283,21 @@ body {
 #roadDesc .btnContainer button {
   margin-bottom: 5px;
 }
-.multi-query-searchContainer{
+.multi-query-searchContainer {
   padding: 10px 5px 15px 5px;
   border-bottom: 1px solid #ccc;
 }
 
-.multi-query-search{
+.multi-query-search {
   margin: 5px 0px;
 }
 
-.multi-query-btnContainer .btn.disabled, .multi-query-btnContainer .btn:disabled{
+.multi-query-btnContainer .btn.disabled,
+.multi-query-btnContainer .btn:disabled {
   opacity: 0.4 !important; /*Overwrites Bootstrap disabled*/
 }
 
-#sideBar2 span.deleteEntry{
+#sideBar2 span.deleteEntry {
   /* background: red; */
   /* color:white; */
   height: 25px;
@@ -304,7 +308,7 @@ body {
   transition: 0.2s linear;
 }
 
-#sideBar2 li:hover span.deleteEntry{
+#sideBar2 li:hover span.deleteEntry {
   width: 25px;
   display: inline-block;
   cursor: pointer;
@@ -326,6 +330,7 @@ body {
   -o-transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000);
   transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000); /* easeInOutQuart */
   -webkit-filter: blur(0.000001px);
+  filter: blur(0.000001px);
   transform: translate3d(99.80%, 0, 0);
 }
 .advancedSearchContainer.open {
@@ -395,12 +400,13 @@ body {
   transition: all 300ms cubic-bezier(0.770, 0.000, 0.175, 1.000); /* easeInOutQuart */
 }
 
-.infoContainer .legendButton, .togglePieBtn{
+.infoContainer .legendButton,
+.togglePieBtn {
   padding-left: 0px;
 }
 
-.statisticsContainerButton{ 
-  white-space: nowrap; 
+.statisticsContainerButton {
+  white-space: nowrap;
 }
 
 .infoContainer.closed {
@@ -485,14 +491,12 @@ body {
 tr {
   font-size: 11px;
 }
-@media screen and (max-height : 1000px)
-{
+@media screen and (max-height: 1000px) {
   .datatable-wrapper {
     height: 44vh;
   }
 }
-@media screen and (max-height : 650px)
-{
+@media screen and (max-height: 650px) {
   .datatable-wrapper {
     height: 40vh;
   }

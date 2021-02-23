@@ -18,18 +18,18 @@ let featureSelected;
 window.multiQueryGroup = new L.FeatureGroup(); // Feature group containing all the layers in multi-search feature.
 
 // var redoBuffer = [];
-
-const mapBox = L.tileLayer(
-  'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw',
-  {
-    maxZoom: 20,
-    attribution:
-      'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-      '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-      'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    id: 'mapbox.streets',
-  }
-);
+// 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw'
+const mapBox = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+  maxZoom: 20,
+  tileSize: 512,
+  zoomOffset: -1,
+  attribution:
+    'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+    'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+  id: 'mapbox/streets-v11',
+  accessToken: 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw',
+});
 
 const Stamen_Toner = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.{ext}', {
   attribution:
@@ -373,8 +373,8 @@ function moveTooltip(e) {
 function addUsrMarker(e) {
   drawnItems.addLayer(e.layer);
   // If its a bounding box drawing rectangle, do nothing.
-  if(e.layer.options.kind && e.layer.options.kind === 'BBox') return;
-  
+  if (e.layer.options.kind && e.layer.options.kind === 'BBox') return;
+
   // On drawing commit, push drawing
   usrMarkers.push(e.layer);
   removeTooltip();
@@ -385,10 +385,10 @@ function addUsrMarker(e) {
     return window.loadNearbyRoads(latlng.lat, latlng.lng);
   }
   // Logic for multiQuerySearch
-  if(window._multiSearchQueryState){
+  if (window._multiSearchQueryState) {
     $('.multi-query-addBtn').prop('disabled', false);
     $('.multi-query-inputBox').val(`Drawing`);
-  }else{
+  } else {
     // Normal drawing query.
     $('.leaflet-control.leaflet-bar.queryBtn').css('display', 'block'); // Display the query button
     $('.leaflet-control-queryBtn').off('click').on('click', queryDrawing); // QUERY BUTTON LISTENER
@@ -401,7 +401,7 @@ function clearUsrMarker(e) {
   drawnItems.clearLayers();
   $('.leaflet-control.leaflet-bar.queryBtn').css('display', 'none'); // hide btn so no meaningless query request
   $('.leaflet-control-queryBtn').off('click');
-  if(e) addTooltip(e);
+  if (e) addTooltip(e);
 }
 
 mymap.on('editable:drawing:start', clearUsrMarker);
@@ -415,10 +415,10 @@ mymap.on('editable:vertex:dragend editable:drawing:cancel', function(e) {
   removeTooltip();
 });
 
-mymap.on('editable:drawing:cancel', function(e){
+mymap.on('editable:drawing:cancel', function(e) {
   if (!e.editTools.featuresLayer) return;
   for (key in e.editTools.featuresLayer._layers) mymap.removeLayer(e.editTools.featuresLayer._layers[key]);
-})
+});
 
 let lastVertex;
 mymap.on('editable:vertex:new', function(e) {

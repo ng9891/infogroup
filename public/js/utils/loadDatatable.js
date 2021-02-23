@@ -144,10 +144,11 @@ function loadDatatable(est) {
         },
         dom: 'Bfrtip',
         destroy: true,
-        autoWidth: false,
-        scrollY: 300,
+        scrollResize: true,
+        scrollY: '30vh',
         scrollCollapse: true,
         responsive: true,
+        autoWidth: false,
       });
 
       // Edit button event listener
