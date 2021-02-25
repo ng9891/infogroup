@@ -32,7 +32,7 @@ router.get('/getconame/:coname', getCtrl.reqGetConame);
 router.get('/getcounty/:county', getCtrl.reqGetCounty);
 router.get('/getempsize', getCtrl.reqGetEmpSize);
 router.get('/getindustries', getCtrl.reqGetNaics);
-router.get('/getmpo/:mpo', getCtrl.reqGeoGetMpo);
+router.get('/getmpo/:mpo?', getCtrl.reqGeoGetMpo);
 router.get('/getmun/:mun', getCtrl.reqGeoGetMun);
 router.get('/getroad', getCtrl.reqGeoGetRoad);
 router.get('/getsalesvolume', getCtrl.reqGetSalesVolume);
