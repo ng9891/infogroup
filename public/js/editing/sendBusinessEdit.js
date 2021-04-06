@@ -38,43 +38,13 @@ function sendBusinessEdit() {
       $('#byemodal').click();
     })
     .catch((err) => {
-      if(err.status === 'CHECK ERROR'){
+      if (err.status === 500 || err.status === 401) {
         return alert(err.responseText);
       }
       alert('Error in submission');
       console.log(err);
     });
 }
-
-// function getForm() {
-//   let obj = {
-//     alias: parseFormInput($('#modal_alias').val()),
-//     CONAME: parseFormInput($('#modal_CONAME').val()),
-//     PRMSICCD: parseFormInput($('#modal_PRMSICCD').val()),
-//     PRMSICDS: parseFormInput($('#modal_PRMSICDS').val()),
-//     NAICSCD: parseFormInput($('#modal_NAICSCD').val()),
-//     NAICSDS: parseFormInput($('#modal_NAICSDS').val()),
-//     SQFOOTCD: parseFormInput($('#modal_SQFOOTCD_button').text()),
-//     SQFOOTDS: parseFormInput($('#modal_SQFOOTDS').val()),
-//     LEMPSZCD: parseFormInput($('#modal_LEMPSZCD_button').text()),
-//     LEMPSZDS: parseFormInput($('#modal_LEMPSZDS').val()),
-//     ALEMPSZ: parseFormInput($('#modal_ALEMPSZ').val()),
-//     LSALVOLCD: parseFormInput($('#modal_LSALVOLCD_button').text()),
-//     LSALVOLDS: parseFormInput($('#modal_LSALVOLDS').val()),
-//     ALSLSVOL: parseFormInput_salesVol($('#modal_ALSLSVOL').val()),
-//     CSALVOLCD: parseFormInput($('#modal_CSALVOLCD_button').text()),
-//     CSALVOLDS: parseFormInput($('#modal_CSALVOLDS').val()),
-//     ACSLSVOL: parseFormInput_salesVol($('#modal_ACSLSVOL').val()),
-//     PRMCITY: parseFormInput($('#modal_PRMCITY').val()),
-//     PRMSTATE: parseFormInput($('#modal_PRMSTATE').val()),
-//     PRMZIP: parseFormInput($('#modal_PRMZIP').val()),
-//     LATITUDEO: $('#modal_LATITUDE').val(),
-//     LONGITUDEO: $('#modal_LONGITUDE').val(),
-//     desc: $('#modal_comment').val(),
-//     by: null,
-//   };
-//   return obj;
-// }
 
 function getForm() {
   // Check if CA
@@ -142,12 +112,6 @@ function isFormInputEmpty(txt) {
 }
 // END Entity Edit Modal Form
 /*
-database records: spatial (add, modify, delete) point feature geometry; 
-non-spatial (add, modify, delete) PRIMARY_SIC_CODE; PRIMARY_SIC_DESC; NAICS_CODE; NAICS_DESC; 
-ACTUAL_LOCATION_EMPLOYMENT_SIZE; ACTUAL_CORPORATE_EMPLOYMENT_SIZE; MODELED_EMPLOYMENT_SIZE; ACTUAL_LOCATION_SALES_VOLUME; 
-ACTUAL_CORPORATE_SALES_VOLUME; SQUARE_FOOTAGE_CODE; LATITUDE; LONGITUDE)
-
-//list
 id
 business_id
 by

@@ -12,7 +12,7 @@ function errorHandler(err, response) {
   // Raise Exception
   if (err.code === 'P0001') {
     return response.status(500).json({
-      status: 'invalid',
+      status: 500,
       responseText: err,
     });
   }
@@ -21,13 +21,13 @@ function errorHandler(err, response) {
     // specific for reqProposeBusinessChange()
     // Check fails on field 'changed_fields'. There were no changes found to the original data.
     return response.status(400).json({
-      status: 'CHECK ERROR',
-      responseText: 'No changes made',
+      status: 400,
+      responseText: 'CHECK ERROR. No changes made',
     });
   }
 
   return response.status(500).json({
-    status: 'Error',
+    status: 500,
     responseText: 'Error in query ' + err,
   });
 }
@@ -39,7 +39,6 @@ exports.reqEditPage = async (request, response) => {
 
 // This gives a pagination option for the datatable. In case loading time optimization is needed.
 exports.reqEditListDatatable = (request, response) => {
-  // console.log(request.query);
   let orderColIndex = request.query.order[0].column;
   let orderCol = request.query.columns[orderColIndex].data;
   // TODO: Implement search.
